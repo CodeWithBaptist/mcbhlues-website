@@ -9,7 +9,18 @@ import {
   users,
 } from "./schema";
 import { NAV_SEED, PERMISSION_SEED, ROLE_SEED, USER_SEED } from "./seed-data";
-import { hashPassword } from "@/lib/auth/password";
+import { generateToken, hashPassword } from "@/lib/auth/password";
+
+/**
+ * Demo staff (one account per role) are only created outside production, or
+ * when SEED_DEMO_STAFF=true is set explicitly. A deployed environment gets a
+ * single Super Admin instead.
+ */
+function shouldSeedDemoStaff() {
+  if (process.env.SEED_DEMO_STAFF === "true") return true;
+  if (process.env.SEED_DEMO_STAFF === "false") return false;
+  return process.env.NODE_ENV !== "production";
+}
 
 /**
  * Seeds the RBAC catalogue. Everything is upserted by natural key so an
@@ -36,7 +47,7 @@ export async function seedDatabase(db: Database) {
           isSystem: true,
         };
       })
-    );
+    ).onConflictDoNothing();
   }
 
   const allPermissions = await db.select().from(permissions);
@@ -49,13 +60,16 @@ export async function seedDatabase(db: Database) {
   const freshRoleKeys: string[] = [];
   for (const role of ROLE_SEED) {
     if (existingRoleKeys.has(role.key)) continue;
-    await db.insert(roles).values({
-      key: role.key,
-      name: role.name,
-      description: role.description,
-      level: role.level,
-      isSystem: true,
-    });
+    await db
+      .insert(roles)
+      .values({
+        key: role.key,
+        name: role.name,
+        description: role.description,
+        level: role.level,
+        isSystem: true,
+      })
+      .onConflictDoNothing();
     freshRoleKeys.push(role.key);
   }
 
@@ -76,7 +90,7 @@ export async function seedDatabase(db: Database) {
       .filter((id): id is string => Boolean(id))
       .map((permissionId) => ({ roleId: role.id, permissionId }));
 
-    if (values.length > 0) await db.insert(rolePermissions).values(values);
+    if (values.length > 0) await db.insert(rolePermissions).values(values).onConflictDoNothing();
   }
 
   // The Super Admin must always hold every permission in the catalogue,
@@ -91,7 +105,7 @@ export async function seedDatabase(db: Database) {
     const missing = allPermissions
       .filter((row) => !heldIds.has(row.id))
       .map((row) => ({ roleId: superAdmin.id, permissionId: row.id }));
-    if (missing.length > 0) await db.insert(rolePermissions).values(missing);
+    if (missing.length > 0) await db.insert(rolePermissions).values(missing).onConflictDoNothing();
   }
 
   /* ---- navigation ------------------------------------------------------- */
@@ -110,21 +124,57 @@ export async function seedDatabase(db: Database) {
         hideIfPermissionKey: row.hideIfPermissionKey ?? null,
         sortOrder: row.sortOrder,
       }))
-    );
+    ).onConflictDoNothing();
   }
 
-  /* ---- demo staff accounts --------------------------------------------- */
-  const seedEmails = USER_SEED.map((row) => row.email);
+  /* ---- staff accounts --------------------------------------------------- */
+  const demo = shouldSeedDemoStaff();
+  const superAdminEmail = (process.env.SUPER_ADMIN_EMAIL ?? "superadmin@mcbhlues.com")
+    .trim()
+    .toLowerCase();
+
+  // Outside development only the Super Admin is provisioned.
+  const wanted = demo
+    ? USER_SEED.map((row) =>
+        row.role === "super_admin" ? { ...row, email: superAdminEmail } : row
+      )
+    : [
+        {
+          firstName: process.env.SUPER_ADMIN_FIRST_NAME ?? "System",
+          lastName: process.env.SUPER_ADMIN_LAST_NAME ?? "Owner",
+          email: superAdminEmail,
+          phone: "",
+          role: "super_admin",
+          password: process.env.SUPER_ADMIN_PASSWORD ?? "",
+        },
+      ];
+
   const existingUsers = await db
     .select({ email: users.email })
     .from(users)
-    .where(inArray(users.email, seedEmails));
+    .where(
+      inArray(
+        users.email,
+        wanted.map((row) => row.email)
+      )
+    );
   const existingEmails = new Set(existingUsers.map((row) => row.email));
 
-  for (const seed of USER_SEED) {
+  for (const seed of wanted) {
     if (existingEmails.has(seed.email)) continue;
     const role = roleByKey.get(seed.role);
     if (!role) continue;
+
+    // If no password was supplied for a deployed environment, generate a strong
+    // one and print it once so the owner can sign in and change it.
+    let password = seed.password;
+    if (!password) {
+      password = `${generateToken(12)}Aa1!`;
+      console.warn(
+        `[seed] Created Super Admin ${seed.email} with generated password: ${password}\n` +
+          "[seed] Sign in and change it immediately, or set SUPER_ADMIN_PASSWORD."
+      );
+    }
 
     const [created] = await db
       .insert(users)
@@ -133,11 +183,13 @@ export async function seedDatabase(db: Database) {
         lastName: seed.lastName,
         email: seed.email,
         phone: seed.phone,
-        passwordHash: await hashPassword(seed.password),
+        passwordHash: await hashPassword(password),
         status: "active",
       })
+      .onConflictDoNothing()
       .returning({ id: users.id });
 
-    await db.insert(userRoles).values({ userId: created.id, roleId: role.id });
+    if (!created) continue; // another instance won the race
+    await db.insert(userRoles).values({ userId: created.id, roleId: role.id }).onConflictDoNothing();
   }
 }

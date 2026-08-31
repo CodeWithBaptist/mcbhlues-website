@@ -28,6 +28,15 @@ async function createDatabase(): Promise<Database> {
     db = drizzle(pool, { schema });
     exec = (statement: string) => pool.query(statement);
   } else {
+    // Serverless filesystems are read-only and ephemeral, so the embedded
+    // database would silently lose every staff account between requests.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "DATABASE_URL is required in production. The Staff Portal stores staff " +
+          "accounts, roles, permissions and audit logs in PostgreSQL — point " +
+          "DATABASE_URL at a managed Postgres instance (Neon, Supabase, RDS, …)."
+      );
+    }
     const { PGlite } = await import("@electric-sql/pglite");
     const { drizzle } = await import("drizzle-orm/pglite");
     const dataDir = process.env.PGLITE_DATA_DIR ?? "./.data/pgdata";
