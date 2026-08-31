@@ -1,24 +1,75 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import * as schema from "./schema";
+import { SCHEMA_DDL } from "./ddl";
+import { seedDatabase } from "./seed";
 
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is required");
-}
+export type Database = NodePgDatabase<typeof schema>;
 
 const globalForDb = globalThis as typeof globalThis & {
-  __arenaNextJsPostgresqlPool?: Pool;
+  __mcbhluesDb?: Promise<Database>;
 };
 
-export const pool =
-  globalForDb.__arenaNextJsPostgresqlPool ??
-  new Pool({
-    connectionString: databaseUrl,
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.__arenaNextJsPostgresqlPool = pool;
+function usingRealPostgres(url: string | undefined): url is string {
+  if (!url) return false;
+  // The preview sandbox injects a placeholder URL; fall back to the embedded
+  // PGlite database in that case so the portal still runs against real SQL.
+  return !url.includes("dummy");
 }
 
-export const db = drizzle(pool);
+async function createDatabase(): Promise<Database> {
+  const url = process.env.DATABASE_URL;
+  let db: Database;
+  let exec: (sql: string) => Promise<unknown>;
+
+  if (usingRealPostgres(url)) {
+    const { Pool } = await import("pg");
+    const { drizzle } = await import("drizzle-orm/node-postgres");
+    const pool = new Pool({ connectionString: url });
+    db = drizzle(pool, { schema });
+    exec = (statement: string) => pool.query(statement);
+  } else {
+    // Serverless filesystems are read-only and ephemeral, so the embedded
+    // database would silently lose every staff account between requests.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "DATABASE_URL is required in production. The Staff Portal stores staff " +
+          "accounts, roles, permissions and audit logs in PostgreSQL — point " +
+          "DATABASE_URL at a managed Postgres instance (Neon, Supabase, RDS, …)."
+      );
+    }
+    const { PGlite } = await import("@electric-sql/pglite");
+    const { drizzle } = await import("drizzle-orm/pglite");
+    const dataDir = process.env.PGLITE_DATA_DIR ?? "./.data/pgdata";
+    const { mkdirSync } = await import("fs");
+    const { dirname } = await import("path");
+    mkdirSync(dirname(dataDir), { recursive: true });
+    const client = new PGlite(dataDir);
+    db = drizzle(client, { schema }) as unknown as Database;
+    exec = (statement: string) => client.exec(statement);
+  }
+
+  // Idempotent DDL — safe on every boot.
+  for (const statement of SCHEMA_DDL.split(";\n")) {
+    const trimmed = statement.trim();
+    if (trimmed) await exec(`${trimmed};`);
+  }
+
+  await seedDatabase(db);
+  return db;
+}
+
+/**
+ * Lazily initialised database handle. Every server-side caller must await this
+ * rather than importing a raw client, which guarantees the RBAC tables exist
+ * before any permission check runs.
+ */
+export function getDb(): Promise<Database> {
+  globalForDb.__mcbhluesDb ??= createDatabase().catch((error) => {
+    // Never cache a failed bootstrap — the next request retries cleanly.
+    globalForDb.__mcbhluesDb = undefined;
+    throw error;
+  });
+  return globalForDb.__mcbhluesDb;
+}
+
+export { schema };
