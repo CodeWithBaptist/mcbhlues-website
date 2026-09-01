@@ -1,25 +1,47 @@
-import { ModuleScaffold } from "@/components/portal/module-scaffold";
+import { pageAccess } from "@/lib/rbac/page-guard";
+import { loadEnquiriesForUser } from "@/lib/enquiries/enquiry-service";
+import { listPropertyOptions } from "@/lib/customers/customer-service";
+import { listStaff } from "@/lib/rbac/staff-service";
+import { AccessDenied } from "@/components/portal/access-denied";
+import { PageHeader } from "@/components/portal/ui";
+import { EnquiriesManager } from "@/components/portal/enquiries-manager";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+export default async function EnquiriesPage() {
+  const access = await pageAccess(["enquiry:read", "enquiry:property_read", "enquiry:assigned_read"]);
+  if (!access.allowed) return <AccessDenied required={access.required} />;
+
+  const user = access.user;
+  const canAssign = user.permissions.includes("enquiry:assign");
+
+  const [enquiryList, staffRows, propertyOptions] = await Promise.all([
+    loadEnquiriesForUser(user),
+    canAssign ? listStaff() : Promise.resolve([]),
+    listPropertyOptions(),
+  ]);
+
+  const staff = staffRows.map((row) => ({
+    id: row.id,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    email: row.email,
+  }));
+
   return (
-    <ModuleScaffold
-      title="Enquiries"
-      description="Incoming enquiries, assignment and follow-up."
-      required={["enquiry:read", "enquiry:property_read", "enquiry:assigned_read"]}
-      capabilities={[
-        { key: "enquiry:read", label: "View all enquiries" },
-        { key: "enquiry:property_read", label: "View property enquiries" },
-        { key: "enquiry:assigned_read", label: "View assigned enquiries" },
-        { key: "enquiry:create", label: "Create enquiries" },
-        { key: "enquiry:update", label: "Update enquiries" },
-        { key: "enquiry:delete", label: "Delete enquiry records" },
-        { key: "enquiry:assign", label: "Assign or forward enquiries" },
-        { key: "enquiry:respond", label: "Respond to enquiries" },
-        { key: "enquiry:status_update", label: "Update enquiry status" },
-        { key: "enquiry:notes", label: "Add internal notes" },
-      ]}
-    />
+    <div>
+      <PageHeader
+        title="Enquiries"
+        description="Incoming website and walk-in enquiries — assignment, responses and internal notes."
+      />
+      <EnquiriesManager
+        initialEnquiries={enquiryList}
+        staff={staff}
+        propertyOptions={propertyOptions}
+        canAssign={canAssign}
+        permissions={user.permissions}
+        currentUserId={user.id}
+      />
+    </div>
   );
 }

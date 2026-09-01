@@ -212,4 +212,184 @@ CREATE TABLE IF NOT EXISTS property_assignments (
   created_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (property_id, user_id)
 );
+
+CREATE TABLE IF NOT EXISTS customers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  first_name text NOT NULL,
+  last_name text NOT NULL,
+  email text NOT NULL DEFAULT '',
+  phone text NOT NULL DEFAULT '',
+  type text NOT NULL DEFAULT 'buyer',
+  status text NOT NULL DEFAULT 'active',
+  source text NOT NULL DEFAULT '',
+  budget_min integer NOT NULL DEFAULT 0,
+  budget_max integer NOT NULL DEFAULT 0,
+  preferred_location text NOT NULL DEFAULT '',
+  notes text NOT NULL DEFAULT '',
+  assigned_to uuid REFERENCES users(id) ON DELETE SET NULL,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS customers_assigned_to_idx ON customers (assigned_to);
+
+CREATE TABLE IF NOT EXISTS customer_notes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id uuid NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  user_id uuid,
+  user_email text NOT NULL DEFAULT 'system',
+  body text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS customer_notes_customer_id_idx ON customer_notes (customer_id);
+
+CREATE TABLE IF NOT EXISTS customer_saved_properties (
+  customer_id uuid NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+  property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (customer_id, property_id)
+);
+
+CREATE TABLE IF NOT EXISTS enquiries (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  reference text NOT NULL,
+  name text NOT NULL,
+  email text NOT NULL DEFAULT '',
+  phone text NOT NULL DEFAULT '',
+  subject text NOT NULL DEFAULT '',
+  message text NOT NULL DEFAULT '',
+  type text NOT NULL DEFAULT 'general',
+  source text NOT NULL DEFAULT 'website',
+  status text NOT NULL DEFAULT 'new',
+  priority text NOT NULL DEFAULT 'normal',
+  property_id uuid REFERENCES properties(id) ON DELETE SET NULL,
+  customer_id uuid REFERENCES customers(id) ON DELETE SET NULL,
+  assigned_to uuid REFERENCES users(id) ON DELETE SET NULL,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS enquiries_reference_unique ON enquiries (reference);
+CREATE INDEX IF NOT EXISTS enquiries_status_idx ON enquiries (status);
+CREATE INDEX IF NOT EXISTS enquiries_assigned_to_idx ON enquiries (assigned_to);
+CREATE INDEX IF NOT EXISTS enquiries_property_id_idx ON enquiries (property_id);
+
+CREATE TABLE IF NOT EXISTS enquiry_notes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  enquiry_id uuid NOT NULL REFERENCES enquiries(id) ON DELETE CASCADE,
+  user_id uuid,
+  user_email text NOT NULL DEFAULT 'system',
+  kind text NOT NULL DEFAULT 'note',
+  body text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS enquiry_notes_enquiry_id_idx ON enquiry_notes (enquiry_id);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  reference text NOT NULL,
+  type text NOT NULL DEFAULT 'viewing',
+  status text NOT NULL DEFAULT 'pending',
+  name text NOT NULL,
+  email text NOT NULL DEFAULT '',
+  phone text NOT NULL DEFAULT '',
+  property_id uuid REFERENCES properties(id) ON DELETE SET NULL,
+  customer_id uuid REFERENCES customers(id) ON DELETE SET NULL,
+  assigned_to uuid REFERENCES users(id) ON DELETE SET NULL,
+  scheduled_at timestamptz NOT NULL,
+  duration_minutes integer NOT NULL DEFAULT 60,
+  location text NOT NULL DEFAULT '',
+  notes text NOT NULL DEFAULT '',
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS bookings_reference_unique ON bookings (reference);
+CREATE INDEX IF NOT EXISTS bookings_scheduled_at_idx ON bookings (scheduled_at);
+CREATE INDEX IF NOT EXISTS bookings_assigned_to_idx ON bookings (assigned_to);
+CREATE INDEX IF NOT EXISTS bookings_property_id_idx ON bookings (property_id);
+
+CREATE TABLE IF NOT EXISTS testimonials (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  role text NOT NULL DEFAULT '',
+  quote text NOT NULL,
+  avatar_url text NOT NULL DEFAULT '',
+  rating integer NOT NULL DEFAULT 5,
+  is_published boolean NOT NULL DEFAULT true,
+  sort_order integer NOT NULL DEFAULT 0,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS faqs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  question text NOT NULL,
+  answer text NOT NULL,
+  category text NOT NULL DEFAULT 'general',
+  is_published boolean NOT NULL DEFAULT true,
+  sort_order integer NOT NULL DEFAULT 0,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS announcements (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  body text NOT NULL DEFAULT '',
+  tone text NOT NULL DEFAULT 'info',
+  is_active boolean NOT NULL DEFAULT true,
+  starts_at timestamptz,
+  ends_at timestamptz,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS cms_content (
+  key text PRIMARY KEY,
+  label text NOT NULL DEFAULT '',
+  section text NOT NULL DEFAULT 'general',
+  value text NOT NULL DEFAULT '',
+  updated_by uuid,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS media_assets (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  url text NOT NULL,
+  kind text NOT NULL DEFAULT 'image',
+  folder text NOT NULL DEFAULT 'general',
+  alt text NOT NULL DEFAULT '',
+  uploaded_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS media_assets_kind_idx ON media_assets (kind);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+  title text NOT NULL,
+  body text NOT NULL DEFAULT '',
+  kind text NOT NULL DEFAULT 'info',
+  link text NOT NULL DEFAULT '',
+  read_by jsonb NOT NULL DEFAULT '[]'::jsonb,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS notifications_user_id_idx ON notifications (user_id);
+CREATE INDEX IF NOT EXISTS notifications_created_at_idx ON notifications (created_at);
+
+CREATE TABLE IF NOT EXISTS email_templates (
+  key text PRIMARY KEY,
+  name text NOT NULL,
+  subject text NOT NULL DEFAULT '',
+  body text NOT NULL DEFAULT '',
+  updated_by uuid,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
 `;

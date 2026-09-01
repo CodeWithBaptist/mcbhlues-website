@@ -4,8 +4,7 @@ import { invitations, roles, userRoles, users } from "@/db/schema";
 import { generateToken, hashToken } from "@/lib/auth/password";
 import type { AuthenticatedUser } from "@/lib/auth/session";
 import { AuthError, canManageLevel } from "@/lib/rbac/permissions";
-
-export const INVITE_TTL_HOURS = 72;
+import { getInviteTtlHours } from "@/lib/settings/system-config";
 
 export interface StaffRecord {
   id: string;
@@ -122,7 +121,9 @@ export async function issueInvitation(userId: string, email: string, invitedBy: 
     );
 
   const token = generateToken();
-  const expiresAt = new Date(Date.now() + INVITE_TTL_HOURS * 60 * 60 * 1000);
+  // Configurable from Portal → System Settings (system.invite_ttl_hours).
+  const ttlHours = await getInviteTtlHours();
+  const expiresAt = new Date(Date.now() + ttlHours * 60 * 60 * 1000);
   await db.insert(invitations).values({
     userId,
     email,

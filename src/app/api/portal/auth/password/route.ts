@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { sessions, users } from "@/db/schema";
 import { withAuth } from "@/lib/rbac/api-guard";
 import { hashPassword, validatePasswordStrength, verifyPassword } from "@/lib/auth/password";
+import { getPasswordMinLength } from "@/lib/settings/system-config";
 import { AUDIT_ACTIONS, recordAudit, recordActivity } from "@/lib/rbac/audit";
 
 /**
@@ -24,7 +25,7 @@ export const POST = withAuth(async (request: NextRequest, { user }) => {
     );
   }
 
-  const policy = validatePasswordStrength(newPassword);
+  const policy = validatePasswordStrength(newPassword, await getPasswordMinLength());
   if (!policy.valid) {
     return NextResponse.json({ error: policy.errors.join(" ") }, { status: 400 });
   }

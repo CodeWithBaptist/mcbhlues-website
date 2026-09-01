@@ -1,26 +1,57 @@
-import { ModuleScaffold } from "@/components/portal/module-scaffold";
+import { pageAccess } from "@/lib/rbac/page-guard";
+import { loadBookingsForUser } from "@/lib/bookings/booking-service";
+import { loadCustomersForUser, listPropertyOptions } from "@/lib/customers/customer-service";
+import { listStaff } from "@/lib/rbac/staff-service";
+import { hasPermission } from "@/lib/rbac/can";
+import { AccessDenied } from "@/components/portal/access-denied";
+import { PageHeader } from "@/components/portal/ui";
+import { BookingsManager } from "@/components/portal/bookings-manager";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+export default async function BookingsPage() {
+  const access = await pageAccess(["booking:read", "booking:property_read", "booking:assigned_read"]);
+  if (!access.allowed) return <AccessDenied required={access.required} />;
+
+  const user = access.user;
+  const canAssign = user.permissions.includes("booking:assign");
+
+  // Customer options are only needed for linking; load when the caller may see customers.
+  const canSeeCustomers = hasPermission(user.permissions, ["customer:read", "customer:assigned_read"]);
+
+  const [bookingList, staffRows, propertyOptions, customerRows] = await Promise.all([
+    loadBookingsForUser(user),
+    canAssign ? listStaff() : Promise.resolve([]),
+    listPropertyOptions(),
+    canSeeCustomers ? loadCustomersForUser(user) : Promise.resolve([]),
+  ]);
+
+  const staff = staffRows.map((row) => ({
+    id: row.id,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    email: row.email,
+  }));
+
+  const customers = customerRows.map((row) => ({
+    id: row.id,
+    name: `${row.firstName} ${row.lastName}`.trim(),
+  }));
+
   return (
-    <ModuleScaffold
-      title="Bookings"
-      description="Viewings and bookings, confirmations and scheduling."
-      required={["booking:read", "booking:property_read", "booking:assigned_read"]}
-      capabilities={[
-        { key: "booking:read", label: "View all bookings" },
-        { key: "booking:property_read", label: "View property bookings" },
-        { key: "booking:assigned_read", label: "View assigned bookings" },
-        { key: "booking:create", label: "Create bookings" },
-        { key: "booking:update", label: "Update bookings" },
-        { key: "booking:delete", label: "Delete bookings" },
-        { key: "booking:approve", label: "Confirm bookings" },
-        { key: "booking:reject", label: "Reject bookings" },
-        { key: "booking:reschedule", label: "Reschedule bookings" },
-        { key: "booking:assign", label: "Assign bookings to staff" },
-        { key: "booking:status_update", label: "Update booking status" },
-      ]}
-    />
+    <div>
+      <PageHeader
+        title="Bookings"
+        description="Viewings, consultations and inspections — confirmation, rejection and rescheduling."
+      />
+      <BookingsManager
+        initialBookings={bookingList}
+        staff={staff}
+        propertyOptions={propertyOptions}
+        customers={customers}
+        canAssign={canAssign}
+        permissions={user.permissions}
+      />
+    </div>
   );
 }

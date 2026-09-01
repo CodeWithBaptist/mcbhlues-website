@@ -1,7 +1,14 @@
 import { eq, inArray } from "drizzle-orm";
 import type { Database } from "./index";
 import {
+  announcements,
+  bookings,
+  customers,
+  enquiries,
+  faqs,
+  mediaAssets,
   navItems,
+  notifications,
   permissions,
   properties,
   propertyAmenities,
@@ -9,11 +16,22 @@ import {
   propertyImages,
   rolePermissions,
   roles,
+  testimonials,
   userRoles,
   users,
 } from "./schema";
 import { NAV_SEED, PERMISSION_SEED, ROLE_SEED, USER_SEED } from "./seed-data";
 import { PROPERTY_SEED } from "./seed-properties";
+import {
+  ANNOUNCEMENT_SEED,
+  BOOKING_SEED,
+  CUSTOMER_SEED,
+  ENQUIRY_SEED,
+  FAQ_SEED,
+  MEDIA_SEED,
+  NOTIFICATION_SEED,
+  TESTIMONIAL_SEED,
+} from "./seed-content";
 import { generateToken, hashPassword } from "@/lib/auth/password";
 
 /**
@@ -266,5 +284,164 @@ export async function seedDatabase(db: Database) {
 
     if (!created) continue; // another instance won the race
     await db.insert(userRoles).values({ userId: created.id, roleId: role.id }).onConflictDoNothing();
+  }
+
+  /* ---- demo operational content ------------------------------------------ */
+  // Seeded once per table, only when that table is empty. Portal edits and
+  // deletions made afterwards are never overwritten by these rows.
+  await seedContent(db, demo);
+}
+
+async function seedContent(db: Database, demo: boolean) {
+  if (!demo) return; // production deployments start with clean operational tables
+
+  const allUsers = await db.select().from(users);
+  const userIdByEmail = new Map(allUsers.map((row) => [row.email, row.id]));
+  const allProperties = await db.select().from(properties);
+  const propertyIdBySlug = new Map(allProperties.map((row) => [row.slug, row.id]));
+
+  /* ---- customers ---------------------------------------------------------- */
+  const customerCount = await db.select({ id: customers.id }).from(customers).limit(1);
+  if (customerCount.length === 0) {
+    for (const seed of CUSTOMER_SEED) {
+      await db.insert(customers).values({
+        firstName: seed.firstName,
+        lastName: seed.lastName,
+        email: seed.email,
+        phone: seed.phone,
+        type: seed.type,
+        status: seed.status,
+        source: seed.source,
+        budgetMin: seed.budgetMin,
+        budgetMax: seed.budgetMax,
+        preferredLocation: seed.preferredLocation,
+        notes: seed.notes,
+        assignedTo: userIdByEmail.get(seed.assignedEmail) ?? null,
+      });
+    }
+  }
+
+  const customersByEmail = new Map(
+    (await db.select().from(customers)).map((row) => [row.email, row.id])
+  );
+
+  /* ---- enquiries ---------------------------------------------------------- */
+  const enquiryCount = await db.select({ id: enquiries.id }).from(enquiries).limit(1);
+  if (enquiryCount.length === 0) {
+    let counter = 1;
+    for (const seed of ENQUIRY_SEED) {
+      await db.insert(enquiries).values({
+        reference: `ENQ-${String(counter++).padStart(4, "0")}`,
+        name: seed.name,
+        email: seed.email,
+        phone: seed.phone,
+        subject: seed.subject,
+        message: seed.message,
+        type: seed.type,
+        source: seed.source,
+        status: seed.status,
+        priority: seed.priority,
+        propertyId: seed.propertySlug ? (propertyIdBySlug.get(seed.propertySlug) ?? null) : null,
+        customerId: seed.customerEmail ? (customersByEmail.get(seed.customerEmail) ?? null) : null,
+        assignedTo: seed.assignedEmail ? (userIdByEmail.get(seed.assignedEmail) ?? null) : null,
+      });
+    }
+  }
+
+  /* ---- bookings ----------------------------------------------------------- */
+  const bookingCount = await db.select({ id: bookings.id }).from(bookings).limit(1);
+  if (bookingCount.length === 0) {
+    let counter = 1;
+    const now = new Date();
+    for (const seed of BOOKING_SEED) {
+      const scheduledAt = new Date(now);
+      scheduledAt.setDate(scheduledAt.getDate() + seed.inDays);
+      scheduledAt.setHours(seed.hour, 0, 0, 0);
+      await db.insert(bookings).values({
+        reference: `BKG-${String(counter++).padStart(4, "0")}`,
+        name: seed.name,
+        email: seed.email,
+        phone: seed.phone,
+        type: seed.type,
+        status: seed.status,
+        scheduledAt,
+        durationMinutes: seed.durationMinutes,
+        location: seed.location,
+        notes: seed.notes,
+        propertyId: seed.propertySlug ? (propertyIdBySlug.get(seed.propertySlug) ?? null) : null,
+        customerId: seed.customerEmail ? (customersByEmail.get(seed.customerEmail) ?? null) : null,
+        assignedTo: seed.assignedEmail ? (userIdByEmail.get(seed.assignedEmail) ?? null) : null,
+      });
+    }
+  }
+
+  /* ---- testimonials -------------------------------------------------------- */
+  const testimonialCount = await db.select({ id: testimonials.id }).from(testimonials).limit(1);
+  if (testimonialCount.length === 0) {
+    await db.insert(testimonials).values(
+      TESTIMONIAL_SEED.map((seed) => ({
+        name: seed.name,
+        role: seed.role,
+        quote: seed.quote,
+        rating: seed.rating,
+        sortOrder: seed.sortOrder,
+        isPublished: true,
+      }))
+    );
+  }
+
+  /* ---- faqs ---------------------------------------------------------------- */
+  const faqCount = await db.select({ id: faqs.id }).from(faqs).limit(1);
+  if (faqCount.length === 0) {
+    await db.insert(faqs).values(
+      FAQ_SEED.map((seed) => ({
+        question: seed.question,
+        answer: seed.answer,
+        category: seed.category,
+        sortOrder: seed.sortOrder,
+        isPublished: true,
+      }))
+    );
+  }
+
+  /* ---- announcements -------------------------------------------------------- */
+  const announcementCount = await db.select({ id: announcements.id }).from(announcements).limit(1);
+  if (announcementCount.length === 0) {
+    await db.insert(announcements).values(
+      ANNOUNCEMENT_SEED.map((seed) => ({
+        title: seed.title,
+        body: seed.body,
+        tone: seed.tone,
+        isActive: seed.isActive,
+      }))
+    );
+  }
+
+  /* ---- media assets --------------------------------------------------------- */
+  const mediaCount = await db.select({ id: mediaAssets.id }).from(mediaAssets).limit(1);
+  if (mediaCount.length === 0) {
+    await db.insert(mediaAssets).values(
+      MEDIA_SEED.map((seed) => ({
+        title: seed.title,
+        url: seed.url,
+        kind: seed.kind,
+        folder: seed.folder,
+        alt: seed.alt,
+      }))
+    );
+  }
+
+  /* ---- notifications ---------------------------------------------------------- */
+  const notificationCount = await db.select({ id: notifications.id }).from(notifications).limit(1);
+  if (notificationCount.length === 0) {
+    for (const seed of NOTIFICATION_SEED) {
+      await db.insert(notifications).values({
+        userId: seed.userEmail ? (userIdByEmail.get(seed.userEmail) ?? null) : null,
+        title: seed.title,
+        body: seed.body,
+        kind: seed.kind,
+        link: seed.link,
+      });
+    }
   }
 }

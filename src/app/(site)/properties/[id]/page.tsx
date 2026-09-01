@@ -58,7 +58,7 @@ export default async function PropertyDetailsPage({ params }: Props) {
             />
           </div>
           <div className="lg:col-span-1">
-            <PropertySidebar />
+            <PropertySidebar propertyId={property.id} propertyTitle={property.title} />
           </div>
         </div>
       </Container>

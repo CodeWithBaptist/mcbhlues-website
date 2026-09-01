@@ -190,7 +190,30 @@ Demo accounts created on first boot:
 
 ---
 
-## 9. Adding a protected feature
+## 9. Operational modules
+
+Every sidebar destination is a fully implemented module backed by its own
+tables, permission-checked API routes and audit logging:
+
+| Module | Route | Tables | Public website tie-in |
+| --- | --- | --- | --- |
+| Properties | `/portal/properties` | `properties`, `property_*` | Listings, homepage feature rail |
+| Customers | `/portal/customers` | `customers`, `customer_notes`, `customer_saved_properties` | — |
+| Enquiries | `/portal/enquiries` | `enquiries`, `enquiry_notes` | Contact page + property inquiry forms post to `/api/public/enquiries` |
+| Bookings | `/portal/bookings` | `bookings` | — |
+| Website CMS | `/portal/cms` | `cms_content` | Homepage hero copy |
+| Testimonials / FAQs / Announcements | `/portal/cms/*` | `testimonials`, `faqs`, `announcements` | Homepage testimonials, Buy page FAQ, site banner |
+| Media Library | `/portal/media` | `media_assets` | URL registry for listings & CMS |
+| Notifications | `/portal/notifications` | `notifications` | In-app bell in the portal topbar |
+| Reports | `/portal/reports` | (aggregates) | — |
+| System Settings | `/portal/settings/system` | `settings`, `email_templates` | Session TTL, invite TTL and password policy honour the saved values |
+
+Workflow events cross-pollinate: new enquiries and bookings notify the right
+permission holders, and assignments notify the assignee directly.
+
+---
+
+## 10. Adding a protected feature
 
 ```ts
 // API route

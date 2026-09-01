@@ -41,9 +41,13 @@ export interface PasswordPolicyResult {
   errors: string[];
 }
 
-export function validatePasswordStrength(password: string): PasswordPolicyResult {
+export function validatePasswordStrength(
+  password: string,
+  minLength = 10
+): PasswordPolicyResult {
   const errors: string[] = [];
-  if (password.length < 10) errors.push("Password must be at least 10 characters long.");
+  if (password.length < minLength)
+    errors.push(`Password must be at least ${minLength} characters long.`);
   if (!/[A-Z]/.test(password)) errors.push("Password must contain an uppercase letter.");
   if (!/[a-z]/.test(password)) errors.push("Password must contain a lowercase letter.");
   if (!/[0-9]/.test(password)) errors.push("Password must contain a number.");

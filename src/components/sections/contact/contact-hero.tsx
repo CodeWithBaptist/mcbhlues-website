@@ -19,10 +19,10 @@ export function ContactHero() {
             Get In Touch
           </span>
           <h1 className="text-4xl md:text-6xl font-extrabold font-heading mb-6">
-            Let's Start a Conversation
+            Let&rsquo;s Start a Conversation
           </h1>
           <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed">
-            Whether you're looking to buy, rent, list a property, or need expert consulting, 
+            Whether you&rsquo;re looking to buy, rent, list a property, or need expert consulting, 
             our team is here to provide world-class service.
           </p>
         </motion.div>

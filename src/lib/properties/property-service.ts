@@ -265,6 +265,39 @@ export async function listPublishedProperties(): Promise<PropertyWithDetails[]> 
   return assemble(rows);
 }
 
+/**
+ * Lightweight list for the CMS featured-properties picker. Deliberately NOT
+ * permission-scoped: `cms:featured_properties` holders (e.g. Content Manager)
+ * curate the homepage without necessarily holding any property:* read scope.
+ */
+export async function listPropertiesForCuration(): Promise<
+  { id: string; title: string; city: string; status: string; isPublished: boolean; isFeatured: boolean; imageUrl: string }[]
+> {
+  const db = await getDb();
+  const rows = await db.select().from(properties).orderBy(asc(properties.title));
+  if (rows.length === 0) return [];
+  const imageRows = await db
+    .select()
+    .from(propertyImages)
+    .where(inArray(propertyImages.propertyId, rows.map((row) => row.id)));
+  const primaryBy = new Map<string, string>();
+  for (const image of imageRows) {
+    if (image.isPrimary && !primaryBy.has(image.propertyId)) primaryBy.set(image.propertyId, image.url);
+  }
+  for (const image of imageRows) {
+    if (!primaryBy.has(image.propertyId)) primaryBy.set(image.propertyId, image.url);
+  }
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    city: row.city,
+    status: row.status,
+    isPublished: row.isPublished,
+    isFeatured: row.isFeatured,
+    imageUrl: primaryBy.get(row.id) ?? "",
+  }));
+}
+
 /* -------------------------------------------------------------------------- */
 /*  Writes                                                                     */
 /* -------------------------------------------------------------------------- */

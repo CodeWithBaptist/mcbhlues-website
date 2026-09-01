@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
 
-const faqs = [
+const defaultFaqs = [
   {
     question: "What types of properties does MCBHLUES offer for sale?",
     answer:
@@ -35,8 +35,18 @@ const faqs = [
   },
 ];
 
-export function BuyFAQ() {
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+/**
+ * FAQ accordion. Items come from the Staff Portal CMS (Content → FAQs);
+ * the built-in list renders when the CMS has no published entries yet.
+ */
+export function BuyFAQ({ items }: { items?: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const faqs = items && items.length > 0 ? items : defaultFaqs;
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
