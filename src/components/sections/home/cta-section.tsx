@@ -26,7 +26,7 @@ export function CTASection() {
             </h2>
             <p className="text-xl text-primary-light mb-10 leading-relaxed">
               Connect with our experts today for a personalized consultation. 
-              Let's find the perfect property that aligns with your lifestyle and goals.
+              Let&rsquo;s find the perfect property that aligns with your lifestyle and goals.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">

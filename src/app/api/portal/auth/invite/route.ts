@@ -3,6 +3,7 @@ import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { invitations, users } from "@/db/schema";
 import { hashPassword, hashToken, validatePasswordStrength } from "@/lib/auth/password";
+import { getPasswordMinLength } from "@/lib/settings/system-config";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 
 /** GET /api/portal/auth/invite?token=... — validate an invitation token. */
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Token and password are required." }, { status: 400 });
   }
 
-  const policy = validatePasswordStrength(password);
+  const policy = validatePasswordStrength(password, await getPasswordMinLength());
   if (!policy.valid) {
     return NextResponse.json({ error: policy.errors.join(" ") }, { status: 400 });
   }

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "./permission-provider";
+import { NotificationBell } from "./notification-bell";
 
 export function PortalTopbar() {
   const { user } = useSession();
@@ -37,6 +38,7 @@ export function PortalTopbar() {
           >
             View website
           </Link>
+          <NotificationBell />
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
             {initials}
           </div>

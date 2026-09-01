@@ -1,24 +1,42 @@
-import { ModuleScaffold } from "@/components/portal/module-scaffold";
+import { pageAccess } from "@/lib/rbac/page-guard";
+import { loadCustomersForUser, listPropertyOptions } from "@/lib/customers/customer-service";
+import { listStaff } from "@/lib/rbac/staff-service";
+import { AccessDenied } from "@/components/portal/access-denied";
+import { PageHeader } from "@/components/portal/ui";
+import { CustomersManager } from "@/components/portal/customers-manager";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+export default async function CustomersPage() {
+  const access = await pageAccess(["customer:read", "customer:assigned_read"]);
+  if (!access.allowed) return <AccessDenied required={access.required} />;
+
+  const user = access.user;
+  const [customerList, staffRows, propertyOptions] = await Promise.all([
+    loadCustomersForUser(user),
+    listStaff(),
+    listPropertyOptions(),
+  ]);
+
+  const staff = staffRows.map((row) => ({
+    id: row.id,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    email: row.email,
+  }));
+
   return (
-    <ModuleScaffold
-      title="Customers"
-      description="Customer records, enquiries, bookings and saved properties."
-      required={["customer:read", "customer:assigned_read"]}
-      capabilities={[
-        { key: "customer:read", label: "View customers" },
-        { key: "customer:assigned_read", label: "View assigned customers" },
-        { key: "customer:create", label: "Add customers" },
-        { key: "customer:update", label: "Edit customer information" },
-        { key: "customer:delete", label: "Delete customers" },
-        { key: "customer:notes", label: "Add internal notes" },
-        { key: "customer:enquiries_read", label: "View customer enquiries" },
-        { key: "customer:bookings_read", label: "View customer bookings" },
-        { key: "customer:saved_read", label: "View saved properties" },
-      ]}
-    />
+    <div>
+      <PageHeader
+        title="Customers"
+        description="Customer records, internal notes, saved properties and their enquiry/booking history."
+      />
+      <CustomersManager
+        initialCustomers={customerList}
+        staff={staff}
+        propertyOptions={propertyOptions}
+        permissions={user.permissions}
+      />
+    </div>
   );
 }

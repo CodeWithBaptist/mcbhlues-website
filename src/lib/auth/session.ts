@@ -12,9 +12,9 @@ import {
   users,
 } from "@/db/schema";
 import { generateToken, hashToken } from "./password";
+import { getSessionHours } from "@/lib/settings/system-config";
 
 export const SESSION_COOKIE = "mcbhlues_staff_session";
-const SESSION_TTL_HOURS = 12;
 
 export interface AuthenticatedRole {
   id: string;
@@ -98,7 +98,9 @@ export async function createSession(userId: string) {
   const db = await getDb();
   const token = generateToken();
   const { ip, userAgent } = await requestMeta();
-  const expiresAt = new Date(Date.now() + SESSION_TTL_HOURS * 60 * 60 * 1000);
+  // Configurable from Portal → System Settings (system.session_hours).
+  const sessionHours = await getSessionHours();
+  const expiresAt = new Date(Date.now() + sessionHours * 60 * 60 * 1000);
 
   await db.insert(sessions).values({
     userId,

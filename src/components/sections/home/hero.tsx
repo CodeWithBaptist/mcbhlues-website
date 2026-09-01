@@ -6,7 +6,36 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 
-export function Hero() {
+export interface HeroContent {
+  badge: string;
+  title: string;
+  subtitle: string;
+}
+
+/**
+ * Homepage hero. Copy comes from the CMS (Content → Website CMS) via props;
+ * the defaults are applied by the page when no override has been saved.
+ * The word "Luxury" is highlighted when present.
+ */
+export function Hero({ content }: { content?: HeroContent }) {
+  const badge = content?.badge || "Welcome to MCBHLUES ENTERPRISES";
+  const title = content?.title || "Redefining Luxury & Innovation in Real Estate";
+  const subtitle =
+    content?.subtitle ||
+    "Specializing in high-end consulting, avant-garde property development, and elite facility management for discerning clients.";
+
+  const highlightIndex = title.indexOf("Luxury");
+  const renderedTitle =
+    highlightIndex === -1 ? (
+      title
+    ) : (
+      <>
+        {title.slice(0, highlightIndex)}
+        <span className="text-primary">Luxury</span>
+        {title.slice(highlightIndex + "Luxury".length)}
+      </>
+    );
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background Decor */}
@@ -21,13 +50,13 @@ export function Hero() {
             transition={{ duration: 0.8 }}
           >
             <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wider uppercase mb-6">
-              Welcome to MCBHLUES ENTERPRISES
+              {badge}
             </span>
             <h1 className="text-5xl md:text-7xl font-extrabold text-dark leading-[1.1] mb-6 font-heading">
-              Redefining <span className="text-primary">Luxury</span> & Innovation in Real Estate
+              {renderedTitle}
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-xl font-body">
-              Specializing in high-end consulting, avant-garde property development, and elite facility management for discerning clients.
+              {subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/properties">
@@ -72,7 +101,7 @@ export function Hero() {
             </div>
             {/* Decorative Card */}
             <div className="absolute -bottom-10 -right-10 z-20 bg-white p-6 rounded-2xl shadow-xl max-w-[240px] border border-gray-100 animate-bounce-slow">
-              <p className="text-sm font-bold text-primary mb-2 italic">"Exceptional Service"</p>
+              <p className="text-sm font-bold text-primary mb-2 italic">&ldquo;Exceptional Service&rdquo;</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gray-200" />
                 <div>

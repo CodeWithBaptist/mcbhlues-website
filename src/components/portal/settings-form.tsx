@@ -18,11 +18,15 @@ export function SettingsForm({
   fields,
   initial,
   requiredPermission,
+  title,
+  description,
 }: {
-  scope: "company" | "system";
+  scope: "company" | "system" | "security";
   fields: SettingField[];
   initial: Record<string, string>;
   requiredPermission: string;
+  title?: string;
+  description?: string;
 }) {
   const { can } = useSession();
   const editable = can(requiredPermission);
@@ -55,8 +59,8 @@ export function SettingsForm({
 
   return (
     <Card
-      title={scope === "company" ? "Company settings" : "System settings"}
-      description={`Requires ${requiredPermission}`}
+      title={title ?? (scope === "company" ? "Company settings" : scope === "security" ? "Security settings" : "System settings")}
+      description={description ?? `Requires ${requiredPermission}`}
       actions={
         editable ? (
           <Button size="sm" onClick={save} disabled={saving}>
