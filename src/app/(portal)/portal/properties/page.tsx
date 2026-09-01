@@ -1,32 +1,50 @@
-import { ModuleScaffold } from "@/components/portal/module-scaffold";
+import { getDb } from "@/db";
+import { pageAccess } from "@/lib/rbac/page-guard";
+import { loadPropertiesForUser } from "@/lib/properties/property-service";
+import { listStaff } from "@/lib/rbac/staff-service";
+import { AccessDenied } from "@/components/portal/access-denied";
+import { PageHeader } from "@/components/portal/ui";
+import { PropertiesManager } from "@/components/portal/properties-manager";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+export default async function PropertiesPage() {
+  const access = await pageAccess([
+    "property:read",
+    "property:read_available",
+    "property:assigned_read",
+  ]);
+  if (!access.allowed) return <AccessDenied required={access.required} />;
+
+  const user = access.user;
+  const canAssign = user.permissions.includes("property:assign");
+
+  const db = await getDb();
+  const [properties, staffRows] = await Promise.all([
+    loadPropertiesForUser(user),
+    canAssign ? listStaff() : Promise.resolve([]),
+  ]);
+
+  const staff = staffRows.map((row) => ({
+    id: row.id,
+    firstName: row.firstName,
+    lastName: row.lastName,
+    email: row.email,
+    roles: row.roles.map((role) => role.name),
+  }));
+
   return (
-    <ModuleScaffold
-      title="Properties"
-      description="Property listings, media, pricing and availability."
-      required={["property:read", "property:assigned_read", "property:read_available"]}
-      capabilities={[
-        { key: "property:read", label: "View all properties" },
-        { key: "property:read_available", label: "View available properties" },
-        { key: "property:assigned_read", label: "View assigned properties" },
-        { key: "property:create", label: "Create properties" },
-        { key: "property:update", label: "Edit properties" },
-        { key: "property:delete", label: "Delete properties" },
-        { key: "property:publish", label: "Publish properties" },
-        { key: "property:unpublish", label: "Unpublish properties" },
-        { key: "property:status_update", label: "Update property status" },
-        { key: "property:price_update", label: "Set property prices" },
-        { key: "property:availability_update", label: "Set availability" },
-        { key: "property:mark_sold", label: "Mark as sold" },
-        { key: "property:mark_rented", label: "Mark as rented" },
-        { key: "property:image_manage", label: "Manage property images" },
-        { key: "property:amenity_manage", label: "Manage amenities" },
-        { key: "property:feature_manage", label: "Manage features" },
-        { key: "property:location_manage", label: "Set location on Google Maps" },
-      ]}
-    />
+    <div>
+      <PageHeader
+        title="Properties"
+        description="Full listing control — images, amenities, features, pricing, status and Google Maps locations."
+      />
+      <PropertiesManager
+        initialProperties={properties}
+        staff={staff}
+        canAssign={canAssign}
+        permissions={user.permissions}
+      />
+    </div>
   );
 }

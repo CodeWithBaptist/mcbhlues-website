@@ -6,12 +6,12 @@ import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Input } from "@/components/ui/input";
 import { Search, Filter } from "lucide-react";
-import { DUMMY_PROPERTIES } from "@/constants";
+import { Property } from "@/types";
 
-export function RentListings() {
+export function RentListings({ properties }: { properties: Property[] }) {
   const [search, setSearch] = useState("");
   
-  const rentalProperties = DUMMY_PROPERTIES.filter((p) => p.type === "rent");
+  const rentalProperties = properties.filter((p) => p.type === "rent");
 
   const filtered = rentalProperties.filter(
     (p) =>

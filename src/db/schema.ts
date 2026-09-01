@@ -231,6 +231,110 @@ export const activityLogs = pgTable(
 );
 
 /* -------------------------------------------------------------------------- */
+/*  PROPERTIES                                                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A property listing. `type` is "sale" | "rent"; `status` is
+ * available | sold | pending | rented. `isPublished` controls whether it
+ * appears on the public website; a Sales Agent with `property:read_available`
+ * additionally only sees published/available rows.
+ */
+export const properties = pgTable(
+  "properties",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description").notNull().default(""),
+    /** sale | rent */
+    type: text("type").notNull().default("sale"),
+    /** available | sold | pending | rented */
+    status: text("status").notNull().default("available"),
+    price: integer("price").notNull().default(0),
+    currency: text("currency").notNull().default("USD"),
+    beds: integer("beds").notNull().default(0),
+    baths: integer("baths").notNull().default(0),
+    sqft: integer("sqft").notNull().default(0),
+    yearBuilt: integer("year_built"),
+    address: text("address").notNull().default(""),
+    city: text("city").notNull().default(""),
+    state: text("state").notNull().default(""),
+    postalCode: text("postal_code").notNull().default(""),
+    country: text("country").notNull().default(""),
+    latitude: text("latitude").notNull().default(""),
+    longitude: text("longitude").notNull().default(""),
+    googleMapsUrl: text("google_maps_url").notNull().default(""),
+    isFeatured: boolean("is_featured").notNull().default(false),
+    isPublished: boolean("is_published").notNull().default(false),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+    createdBy: uuid("created_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("properties_slug_unique").on(table.slug)]
+);
+
+export const propertyImages = pgTable(
+  "property_images",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    propertyId: uuid("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    alt: text("alt").notNull().default(""),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isPrimary: boolean("is_primary").notNull().default(false),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("property_images_property_id_idx").on(table.propertyId)]
+);
+
+export const propertyAmenities = pgTable(
+  "property_amenities",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    propertyId: uuid("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    icon: text("icon").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("property_amenities_property_id_idx").on(table.propertyId)]
+);
+
+export const propertyFeatures = pgTable(
+  "property_features",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    propertyId: uuid("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
+    label: text("label").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("property_features_property_id_idx").on(table.propertyId)]
+);
+
+/** Which staff members a property is assigned to (drives `property:assigned_read`). */
+export const propertyAssignments = pgTable(
+  "property_assignments",
+  {
+    propertyId: uuid("property_id")
+      .notNull()
+      .references(() => properties.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    assignedBy: uuid("assigned_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.propertyId, table.userId] })]
+);
+
+/* -------------------------------------------------------------------------- */
 /*  SETTINGS                                                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -251,3 +355,8 @@ export type Permission = typeof permissions.$inferSelect;
 export type NavItem = typeof navItems.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type ActivityLog = typeof activityLogs.$inferSelect;
+export type Property = typeof properties.$inferSelect;
+export type PropertyImage = typeof propertyImages.$inferSelect;
+export type PropertyAmenity = typeof propertyAmenities.$inferSelect;
+export type PropertyFeature = typeof propertyFeatures.$inferSelect;
+export type PropertyAssignment = typeof propertyAssignments.$inferSelect;

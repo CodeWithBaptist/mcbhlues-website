@@ -15,6 +15,22 @@ import { revokeUserSessions } from "@/lib/auth/session";
  */
 export const POST = withPermission("staff:reset_password", async (_request, { params, user }) => {
   const { id } = await params;
+
+  // Resetting your OWN password used to set the account to "invited", clear the
+  // password hash and revoke every session — which locks you out and forces a
+  // fresh invitation link. Instead, self-service password changes go through
+  // the "Change Password" screen, which keeps you signed in.
+  if (id === user.id) {
+    return NextResponse.json(
+      {
+        error:
+          "Use 'Change Password' (under your Account menu) to set a new password for yourself — this keeps you signed in.",
+        code: "SELF_RESET",
+      },
+      { status: 400 }
+    );
+  }
+
   await assertCanAdministerStaff(user, id);
 
   const db = await getDb();

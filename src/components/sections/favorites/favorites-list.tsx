@@ -4,14 +4,14 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Heart, ArrowRight } from "lucide-react";
-import { DUMMY_PROPERTIES } from "@/constants";
+import { Property } from "@/types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export function FavoritesList() {
-  // Since we don't have a real state/DB yet, we'll show a curated "saved" list 
-  // or an empty state to demonstrate the UI.
-  const savedProperties = [DUMMY_PROPERTIES[0], DUMMY_PROPERTIES[2]]; 
+export function FavoritesList({ properties }: { properties: Property[] }) {
+  // Favourites are not yet persisted on the backend — we showcase a curated
+  // "saved" set from the published listings to demonstrate the UI.
+  const savedProperties = properties.slice(0, 2);
 
   if (savedProperties.length === 0) {
     return (

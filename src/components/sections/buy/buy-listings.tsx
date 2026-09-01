@@ -6,13 +6,13 @@ import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { DUMMY_PROPERTIES } from "@/constants";
+import { Property } from "@/types";
 
-export function BuyListings() {
+export function BuyListings({ properties }: { properties: Property[] }) {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("default");
 
-  const saleProperties = DUMMY_PROPERTIES.filter((p) => p.type === "sale");
+  const saleProperties = properties.filter((p) => p.type === "sale");
 
   const filtered = saleProperties
     .filter(

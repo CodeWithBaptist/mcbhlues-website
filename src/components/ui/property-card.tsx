@@ -12,7 +12,7 @@ interface PropertyCardProps {
 export function PropertyCard({ property, className }: PropertyCardProps) {
   return (
     <Link
-      href={`/properties/${property.id}`}
+      href={`/properties/${property.slug}`}
       className={cn(
         "group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300",
         className
@@ -25,10 +25,19 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           </Badge>
         </div>
         <div className="absolute inset-0 bg-primary-dark/10 group-hover:bg-primary-dark/0 transition-colors" />
-        {/* Image placeholder since we don't have real images yet */}
-        <div className="w-full h-full bg-gradient-to-br from-primary-light/20 to-primary-dark/20 flex items-center justify-center text-primary-dark/50">
-          <Maximize2 className="w-12 h-12" />
-        </div>
+        {property.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={property.image}
+            alt={property.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary-light/20 to-primary-dark/20 text-primary-dark/50">
+            <Maximize2 className="h-12 w-12" />
+          </div>
+        )}
       </div>
       
       <div className="p-6 flex flex-col gap-4">

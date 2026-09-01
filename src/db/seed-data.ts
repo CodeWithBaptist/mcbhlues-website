@@ -50,6 +50,7 @@ export const PERMISSION_SEED: PermissionSeed[] = [
   p("property:amenity_manage", "Property Management", "Manage property amenities"),
   p("property:feature_manage", "Property Management", "Manage property features"),
   p("property:location_manage", "Property Management", "Set property locations (Google Maps)"),
+  p("property:assign", "Property Management", "Assign properties to staff members"),
 
   // ---- Customer management ------------------------------------------------
   p("customer:read", "Customer Management", "View customers"),
@@ -170,6 +171,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "property:amenity_manage",
       "property:feature_manage",
       "property:location_manage",
+      "property:assign",
       "customer:read",
       "customer:create",
       "customer:update",
@@ -232,6 +234,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "property:amenity_manage",
       "property:feature_manage",
       "property:location_manage",
+      "property:assign",
       "enquiry:property_read",
       "booking:property_read",
       "media:upload",
@@ -346,6 +349,9 @@ export const NAV_SEED: NavSeed[] = [
 
   { key: "company-settings", label: "Company Settings", href: "/portal/settings/company", icon: "Building", group: "Settings", permissionKey: "settings:company", sortOrder: 90 },
   { key: "system-settings", label: "System Settings", href: "/portal/settings/system", icon: "Settings", group: "Settings", permissionKey: "settings:system", sortOrder: 91 },
+
+  // Available to every authenticated staff member regardless of role.
+  { key: "change-password", label: "Change Password", href: "/portal/account/password", icon: "KeyRound", group: "Account", permissionKey: null, sortOrder: 100 },
 ];
 
 /** Demo accounts created on first boot so every role can be inspected. */

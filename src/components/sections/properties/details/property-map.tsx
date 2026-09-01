@@ -9,14 +9,21 @@ import { cn } from "@/lib/utils";
 
 interface PropertyMapProps {
   location: string;
+  latitude?: string;
+  longitude?: string;
 }
 
-export function PropertyMap({ location }: PropertyMapProps) {
+export function PropertyMap({ location, latitude, longitude }: PropertyMapProps) {
   const [view, setView] = useState<"map" | "directions">("map");
   const [origin, setOrigin] = useState(SITE_CONFIG.contact.address);
   const [activeOrigin, setActiveOrigin] = useState(SITE_CONFIG.contact.address);
 
-  const mapQuery = encodeURIComponent(location);
+  // Prefer an exact coordinate pin when the listing has one; otherwise fall
+  // back to a text query of the location.
+  const hasCoords = Boolean(latitude && longitude);
+  const mapQuery = hasCoords
+    ? `${Number(latitude).toFixed(6)},${Number(longitude).toFixed(6)}`
+    : encodeURIComponent(location);
 
   // Keyless Google Maps embeds — work inside iframes WITHOUT an API key
   // and WITHOUT opening any new tabs/popups (which sandboxed previews block).

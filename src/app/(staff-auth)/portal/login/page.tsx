@@ -112,18 +112,6 @@ export default function StaffLoginPage() {
       <Suspense fallback={<div className="h-40" />}>
         <LoginForm />
       </Suspense>
-
-      <div className="mt-6 rounded-lg border border-dashed border-gray-200 bg-gray-50 p-3 text-xs text-gray-600">
-        <p className="mb-1 font-semibold text-gray-700">Demo accounts</p>
-        <ul className="space-y-0.5">
-          <li>superadmin@mcbhlues.com — SuperAdmin@123</li>
-          <li>admin@mcbhlues.com — Admin@123</li>
-          <li>propertymanager@mcbhlues.com — Property@123</li>
-          <li>salesagent@mcbhlues.com — Sales@123</li>
-          <li>reception@mcbhlues.com — Reception@123</li>
-          <li>contentmanager@mcbhlues.com — Content@123</li>
-        </ul>
-      </div>
     </div>
   );
 }

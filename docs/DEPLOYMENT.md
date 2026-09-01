@@ -76,8 +76,9 @@ made through the portal is preserved.
 
 1. Visit `https://<your-app>.vercel.app/portal/login`
 2. Sign in as the Super Admin.
-3. **Change the password immediately** (Staff Management → reset your own
-   password, or set `SUPER_ADMIN_PASSWORD` and redeploy).
+3. **Change the password immediately** (use the **Change Password** screen in
+   the account menu — `/portal/account/password` — or set
+   `SUPER_ADMIN_PASSWORD` and redeploy).
 4. Create the real staff accounts and send each person their invitation link.
 
 ---
@@ -95,8 +96,8 @@ made through the portal is preserved.
       reset-password routes.
 - [ ] Review the seeded role permissions on `/portal/roles` against how your
       team actually works.
-- [ ] Remove the demo-credentials panel at the bottom of
-      `src/app/(staff-auth)/portal/login/page.tsx`.
+- [x] The demo-credentials panel at the bottom of
+      `src/app/(staff-auth)/portal/login/page.tsx` has been removed.
 
 ---
 
