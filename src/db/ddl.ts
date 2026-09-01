@@ -146,4 +146,70 @@ CREATE TABLE IF NOT EXISTS settings (
   updated_by uuid,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS properties (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  slug text NOT NULL,
+  description text NOT NULL DEFAULT '',
+  type text NOT NULL DEFAULT 'sale',
+  status text NOT NULL DEFAULT 'available',
+  price integer NOT NULL DEFAULT 0,
+  currency text NOT NULL DEFAULT 'USD',
+  beds integer NOT NULL DEFAULT 0,
+  baths integer NOT NULL DEFAULT 0,
+  sqft integer NOT NULL DEFAULT 0,
+  year_built integer,
+  address text NOT NULL DEFAULT '',
+  city text NOT NULL DEFAULT '',
+  state text NOT NULL DEFAULT '',
+  postal_code text NOT NULL DEFAULT '',
+  country text NOT NULL DEFAULT '',
+  latitude text NOT NULL DEFAULT '',
+  longitude text NOT NULL DEFAULT '',
+  google_maps_url text NOT NULL DEFAULT '',
+  is_featured boolean NOT NULL DEFAULT false,
+  is_published boolean NOT NULL DEFAULT false,
+  published_at timestamptz,
+  created_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS properties_slug_unique ON properties (slug);
+
+CREATE TABLE IF NOT EXISTS property_images (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  url text NOT NULL,
+  alt text NOT NULL DEFAULT '',
+  sort_order integer NOT NULL DEFAULT 0,
+  is_primary boolean NOT NULL DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS property_images_property_id_idx ON property_images (property_id);
+
+CREATE TABLE IF NOT EXISTS property_amenities (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  icon text NOT NULL DEFAULT '',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS property_amenities_property_id_idx ON property_amenities (property_id);
+
+CREATE TABLE IF NOT EXISTS property_features (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  label text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS property_features_property_id_idx ON property_features (property_id);
+
+CREATE TABLE IF NOT EXISTS property_assignments (
+  property_id uuid NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  assigned_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (property_id, user_id)
+);
 `;

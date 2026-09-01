@@ -6,11 +6,14 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Button } from "@/components/ui/button";
-import { DUMMY_PROPERTIES } from "@/constants";
+import { Property } from "@/types";
 import Link from "next/link";
 
-export function FeaturedProperties() {
-  const featured = DUMMY_PROPERTIES.slice(0, 3);
+export function FeaturedProperties({ properties }: { properties: Property[] }) {
+  const featured = (properties.filter((p) => p.isFeatured).length > 0
+    ? properties.filter((p) => p.isFeatured)
+    : properties
+  ).slice(0, 3);
 
   return (
     <section className="py-24">

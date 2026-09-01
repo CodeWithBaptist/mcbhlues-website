@@ -116,6 +116,15 @@ Resulting menus:
    or removed.
 5. Every one of those actions is written to the audit log.
 
+Staff change their **own** password on the **Change Password** screen
+(`/portal/account/password`, visible to every signed-in user in the Account
+nav group). The route verifies the current password, updates the hash and
+revokes every *other* session while keeping the current one — so a password
+change never logs the user out. Admin-initiated password resets still set the
+account to `invited` and require a fresh invitation link; the admin reset route
+rejects resetting your *own* account (use Change Password instead) so nobody
+accidentally locks themselves out.
+
 ---
 
 ## 6. Audit logging
@@ -137,6 +146,8 @@ Grouped by module in `src/db/seed-data.ts`, e.g.
 
 ```
 property:create   property:read   property:update   property:delete   property:publish
+property:assign   property:image_manage   property:amenity_manage   property:feature_manage
+property:location_manage   property:status_update   property:price_update
 customer:create   customer:read   customer:update   customer:delete
 enquiry:create    enquiry:read    enquiry:update    enquiry:delete    enquiry:assign
 booking:create    booking:read    booking:update    booking:delete    booking:approve

@@ -265,8 +265,8 @@ export function StaffManager({
 
                           <Can permission="staff:reset_password">
                             <IconAction
-                              disabled={!manageable || busy !== null}
-                              title="Reset password"
+                              disabled={!manageable || row.id === user.id || busy !== null}
+                              title={row.id === user.id ? "Use Change Password to reset your own password" : "Reset password"}
                               onClick={async () => {
                                 const data = await call(
                                   `${row.id}-reset`,

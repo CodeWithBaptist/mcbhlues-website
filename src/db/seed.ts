@@ -3,12 +3,17 @@ import type { Database } from "./index";
 import {
   navItems,
   permissions,
+  properties,
+  propertyAmenities,
+  propertyFeatures,
+  propertyImages,
   rolePermissions,
   roles,
   userRoles,
   users,
 } from "./schema";
 import { NAV_SEED, PERMISSION_SEED, ROLE_SEED, USER_SEED } from "./seed-data";
+import { PROPERTY_SEED } from "./seed-properties";
 import { generateToken, hashPassword } from "@/lib/auth/password";
 
 /**
@@ -160,6 +165,76 @@ export async function seedDatabase(db: Database) {
     );
   const existingEmails = new Set(existingUsers.map((row) => row.email));
 
+  /* ---- properties ------------------------------------------------------- */
+  // The property catalogue is seeded once by slug. Afterwards every property,
+  // image, amenity, feature and assignment is ordinary data managed entirely
+  // from the Staff Portal — nothing here overrides runtime changes.
+  const existingProperties = await db.select({ slug: properties.slug }).from(properties);
+  const existingSlugs = new Set(existingProperties.map((row) => row.slug));
+  const missing = PROPERTY_SEED.filter((row) => !existingSlugs.has(row.slug));
+
+  for (const seed of missing) {
+    const [created] = await db
+      .insert(properties)
+      .values({
+        title: seed.title,
+        slug: seed.slug,
+        description: seed.description,
+        type: seed.type,
+        status: seed.status,
+        price: seed.price,
+        beds: seed.beds,
+        baths: seed.baths,
+        sqft: seed.sqft,
+        yearBuilt: seed.yearBuilt,
+        address: seed.address,
+        city: seed.city,
+        state: seed.state,
+        postalCode: seed.postalCode,
+        country: seed.country,
+        latitude: seed.latitude,
+        longitude: seed.longitude,
+        isFeatured: seed.isFeatured,
+        isPublished: true,
+        publishedAt: new Date(),
+      })
+      .returning({ id: properties.id });
+
+    if (!created) continue;
+    await db
+      .insert(propertyImages)
+      .values(
+        seed.images.map((url, index) => ({
+          propertyId: created.id,
+          url,
+          alt: seed.title,
+          sortOrder: index,
+          isPrimary: index === 0,
+        }))
+      )
+      .onConflictDoNothing();
+    await db
+      .insert(propertyAmenities)
+      .values(
+        seed.amenities.map((amenity) => ({
+          propertyId: created.id,
+          name: amenity.name,
+          icon: amenity.icon,
+        }))
+      )
+      .onConflictDoNothing();
+    await db
+      .insert(propertyFeatures)
+      .values(
+        seed.features.map((label) => ({
+          propertyId: created.id,
+          label,
+        }))
+      )
+      .onConflictDoNothing();
+  }
+
+  /* ---- staff accounts --------------------------------------------------- */
   for (const seed of wanted) {
     if (existingEmails.has(seed.email)) continue;
     const role = roleByKey.get(seed.role);

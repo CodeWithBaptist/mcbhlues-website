@@ -4,14 +4,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
-import { DUMMY_PROPERTIES } from "@/constants";
+import { Property } from "@/types";
 import { PropertyFilters } from "./property-filters";
 
-export function PropertiesList() {
+export function PropertiesList({ properties }: { properties: Property[] }) {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("all");
 
-  const filteredProperties = DUMMY_PROPERTIES.filter((p) => {
+  const filteredProperties = properties.filter((p) => {
     const matchesSearch = 
       p.title.toLowerCase().includes(search.toLowerCase()) || 
       p.location.toLowerCase().includes(search.toLowerCase());

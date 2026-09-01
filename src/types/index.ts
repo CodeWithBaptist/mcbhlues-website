@@ -10,15 +10,33 @@ export interface Service {
   icon: string;
 }
 
+/**
+ * Shape consumed by the public website components. Derived from the database
+ * `PropertyWithDetails` rows via `toPublicProperty` — the site never touches
+ * the raw portal rows directly.
+ */
 export interface Property {
   id: string;
+  slug: string;
   title: string;
+  description: string;
   price: number;
-  location: string;
+  currency: string;
+  type: "sale" | "rent";
+  status: string;
   beds: number;
   baths: number;
   sqft: number;
+  yearBuilt?: number | null;
+  location: string;
+  address: string;
+  city: string;
+  state: string;
   image: string;
-  type: "sale" | "rent";
-  status: "available" | "sold" | "pending";
+  images: string[];
+  amenities: string[];
+  features: string[];
+  latitude: string;
+  longitude: string;
+  isFeatured: boolean;
 }
