@@ -1,10 +1,11 @@
 import { asc } from "drizzle-orm";
+import { KeyRound, ShieldCheck, Users } from "lucide-react";
 import { getDb } from "@/db";
 import { permissions, roles } from "@/db/schema";
 import { pageAccess } from "@/lib/rbac/page-guard";
 import { listStaff } from "@/lib/rbac/staff-service";
 import { AccessDenied } from "@/components/portal/access-denied";
-import { PageHeader } from "@/components/portal/ui";
+import { HeroMeta, PageHero } from "@/components/portal/ui";
 import { StaffManager } from "@/components/portal/staff-manager";
 
 export const dynamic = "force-dynamic";
@@ -22,10 +23,23 @@ export default async function StaffPage() {
 
   return (
     <div>
-      <PageHeader
+      <PageHero
+        kicker="Administration"
         title="Staff Management"
-        description="Create accounts, invite staff, assign roles and fine-tune individual permissions."
-      />
+        description="Create accounts, send invitations, assign roles and fine-tune individual permissions for every member of the team."
+        icon={<Users className="h-6 w-6" />}
+      >
+        <HeroMeta
+          icon={<ShieldCheck className="h-4 w-4" />}
+          label="Your clearance"
+          value={`Level ${access.user.level}`}
+        />
+        <HeroMeta
+          icon={<KeyRound className="h-4 w-4" />}
+          label="You hold"
+          value={`${access.user.permissions.length} permissions`}
+        />
+      </PageHero>
       <StaffManager
         initialStaff={staff.map((row) => ({
           ...row,

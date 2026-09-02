@@ -1,9 +1,10 @@
 import { asc } from "drizzle-orm";
+import { Boxes, KeyRound, ShieldCheck } from "lucide-react";
 import { getDb } from "@/db";
 import { permissions } from "@/db/schema";
 import { pageAccess } from "@/lib/rbac/page-guard";
 import { AccessDenied } from "@/components/portal/access-denied";
-import { PageHeader } from "@/components/portal/ui";
+import { HeroMeta, PageHero } from "@/components/portal/ui";
 import { PermissionsManager } from "@/components/portal/permissions-manager";
 import { loadRolesWithPermissions } from "@/lib/rbac/role-service";
 
@@ -19,12 +20,27 @@ export default async function PermissionsPage() {
     loadRolesWithPermissions(),
   ]);
 
+  const moduleCount = new Set(permissionRows.map((row) => row.module)).size;
+
   return (
     <div>
-      <PageHeader
-        title="Permissions"
-        description="The permission catalogue. Add custom permissions here and attach them to any role."
-      />
+      <PageHero
+        kicker="Administration"
+        title="Permissions Catalogue"
+        description="Every capability in the portal is a permission key. Add custom permissions here and attach them to any role."
+        icon={<KeyRound className="h-6 w-6" />}
+      >
+        <HeroMeta
+          icon={<Boxes className="h-4 w-4" />}
+          label="Modules"
+          value={`${moduleCount}`}
+        />
+        <HeroMeta
+          icon={<ShieldCheck className="h-4 w-4" />}
+          label="Roles in matrix"
+          value={`${roleRows.length}`}
+        />
+      </PageHero>
       <PermissionsManager
         permissions={permissionRows.map((row) => ({
           key: row.key,
