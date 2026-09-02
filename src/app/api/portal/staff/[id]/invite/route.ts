@@ -5,9 +5,10 @@ import { users } from "@/db/schema";
 import { withPermission } from "@/lib/rbac/api-guard";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 import { assertCanAdministerStaff, issueInvitation } from "@/lib/rbac/staff-service";
+import { hoursUntil, sendStaffInviteEmail } from "@/lib/email/staff-emails";
 
 /** POST /api/portal/staff/:id/invite — (re)issue a secure invitation link. */
-export const POST = withPermission("staff:invite", async (_request, { params, user }) => {
+export const POST = withPermission("staff:invite", async (request, { params, user }) => {
   const { id } = await params;
   await assertCanAdministerStaff(user, id);
 
@@ -17,15 +18,27 @@ export const POST = withPermission("staff:invite", async (_request, { params, us
 
   const issued = await issueInvitation(target.id, target.email, user.id);
 
+  const origin = request.nextUrl.origin;
+  const mail = await sendStaffInviteEmail({
+    firstName: target.firstName,
+    email: target.email,
+    inviteUrl: `${origin}${issued.url}`,
+    expiresInHours: hoursUntil(issued.expiresAt),
+  });
+
   await recordAudit({
     actor: user,
     action: AUDIT_ACTIONS.STAFF_INVITED,
     resource: "user",
     resourceId: id,
-    metadata: { email: target.email, expiresAt: issued.expiresAt.toISOString() },
+    metadata: { email: target.email, expiresAt: issued.expiresAt.toISOString(), emailStatus: mail.status },
   });
 
-  // In production this link is emailed; it is returned here so the Super Admin
-  // can copy it while no mail transport is configured.
-  return NextResponse.json({ invitation: { url: issued.url, expiresAt: issued.expiresAt } });
+  // The link is emailed when a transport is configured; it is always returned
+  // so an admin can copy it manually if delivery is unavailable.
+  return NextResponse.json({
+    invitation: { url: issued.url, expiresAt: issued.expiresAt },
+    emailed: mail.status === "sent",
+    emailStatus: mail.status,
+  });
 });

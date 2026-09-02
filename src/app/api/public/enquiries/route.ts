@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createEnquiry } from "@/lib/enquiries/enquiry-service";
+import { sendEnquiryAutoReply } from "@/lib/enquiries/enquiry-email";
 import { notifyPermissionHolders } from "@/lib/notifications/notification-service";
 import { recordAudit } from "@/lib/rbac/audit";
 
@@ -64,6 +65,14 @@ export async function POST(request: Request) {
       link: "/portal/enquiries",
     }
   );
+
+  // Acknowledge the visitor instantly. Delivery problems must never break the
+  // submission — the outbox records what happened.
+  try {
+    await sendEnquiryAutoReply(enquiry);
+  } catch {
+    /* swallowed on purpose */
+  }
 
   return NextResponse.json({ ok: true, reference: enquiry.reference }, { status: 201 });
 }

@@ -16,8 +16,8 @@ export interface SettingField {
   key: string;
   label: string;
   placeholder?: string;
-  /** text (default) · number · select · toggle · textarea */
-  type?: "text" | "number" | "select" | "toggle" | "textarea";
+  /** text (default) · number · select · toggle · textarea · password */
+  type?: "text" | "number" | "select" | "toggle" | "textarea" | "password";
   options?: SettingFieldOption[];
   help?: string;
   min?: number;
@@ -157,7 +157,8 @@ export function SettingsForm({
                     />
                   ) : (
                     <Input
-                      type={field.type === "number" ? "number" : "text"}
+                      type={field.type === "number" ? "number" : field.type === "password" ? "password" : "text"}
+                      autoComplete={field.type === "password" ? "new-password" : undefined}
                       min={field.min}
                       max={field.max}
                       value={value}

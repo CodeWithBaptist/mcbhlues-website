@@ -616,6 +616,28 @@ export const emailTemplates = pgTable("email_templates", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/**
+ * Outgoing mail ledger. Every message the portal attempts to send is recorded
+ * here — delivered ("sent"), held because no SMTP transport is configured
+ * ("queued"), or rejected ("failed") — so delivery can be audited from the
+ * Staff Portal without needing mailbox access.
+ */
+export const emailOutbox = pgTable(
+  "email_outbox",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    toEmail: text("to_email").notNull(),
+    subject: text("subject").notNull().default(""),
+    body: text("body").notNull().default(""),
+    purpose: text("purpose").notNull().default(""),
+    status: text("status").notNull().default("queued"), // queued | sent | failed
+    error: text("error"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (table) => [index("email_outbox_created_at_idx").on(table.createdAt)]
+);
+
 /* -------------------------------------------------------------------------- */
 /*  SETTINGS                                                                   */
 /* -------------------------------------------------------------------------- */

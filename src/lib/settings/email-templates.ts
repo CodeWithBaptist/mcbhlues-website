@@ -19,15 +19,22 @@ export const EMAIL_TEMPLATE_DEFAULTS = [
     key: "password_reset",
     name: "Password reset",
     description: "Sent when an administrator resets a staff password.",
-    subject: "Your MCBHLUES Staff Portal password was reset",
-    body: "Hello {{firstName}},\n\nYour password has been reset by an administrator.\n\nNew temporary password: {{temporaryPassword}}\n\nSign in and change it immediately.",
+    subject: "Set a new password for the MCBHLUES Staff Portal",
+    body: "Hello {{firstName}},\n\nYour password was reset by an administrator.\n\nSet a new password using this secure link: {{inviteUrl}}\n\nThis link expires in {{expiresInHours}} hours. If you did not request this, please contact your administrator.",
   },
   {
     key: "enquiry_auto_reply",
     name: "Enquiry auto-reply",
     description: "Acknowledgement sent to website visitors after they enquire.",
     subject: "We received your enquiry ({{reference}})",
-    body: "Hello {{name}},\n\nThank you for contacting MCBHLUES ENTERPRISES. Your enquiry {{reference}} has been received and a consultant will respond shortly.",
+    body: "Hello {{name}},\n\nThank you for contacting {{companyName}}. Your enquiry {{reference}} has been received and a consultant will respond shortly.\n\nKind regards,\n{{companyName}}\n{{companyPhone}}",
+  },
+  {
+    key: "enquiry_response",
+    name: "Enquiry response",
+    description: "Sent to the customer when a staff member replies to their enquiry.",
+    subject: "Re: {{subject}} ({{reference}})",
+    body: "Hello {{name}},\n\nThank you for contacting {{companyName}} about your enquiry {{reference}}.\n\n{{message}}\n\nKind regards,\n{{staffName}}\n{{companyName}}\n{{companyPhone}}\n{{companyEmail}}",
   },
 ] as const;
 
@@ -87,6 +94,21 @@ export async function saveEmailTemplate(
     subject: input.subject,
     body: input.body,
     updatedAt: new Date().toISOString(),
+  };
+}
+
+/** Loads one template (saved override or the shipped default) by key. */
+export async function getEmailTemplate(
+  key: string
+): Promise<{ key: string; subject: string; body: string } | null> {
+  const base = EMAIL_TEMPLATE_DEFAULTS.find((template) => template.key === key);
+  if (!base) return null;
+  const db = await getDb();
+  const [saved] = await db.select().from(emailTemplates).where(eq(emailTemplates.key, key)).limit(1);
+  return {
+    key,
+    subject: saved?.subject ?? base.subject,
+    body: saved?.body ?? base.body,
   };
 }
 

@@ -7,7 +7,9 @@ import {
   KeyRound,
   Loader2,
   Mail,
+  Pencil,
   Plus,
+  Save,
   ShieldCheck,
   SlidersHorizontal,
   Trash2,
@@ -60,12 +62,13 @@ export function StaffManager({
   const router = useRouter();
   const { user, can } = useSession();
 
-  const [staff] = useState(initialStaff);
+  const [staff, setStaff] = useState(initialStaff);
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [permissionTarget, setPermissionTarget] = useState<StaffRow | null>(null);
+  const [editTarget, setEditTarget] = useState<StaffRow | null>(null);
 
   /** Mirrors the server-side hierarchy rule so the UI does not offer impossible actions. */
   const canAdminister = (row: StaffRow) =>
@@ -138,10 +141,19 @@ export function StaffManager({
           roles={assignableRoles}
           canAssignRole={can("staff:assign_role")}
           canInvite={can("staff:invite")}
-          onDone={(link) => {
+          onDone={(link, emailed, email) => {
             setShowCreate(false);
             setInviteLink(link);
-            setMessage({ tone: "ok", text: "Staff account created." });
+            setMessage(
+              emailed
+                ? { tone: "ok", text: `Staff account created — the invitation was emailed to ${email}.` }
+                : {
+                    tone: "ok",
+                    text: link
+                      ? "Staff account created. Email delivery is not configured yet, so share the invitation link manually."
+                      : "Staff account created.",
+                  }
+            );
             router.refresh();
           }}
           onError={(text) => setMessage({ tone: "error", text })}
@@ -246,6 +258,16 @@ export function StaffManager({
 
                       <td className="px-3 py-3">
                         <div className="flex flex-wrap justify-end gap-1.5">
+                          <Can permission="staff:update">
+                            <IconAction
+                              disabled={!manageable || busy !== null}
+                              title="Edit name & details"
+                              onClick={() => setEditTarget(row)}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </IconAction>
+                          </Can>
+
                           <Can permission="staff:invite">
                             <IconAction
                               disabled={!manageable || busy !== null}
@@ -256,7 +278,14 @@ export function StaffManager({
                                   `/api/portal/staff/${row.id}/invite`,
                                   { method: "POST" }
                                 );
-                                if (data?.invitation) setInviteLink(data.invitation.url);
+                                if (data?.invitation) {
+                                  setInviteLink(data.invitation.url);
+                                  setMessage(
+                                    data.emailed
+                                      ? { tone: "ok", text: `Invitation emailed to ${row.email} — the link below is a backup copy.` }
+                                      : { tone: "ok", text: `Invitation created for ${row.email}. Email delivery is not configured, so share the link manually.` }
+                                  );
+                                }
                               }}
                             >
                               <Mail className="h-3.5 w-3.5" />
@@ -273,7 +302,14 @@ export function StaffManager({
                                   `/api/portal/staff/${row.id}/reset-password`,
                                   { method: "POST" }
                                 );
-                                if (data?.invitation) setInviteLink(data.invitation.url);
+                                if (data?.invitation) {
+                                  setInviteLink(data.invitation.url);
+                                  setMessage(
+                                    data.emailed
+                                      ? { tone: "ok", text: `Password reset — the "set a new password" link was emailed to ${row.email}.` }
+                                      : { tone: "ok", text: `Password reset for ${row.email}. Email delivery is not configured, so share the link manually.` }
+                                  );
+                                }
                               }}
                             >
                               <KeyRound className="h-3.5 w-3.5" />
@@ -350,6 +386,34 @@ export function StaffManager({
           }}
         />
       )}
+
+      {editTarget && (
+        <EditStaffDetails
+          staff={editTarget}
+          onClose={() => setEditTarget(null)}
+          onSaved={(updated) => {
+            setEditTarget(null);
+            setStaff((current) =>
+              current.map((row) =>
+                row.id === updated.id
+                  ? {
+                      ...row,
+                      firstName: updated.firstName,
+                      lastName: updated.lastName,
+                      phone: updated.phone,
+                    }
+                  : row
+              )
+            );
+            setMessage({
+              tone: "ok",
+              text: `Saved — ${updated.firstName} ${updated.lastName}'s details were updated.`,
+            });
+            router.refresh();
+          }}
+          onError={(text) => setMessage({ tone: "error", text })}
+        />
+      )}
     </div>
   );
 }
@@ -395,7 +459,7 @@ function CreateStaffForm({
   roles: RoleOption[];
   canAssignRole: boolean;
   canInvite: boolean;
-  onDone: (inviteLink: string | null) => void;
+  onDone: (inviteLink: string | null, emailed: boolean, email: string) => void;
   onError: (message: string) => void;
 }) {
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", roleId: "" });
@@ -423,7 +487,7 @@ function CreateStaffForm({
       onError(data.error ?? "Unable to create the staff account.");
       return;
     }
-    onDone(data.invitation?.url ?? null);
+    onDone(data.invitation?.url ?? null, Boolean(data.emailed), form.email);
   }
 
   return (
@@ -503,6 +567,103 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="mb-1.5 block text-sm font-medium text-gray-700">{label}</span>
       {children}
     </label>
+  );
+}
+
+function EditStaffDetails({
+  staff,
+  onClose,
+  onSaved,
+  onError,
+}: {
+  staff: StaffRow;
+  onClose: () => void;
+  onSaved: (updated: { id: string; firstName: string; lastName: string; phone: string }) => void;
+  onError: (message: string) => void;
+}) {
+  const [form, setForm] = useState({
+    firstName: staff.firstName,
+    lastName: staff.lastName,
+    phone: staff.phone,
+  });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    setSaving(true);
+    setError(null);
+    const response = await fetch(`/api/portal/staff/${staff.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    setSaving(false);
+    if (!response.ok || !data.staff) {
+      const text = data.error ?? "Unable to update the staff member.";
+      setError(text);
+      onError(text);
+      return;
+    }
+    onSaved({
+      id: staff.id,
+      firstName: data.staff.firstName,
+      lastName: data.staff.lastName,
+      phone: data.staff.phone,
+    });
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <form onSubmit={submit} className="w-full max-w-md rounded-xl bg-white shadow-2xl">
+        <header className="border-b border-gray-100 px-5 py-4">
+          <h2 className="font-heading text-base font-bold text-dark">Edit staff details</h2>
+          <p className="text-xs text-gray-500">
+            Update the name and phone number for {staff.email}. The sign-in email cannot be changed here.
+          </p>
+        </header>
+
+        <div className="space-y-4 px-5 py-4">
+          <Field label="First name">
+            <Input
+              value={form.firstName}
+              onChange={(event) => setForm({ ...form, firstName: event.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Last name">
+            <Input
+              value={form.lastName}
+              onChange={(event) => setForm({ ...form, lastName: event.target.value })}
+              required
+            />
+          </Field>
+          <Field label="Phone number">
+            <Input
+              value={form.phone}
+              onChange={(event) => setForm({ ...form, phone: event.target.value })}
+            />
+          </Field>
+          {error && <p className="text-sm text-red-600">{error}</p>}
+        </div>
+
+        <footer className="flex justify-end gap-2 border-t border-gray-100 px-5 py-3">
+          <Button variant="outline" onClick={onClose} type="button">
+            Cancel
+          </Button>
+          <Button type="submit" disabled={saving}>
+            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Save className="mr-2 h-4 w-4" />
+            Save changes
+          </Button>
+        </footer>
+      </form>
+    </div>
   );
 }
 

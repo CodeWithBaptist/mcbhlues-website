@@ -5,6 +5,7 @@ import { userRoles, users } from "@/db/schema";
 import { withPermission } from "@/lib/rbac/api-guard";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 import { assertCanAssignRole, issueInvitation, listStaff } from "@/lib/rbac/staff-service";
+import { hoursUntil, sendStaffInviteEmail } from "@/lib/email/staff-emails";
 
 /** GET /api/portal/staff — requires staff:read */
 export const GET = withPermission("staff:read", async () => {
@@ -71,18 +72,29 @@ export const POST = withPermission("staff:create", async (request, { user }) => 
   });
 
   let invitation: { url: string; expiresAt: Date } | null = null;
+  let emailed = false;
   if (sendInvite && user.permissions.includes("staff:invite")) {
     const issued = await issueInvitation(created.id, email, user.id);
     invitation = { url: issued.url, expiresAt: issued.expiresAt };
+
+    const origin = request.nextUrl.origin;
+    const mail = await sendStaffInviteEmail({
+      firstName,
+      email,
+      inviteUrl: `${origin}${issued.url}`,
+      expiresInHours: hoursUntil(issued.expiresAt),
+    });
+    emailed = mail.status === "sent";
+
     await recordAudit({
       actor: user,
       action: AUDIT_ACTIONS.STAFF_INVITED,
       resource: "user",
       resourceId: created.id,
-      metadata: { email, expiresAt: issued.expiresAt.toISOString() },
+      metadata: { email, expiresAt: issued.expiresAt.toISOString(), emailStatus: mail.status },
     });
   }
 
   const { passwordHash: _passwordHash, ...safeStaff } = created;
-  return NextResponse.json({ staff: safeStaff, invitation }, { status: 201 });
+  return NextResponse.json({ staff: safeStaff, invitation, emailed }, { status: 201 });
 });

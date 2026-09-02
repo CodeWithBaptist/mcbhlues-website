@@ -346,6 +346,7 @@ export const NAV_SEED: NavSeed[] = [
   { key: "reports", label: "Reports", href: "/portal/reports", icon: "BarChart3", group: "Insights", permissionKey: "report:read", sortOrder: 81 },
   { key: "activity-logs", label: "Activity Logs", href: "/portal/activity-logs", icon: "Activity", group: "Insights", permissionKey: "activity:read", sortOrder: 82 },
   { key: "audit-logs", label: "Audit Logs", href: "/portal/audit-logs", icon: "ScrollText", group: "Insights", permissionKey: "audit:read", sortOrder: 83 },
+  { key: "system-logs", label: "System Logs", href: "/portal/logs", icon: "Inbox", group: "Insights", permissionKey: "log:read", sortOrder: 84 },
 
   { key: "company-settings", label: "Company Settings", href: "/portal/settings/company", icon: "Building", group: "Settings", permissionKey: "settings:company", sortOrder: 90 },
   { key: "system-settings", label: "System Settings", href: "/portal/settings/system", icon: "Settings", group: "Settings", permissionKey: "settings:system", sortOrder: 91 },
