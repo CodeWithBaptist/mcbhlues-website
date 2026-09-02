@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS properties (
   type text NOT NULL DEFAULT 'sale',
   status text NOT NULL DEFAULT 'available',
   price integer NOT NULL DEFAULT 0,
-  currency text NOT NULL DEFAULT 'USD',
+  currency text NOT NULL DEFAULT 'NGN',
   beds integer NOT NULL DEFAULT 0,
   baths integer NOT NULL DEFAULT 0,
   sqft integer NOT NULL DEFAULT 0,
@@ -392,4 +392,14 @@ CREATE TABLE IF NOT EXISTS email_templates (
   updated_by uuid,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS uploads (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  file_name text NOT NULL,
+  content_type text NOT NULL DEFAULT 'application/octet-stream',
+  byte_size integer NOT NULL DEFAULT 0,
+  data text NOT NULL,
+  uploaded_by uuid,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS uploads_created_at_idx ON uploads (created_at);
 `;

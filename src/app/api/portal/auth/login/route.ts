@@ -1,10 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, count, eq, gt, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { users } from "@/db/schema";
+import { auditLogs, users } from "@/db/schema";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { AUDIT_ACTIONS, recordActivity, recordAudit } from "@/lib/rbac/audit";
+import { getSecurityPolicy } from "@/lib/settings/system-config";
 
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
@@ -17,6 +18,32 @@ export async function POST(request: NextRequest) {
 
   const db = await getDb();
   const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+
+  // Brute-force protection, driven by System Settings → Authentication & security.
+  const policy = await getSecurityPolicy();
+  if (policy.maxFailedLogins > 0) {
+    const since = new Date(Date.now() - policy.lockoutMinutes * 60_000);
+    const [recent] = await db
+      .select({ value: count() })
+      .from(auditLogs)
+      .where(
+        and(
+          eq(auditLogs.action, AUDIT_ACTIONS.LOGIN_FAILED),
+          gt(auditLogs.createdAt, since),
+          sql`${auditLogs.metadata} ->> 'email' = ${email}`
+        )
+      );
+
+    if ((recent?.value ?? 0) >= policy.maxFailedLogins) {
+      return NextResponse.json(
+        {
+          error: `Too many failed sign-in attempts. Try again in ${policy.lockoutMinutes} minutes.`,
+          code: "LOCKED_OUT",
+        },
+        { status: 429 }
+      );
+    }
+  }
 
   const passwordOk = user ? await verifyPassword(password, user.passwordHash) : false;
 

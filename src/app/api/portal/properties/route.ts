@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { withPermission } from "@/lib/rbac/api-guard";
 import { createProperty, loadPropertiesForUser } from "@/lib/properties/property-service";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
+import { DEFAULT_CURRENCY } from "@/lib/utils";
 
 /**
  * GET /api/portal/properties — list the properties the caller may see,
@@ -30,7 +31,7 @@ export const POST = withPermission("property:create", async (request, { user }) 
       type: body?.type === "rent" ? "rent" : "sale",
       status: typeof body?.status === "string" ? body.status : "available",
       price: Number.isFinite(body?.price) ? Number(body.price) : 0,
-      currency: typeof body?.currency === "string" ? body.currency : "USD",
+      currency: typeof body?.currency === "string" ? body.currency : DEFAULT_CURRENCY,
       beds: Number.isFinite(body?.beds) ? Number(body.beds) : 0,
       baths: Number.isFinite(body?.baths) ? Number(body.baths) : 0,
       sqft: Number.isFinite(body?.sqft) ? Number(body.sqft) : 0,

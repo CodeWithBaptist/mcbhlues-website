@@ -252,7 +252,7 @@ export const properties = pgTable(
     /** available | sold | pending | rented */
     status: text("status").notNull().default("available"),
     price: integer("price").notNull().default(0),
-    currency: text("currency").notNull().default("USD"),
+    currency: text("currency").notNull().default("NGN"),
     beds: integer("beds").notNull().default(0),
     baths: integer("baths").notNull().default(0),
     sqft: integer("sqft").notNull().default(0),
@@ -631,6 +631,25 @@ export const settings = pgTable(
   }
 );
 
+/* -------------------------------------------------------------------------- */
+/*  UPLOADS (files stored in the database so they survive read-only hosts)     */
+/* -------------------------------------------------------------------------- */
+
+export const uploads = pgTable(
+  "uploads",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    fileName: text("file_name").notNull(),
+    contentType: text("content_type").notNull().default("application/octet-stream"),
+    byteSize: integer("byte_size").notNull().default(0),
+    /** base64-encoded file contents */
+    data: text("data").notNull(),
+    uploadedBy: uuid("uploaded_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("uploads_created_at_idx").on(table.createdAt)]
+);
+
 export type User = typeof users.$inferSelect;
 export type Role = typeof roles.$inferSelect;
 export type Permission = typeof permissions.$inferSelect;
@@ -655,3 +674,4 @@ export type CmsContent = typeof cmsContent.$inferSelect;
 export type MediaAsset = typeof mediaAssets.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type Upload = typeof uploads.$inferSelect;

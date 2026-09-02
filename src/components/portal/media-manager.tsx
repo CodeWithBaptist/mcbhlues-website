@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, EmptyState } from "./ui";
+import { FileUpload } from "./file-upload";
 
 export interface MediaAssetRow {
   id: string;
@@ -137,7 +138,7 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
         {filtered.length === 0 ? (
           <EmptyState
             title="The library is empty"
-            description="Add images, documents or the company logo by URL — then paste those URLs into listings and CMS content."
+            description="Upload images, documents or the company logo from your device — or register a link — then reuse those URLs across listings and CMS content."
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -226,6 +227,7 @@ function AddAssetDialog({
 }) {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [source, setSource] = useState<"device" | "url">("device");
   const [kind, setKind] = useState("image");
   const [folder, setFolder] = useState("general");
   const [alt, setAlt] = useState("");
@@ -234,6 +236,10 @@ function AddAssetDialog({
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (!url) {
+      setError("Upload a file or paste a URL first.");
+      return;
+    }
     setSaving(true);
     setError(null);
     const response = await fetch("/api/portal/media", {
@@ -273,10 +279,41 @@ function AddAssetDialog({
             <span className="mb-1.5 block text-sm font-medium text-gray-700">Title</span>
             <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Penthouse hero shot" />
           </label>
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-gray-700">URL</span>
-            <Input required type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
-          </label>
+          <div>
+            <div className="mb-2 inline-flex rounded-lg bg-gray-100 p-1">
+              {(["device", "url"] as const).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setSource(value)}
+                  className={cn(
+                    "rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
+                    source === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
+                  )}
+                >
+                  {value === "device" ? "Upload from device" : "Paste a URL"}
+                </button>
+              ))}
+            </div>
+
+            {source === "device" ? (
+              <FileUpload
+                accept={kind === "document" ? "image/*,application/pdf" : "image/*"}
+                onError={(text) => setError(text)}
+                onUploaded={(file) => {
+                  setError(null);
+                  setUrl(file.url);
+                  if (!title) setTitle(file.fileName.replace(/\.[^.]+$/, ""));
+                }}
+              />
+            ) : (
+              <Input required type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" />
+            )}
+
+            {source === "device" && url && (
+              <p className="mt-2 truncate text-[11px] text-green-700">Uploaded · {url}</p>
+            )}
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Kind</span>
@@ -309,7 +346,8 @@ function AddAssetDialog({
           )}
           <p className="flex items-start gap-2 text-[11px] text-gray-400">
             <ImageIcon className="mt-0.5 h-3 w-3 shrink-0" />
-            Assets are registered by URL. Upload files to your CDN or image host first, then register the link here.
+            Upload straight from this device, or paste a link to a file already hosted elsewhere. Uploaded files get a
+            permanent URL you can reuse in listings and CMS content.
           </p>
         </div>
 

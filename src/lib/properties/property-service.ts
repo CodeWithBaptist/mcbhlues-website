@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db";
+import { DEFAULT_CURRENCY } from "@/lib/utils";
 import {
   properties,
   propertyAmenities,
@@ -316,7 +317,7 @@ export async function createProperty(input: PropertyInput & { title: string }, a
       type: input.type ?? "sale",
       status: input.status ?? "available",
       price: input.price ?? 0,
-      currency: input.currency ?? "USD",
+      currency: input.currency ?? DEFAULT_CURRENCY,
       beds: input.beds ?? 0,
       baths: input.baths ?? 0,
       sqft: input.sqft ?? 0,
