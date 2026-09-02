@@ -66,3 +66,53 @@ export async function getPasswordMinLength(): Promise<number> {
   );
   return parsed >= 8 ? parsed : SYSTEM_DEFAULTS.PASSWORD_MIN_LENGTH;
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Additional runtime configuration                                           */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Default currency used for new listings and anywhere a price has no explicit
+ * currency (system.default_currency). Naira unless an admin changes it.
+ */
+export async function getDefaultCurrency(): Promise<string> {
+  const values = await readSystemValues(["system.default_currency"]);
+  const raw = (values.get("system.default_currency") ?? "").trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(raw) ? raw : "NGN";
+}
+
+/** Maintenance mode banner/notice toggle (system.maintenance_mode). */
+export async function getMaintenanceMode(): Promise<{ enabled: boolean; message: string }> {
+  const values = await readSystemValues(["system.maintenance_mode", "system.maintenance_message"]);
+  return {
+    enabled: values.get("system.maintenance_mode") === "true",
+    message:
+      values.get("system.maintenance_message")?.trim() ||
+      "The portal is undergoing scheduled maintenance. Some actions may be unavailable.",
+  };
+}
+
+export interface SecurityPolicy {
+  maxFailedLogins: number;
+  lockoutMinutes: number;
+  inviteSingleUse: boolean;
+}
+
+/** The authentication policy enforced by the login route. */
+export async function getSecurityPolicy(): Promise<SecurityPolicy> {
+  const values = await readSystemValues([
+    "security.max_failed_logins",
+    "security.lockout_minutes",
+    "security.invite_single_use",
+  ]);
+  return {
+    maxFailedLogins: toPositiveInt(
+      values.get("security.max_failed_logins"),
+      SECURITY_DEFAULTS.MAX_FAILED_LOGINS
+    ),
+    lockoutMinutes:
+      toPositiveInt(values.get("security.lockout_minutes"), SECURITY_DEFAULTS.LOCKOUT_MINUTES) ||
+      SECURITY_DEFAULTS.LOCKOUT_MINUTES,
+    inviteSingleUse: values.get("security.invite_single_use") !== "false",
+  };
+}

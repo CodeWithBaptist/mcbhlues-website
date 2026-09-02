@@ -19,10 +19,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency, SUPPORTED_CURRENCIES, DEFAULT_CURRENCY } from "@/lib/utils";
 import type { PropertyWithDetails } from "@/lib/properties/property-service";
 import { useSession } from "./permission-provider";
 import { Card, EmptyState, StatusPill } from "./ui";
+import { FileUpload } from "./file-upload";
 
 export interface StaffOption {
   id: string;
@@ -85,7 +86,7 @@ function emptyEditor(): EditorState {
     type: "sale",
     status: "available",
     price: "",
-    currency: "USD",
+    currency: DEFAULT_CURRENCY,
     beds: "",
     baths: "",
     sqft: "",
@@ -359,7 +360,7 @@ export function PropertiesManager({
                     </td>
 
                     <td className="px-3 py-3 font-semibold text-dark">
-                      {property.currency} {property.price.toLocaleString()}
+                      {formatCurrency(property.price, property.currency)}
                       {property.type === "rent" && <span className="text-xs text-gray-400">/mo</span>}
                     </td>
 
@@ -565,7 +566,7 @@ function PropertyEditor({
       type: form.type,
       status: form.status,
       price: Number(form.price) || 0,
-      currency: form.currency || "USD",
+      currency: form.currency || DEFAULT_CURRENCY,
       beds: Number(form.beds) || 0,
       baths: Number(form.baths) || 0,
       sqft: Number(form.sqft) || 0,
@@ -715,7 +716,17 @@ function PropertyEditor({
               />
             </Field>
             <Field label="Currency">
-              <Input value={form.currency} onChange={(event) => set("currency", event.target.value)} />
+              <select
+                className={inputClass}
+                value={form.currency}
+                onChange={(event) => set("currency", event.target.value)}
+              >
+                {SUPPORTED_CURRENCIES.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Field label="Bedrooms">
               <Input type="number" min={0} value={form.beds} onChange={(event) => set("beds", event.target.value)} />
@@ -778,11 +789,25 @@ function PropertyEditor({
                 <ImageIcon className="h-4 w-4 text-primary" /> Images
               </h3>
               <div className="flex flex-col gap-3">
+                <FileUpload
+                  accept="image/*"
+                  label="Choose photos from this device"
+                  hint="or drag & drop · JPG, PNG, WebP, GIF up to 6 MB each"
+                  onUploaded={(file) =>
+                    set("images", [
+                      ...form.images,
+                      { url: file.url, alt: form.title || file.fileName, isPrimary: form.images.length === 0 },
+                    ])
+                  }
+                />
+                <div className="flex items-center gap-3 text-[11px] uppercase tracking-wide text-gray-400">
+                  <span className="h-px flex-1 bg-gray-200" /> or paste a link <span className="h-px flex-1 bg-gray-200" />
+                </div>
                 <div className="flex gap-2">
                   <Input
                     value={imageUrl}
                     onChange={(event) => setImageUrl(event.target.value)}
-                    placeholder="Paste an image URL"
+                    placeholder="https://…"
                   />
                   <Button type="button" variant="outline" onClick={addImage}>
                     Add

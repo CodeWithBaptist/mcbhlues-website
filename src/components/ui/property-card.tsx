@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Bed, Bath, Maximize2, MapPin } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Property } from "@/types";
 
@@ -46,7 +46,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
             {property.title}
           </h3>
           <p className="text-lg font-bold text-primary shrink-0 ml-2">
-            ${property.price.toLocaleString()}
+            {formatCurrency(property.price, property.currency)}
             {property.type === "rent" && <span className="text-sm text-gray-500">/mo</span>}
           </p>
         </div>

@@ -3,6 +3,7 @@
 import { MapPin, Share2, Heart, Printer } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
+import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Property } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
 
           <div className="flex flex-col items-start md:items-end gap-4">
             <p className="text-3xl md:text-4xl font-black text-primary font-heading">
-              ${property.price.toLocaleString()}
+              {formatCurrency(property.price, property.currency)}
               {property.type === "rent" && <span className="text-xl font-bold text-gray-400">/mo</span>}
             </p>
             <div className="flex gap-2">

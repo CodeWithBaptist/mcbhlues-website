@@ -31,11 +31,11 @@ export default async function PortalLayout({ children }: { children: React.React
         permissions: user.permissions,
       }}
     >
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(37,99,235,0.08),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
         <PortalSidebar navigation={navigation} />
         <div className="flex min-w-0 flex-1 flex-col">
           <PortalTopbar />
-          <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+          <main className="portal-enter flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
         </div>
       </div>
     </PermissionProvider>
