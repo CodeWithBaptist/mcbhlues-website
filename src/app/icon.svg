@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- MCBHLUES brand mark: navy "C" ring around a sky-blue "e". Corners stay
+       transparent so the icon adapts to any browser-tab background; the white
+       separator ring and inner counter are painted so the mark reads the same
+       on dark tabs. -->
+  <!-- white separator ring between the ring and the letter (same opening) -->
+  <circle cx="256" cy="256" r="141.75" fill="none" stroke="#ffffff" stroke-width="19.5"
+          pathLength="100" stroke-dasharray="81.94 18.06" stroke-dashoffset="-12.5"/>
+  <!-- navy ring, open on the right (gap from -20deg to +45deg) -->
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#1d2a9b" stroke-width="53"
+          pathLength="100" stroke-dasharray="81.94 18.06" stroke-dashoffset="-12.5"/>
+  <!-- inner counter of the "e" -->
+  <circle cx="256" cy="256" r="79" fill="#ffffff"/>
+  <!-- bowl of the "e": full circle minus the lower-right opening -->
+  <circle cx="256" cy="256" r="106" fill="none" stroke="#20b9e8" stroke-width="52"
+          pathLength="100" stroke-dasharray="87.22 12.78" stroke-dashoffset="-15.28"/>
+  <!-- crossbar of the "e" -->
+  <rect x="124" y="232" width="264" height="42" fill="#20b9e8"/>
+</svg>

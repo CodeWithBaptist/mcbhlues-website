@@ -11,12 +11,19 @@ interface PropertyMapProps {
   location: string;
   latitude?: string;
   longitude?: string;
+  /** Default "directions from" address — the office address from Company Settings. */
+  defaultOrigin?: string;
 }
 
-export function PropertyMap({ location, latitude, longitude }: PropertyMapProps) {
+export function PropertyMap({
+  location,
+  latitude,
+  longitude,
+  defaultOrigin = SITE_CONFIG.contact.address,
+}: PropertyMapProps) {
   const [view, setView] = useState<"map" | "directions">("map");
-  const [origin, setOrigin] = useState(SITE_CONFIG.contact.address);
-  const [activeOrigin, setActiveOrigin] = useState(SITE_CONFIG.contact.address);
+  const [origin, setOrigin] = useState(defaultOrigin);
+  const [activeOrigin, setActiveOrigin] = useState(defaultOrigin);
 
   // Prefer an exact coordinate pin when the listing has one; otherwise fall
   // back to a text query of the location.
@@ -33,7 +40,7 @@ export function PropertyMap({ location, latitude, longitude }: PropertyMapProps)
   )}&daddr=${mapQuery}&output=embed`;
 
   const handleShowRoute = () => {
-    setActiveOrigin(origin.trim() || SITE_CONFIG.contact.address);
+    setActiveOrigin(origin.trim() || defaultOrigin);
     setView("directions");
   };
 
