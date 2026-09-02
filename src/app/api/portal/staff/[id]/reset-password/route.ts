@@ -6,6 +6,7 @@ import { withPermission } from "@/lib/rbac/api-guard";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 import { assertCanAdministerStaff, issueInvitation } from "@/lib/rbac/staff-service";
 import { revokeUserSessions } from "@/lib/auth/session";
+import { hoursUntil, sendPasswordResetEmail } from "@/lib/email/staff-emails";
 
 /**
  * POST /api/portal/staff/:id/reset-password
@@ -13,7 +14,7 @@ import { revokeUserSessions } from "@/lib/auth/session";
  * secure link so the staff member sets their own password. Requires
  * staff:reset_password.
  */
-export const POST = withPermission("staff:reset_password", async (_request, { params, user }) => {
+export const POST = withPermission("staff:reset_password", async (request, { params, user }) => {
   const { id } = await params;
 
   // Resetting your OWN password used to set the account to "invited", clear the
@@ -45,13 +46,25 @@ export const POST = withPermission("staff:reset_password", async (_request, { pa
 
   const issued = await issueInvitation(target.id, target.email, user.id);
 
+  const origin = request.nextUrl.origin;
+  const mail = await sendPasswordResetEmail({
+    firstName: target.firstName,
+    email: target.email,
+    inviteUrl: `${origin}${issued.url}`,
+    expiresInHours: hoursUntil(issued.expiresAt),
+  });
+
   await recordAudit({
     actor: user,
     action: AUDIT_ACTIONS.STAFF_PASSWORD_RESET,
     resource: "user",
     resourceId: id,
-    metadata: { email: target.email },
+    metadata: { email: target.email, emailStatus: mail.status },
   });
 
-  return NextResponse.json({ invitation: { url: issued.url, expiresAt: issued.expiresAt } });
+  return NextResponse.json({
+    invitation: { url: issued.url, expiresAt: issued.expiresAt },
+    emailed: mail.status === "sent",
+    emailStatus: mail.status,
+  });
 });

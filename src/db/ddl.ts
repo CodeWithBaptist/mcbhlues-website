@@ -392,6 +392,19 @@ CREATE TABLE IF NOT EXISTS email_templates (
   updated_by uuid,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS email_outbox (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  to_email text NOT NULL,
+  subject text NOT NULL DEFAULT '',
+  body text NOT NULL DEFAULT '',
+  purpose text NOT NULL DEFAULT '',
+  status text NOT NULL DEFAULT 'queued',
+  error text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  sent_at timestamptz
+);
+CREATE INDEX IF NOT EXISTS email_outbox_created_at_idx ON email_outbox (created_at);
 CREATE TABLE IF NOT EXISTS uploads (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   file_name text NOT NULL,

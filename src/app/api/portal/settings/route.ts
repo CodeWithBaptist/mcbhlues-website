@@ -4,6 +4,7 @@ import { getDb } from "@/db";
 import { settings } from "@/db/schema";
 import { withPermission } from "@/lib/rbac/api-guard";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
+import { MASKED_VALUE, isSensitiveKey } from "@/lib/settings/secrets";
 
 const SCOPE_PERMISSION: Record<string, string> = {
   company: "settings:company",
@@ -28,7 +29,16 @@ export const GET = withPermission(
 
     const db = await getDb();
     const rows = await db.select().from(settings).where(eq(settings.scope, scope));
-    return NextResponse.json({ settings: rows });
+    // Secrets (SMTP password, API keys…) are never echoed back — a masked
+    // placeholder shows in their place.
+    const safe = rows.map((row) => ({
+      ...row,
+      value:
+        isSensitiveKey(row.key) && row.value != null && String(row.value) !== ""
+          ? MASKED_VALUE
+          : row.value,
+    }));
+    return NextResponse.json({ settings: safe });
   }
 );
 
@@ -49,6 +59,12 @@ export const PUT = withPermission(
       );
     }
 
+    // A masked value being sent back means "keep what is stored" — never
+    // overwrite a secret with its own placeholder.
+    if (isSensitiveKey(key) && body?.value === MASKED_VALUE) {
+      return NextResponse.json({ ok: true, unchanged: true });
+    }
+
     const db = await getDb();
     const [existing] = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
     if (existing) {
@@ -65,7 +81,8 @@ export const PUT = withPermission(
       action: AUDIT_ACTIONS.SETTINGS_CHANGED,
       resource: "settings",
       resourceId: key,
-      metadata: { scope, value: body?.value ?? null },
+      // Never write secrets into the audit trail.
+      metadata: { scope, value: isSensitiveKey(key) ? "••••" : (body?.value ?? null) },
     });
 
     return NextResponse.json({ ok: true });

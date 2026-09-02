@@ -622,7 +622,22 @@ function EnquiryDetailPanel({
     setSaving(false);
     if (data?.enquiry) {
       setReply("");
-      notify("Response recorded and enquiry marked as responded.");
+      const emailStatus: string | undefined = data.email?.status;
+      if (emailStatus === "sent") {
+        notify(`Response emailed to ${detail.name} (${detail.email}).`);
+      } else if (emailStatus === "queued") {
+        notify(
+          "Response recorded, but the email was NOT delivered — no mail server is configured yet. Add SMTP details under System Settings → Email delivery.",
+          "error"
+        );
+      } else if (emailStatus === "failed") {
+        notify(
+          `Response recorded, but the email failed to send${data.email?.error ? `: ${data.email.error}` : "."} Check System Settings → Email delivery.`,
+          "error"
+        );
+      } else {
+        notify("Response recorded — this customer left no email address, so follow up by phone.");
+      }
       await onChanged();
     }
   }
@@ -745,9 +760,19 @@ function EnquiryDetailPanel({
           {/* Respond */}
           {canRespond && detail.status !== "closed" && (
             <section className="rounded-lg border border-green-100 bg-green-50/40 p-4">
-              <h3 className="mb-2 flex items-center gap-2 text-sm font-bold text-dark">
+              <h3 className="mb-1 flex items-center gap-2 text-sm font-bold text-dark">
                 <Send className="h-4 w-4 text-green-700" /> Respond to customer
               </h3>
+              <p className="mb-2 text-[11px] text-gray-500">
+                {detail.email ? (
+                  <>
+                    Your reply will be emailed to <span className="font-semibold">{detail.email}</span> and
+                    kept on this thread.
+                  </>
+                ) : (
+                  <>No email address on record — the reply is logged here; follow up by phone.</>
+                )}
+              </p>
               <Textarea
                 value={reply}
                 onChange={(e) => setReply(e.target.value)}
@@ -756,7 +781,7 @@ function EnquiryDetailPanel({
               />
               <Button size="sm" className="mt-2" onClick={respond} disabled={saving || !reply.trim()}>
                 {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Record response
+                Send response
               </Button>
             </section>
           )}

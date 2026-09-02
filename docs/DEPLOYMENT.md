@@ -52,6 +52,7 @@ Settings → Environment Variables (add to **Production** and **Preview**):
 | `SUPER_ADMIN_PASSWORD` | Recommended | Password for that account. If omitted, a strong one is generated and printed **once** in the deployment's runtime logs. |
 | `SUPER_ADMIN_FIRST_NAME` / `SUPER_ADMIN_LAST_NAME` | Optional | Display name for the initial account. |
 | `SEED_DEMO_STAFF` | Optional | `true` to also create the six demo role accounts (handy on a staging/preview deploy). **Never set this in production.** |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`, `EMAIL_FROM`, `EMAIL_FROM_NAME` | Optional | Outgoing mail. Only needed if you want email configured via environment instead of the Staff Portal. The portal's **System Settings → Email delivery** screen takes priority over these. |
 
 In production the seeder creates **only** the Super Admin — the demo accounts
 (`admin@mcbhlues.com`, `salesagent@mcbhlues.com`, …) are development-only.
@@ -89,11 +90,12 @@ made through the portal is preserved.
 - [ ] Super Admin password changed from the seeded/generated value.
 - [ ] Session cookies are already `Secure` + `httpOnly` + `SameSite=Lax` in
       production — no action needed, but keep the site on HTTPS.
-- [ ] Wire an email transport so invitation links are emailed rather than
-      copied from the UI. The link is produced in
-      `src/lib/rbac/staff-service.ts` → `issueInvitation()`; send
-      `${origin}${invitation.url}` from the staff create / invite /
-      reset-password routes.
+- [x] Email transport wired. Customer enquiry replies, auto-replies, staff
+      invitations and password resets are now sent automatically through
+      `src/lib/email/mailer.ts`. Configure SMTP under **System Settings →
+      Email delivery** (or via `SMTP_*` env vars) and use **Send me a test
+      email**. Every attempt is recorded in **System Logs** (`/portal/logs`).
+      Until SMTP is configured, outgoing messages are stored as "queued".
 - [ ] Review the seeded role permissions on `/portal/roles` against how your
       team actually works.
 - [x] The demo-credentials panel at the bottom of

@@ -18,6 +18,13 @@ export const PATCH = withPermission("staff:update", async (request, { params, us
   if (typeof body?.lastName === "string") patch.lastName = body.lastName.trim();
   if (typeof body?.phone === "string") patch.phone = body.phone.trim();
 
+  if (patch.firstName !== undefined && patch.firstName === "") {
+    return NextResponse.json({ error: "First name cannot be empty." }, { status: 400 });
+  }
+  if (patch.lastName !== undefined && patch.lastName === "") {
+    return NextResponse.json({ error: "Last name cannot be empty." }, { status: 400 });
+  }
+
   const db = await getDb();
   const [updated] = await db.update(users).set(patch).where(eq(users.id, id)).returning();
   if (!updated) return NextResponse.json({ error: "Staff member not found." }, { status: 404 });
