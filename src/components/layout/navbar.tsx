@@ -11,7 +11,18 @@ import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 
-export function Navbar() {
+interface NavbarProps {
+  /** From Portal → Company Settings; falls back to the shipped constants. */
+  phone?: string;
+  logoUrl?: string | null;
+  companyName?: string;
+}
+
+export function Navbar({
+  phone = SITE_CONFIG.contact.phone,
+  logoUrl = null,
+  companyName = SITE_CONFIG.name,
+}: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -42,7 +53,7 @@ export function Navbar() {
     >
       <Container>
         <nav className="flex items-center justify-between">
-          <Logo />
+          <Logo logoUrl={logoUrl} name={companyName} />
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
@@ -72,11 +83,11 @@ export function Navbar() {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-white" />
             </Link>
             <a
-              href={`tel:${SITE_CONFIG.contact.phone}`}
+              href={`tel:${phone}`}
               className="flex items-center gap-2 text-sm font-semibold text-dark hover:text-primary transition-colors"
             >
               <Phone className="w-4 h-4 text-primary" />
-              {SITE_CONFIG.contact.phone}
+              {phone}
             </a>
             <Link href="/contact">
               <Button size="sm">Get a Quote</Button>
@@ -119,11 +130,11 @@ export function Navbar() {
               <hr />
               <div className="flex flex-col gap-4">
                 <a
-                  href={`tel:${SITE_CONFIG.contact.phone}`}
+                  href={`tel:${phone}`}
                   className="flex items-center gap-3 text-lg font-semibold text-dark"
                 >
                   <Phone className="w-5 h-5 text-primary" />
-                  {SITE_CONFIG.contact.phone}
+                  {phone}
                 </a>
                 <Link href="/contact" className="w-full">
                   <Button className="w-full">Get a Quote</Button>

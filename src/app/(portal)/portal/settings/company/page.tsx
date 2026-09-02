@@ -5,6 +5,7 @@ import { pageAccess } from "@/lib/rbac/page-guard";
 import { AccessDenied } from "@/components/portal/access-denied";
 import { PageHeader } from "@/components/portal/ui";
 import { SettingsForm } from "@/components/portal/settings-form";
+import { LogoSettings } from "@/components/portal/logo-settings";
 import { SITE_CONFIG } from "@/constants";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +30,9 @@ export default async function CompanySettingsPage() {
         title="Company Settings"
         description="Business details shown across the public website and staff communications."
       />
+      <div className="mb-6">
+        <LogoSettings initialLogoUrl={initial["company.logo"] ?? ""} />
+      </div>
       <SettingsForm
         scope="company"
         requiredPermission="settings:company"

@@ -3,34 +3,45 @@
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { SITE_CONFIG } from "@/constants";
 
-const contactDetails = [
-  {
-    icon: Phone,
-    title: "Call Us",
-    value: SITE_CONFIG.contact.phone,
-    description: "Mon-Fri from 8am to 6pm.",
-  },
-  {
-    icon: Mail,
-    title: "Email Us",
-    value: SITE_CONFIG.contact.email,
-    description: "We'll respond within 24 hours.",
-  },
-  {
-    icon: MapPin,
-    title: "Visit Our Office",
-    value: SITE_CONFIG.contact.address,
-    description: "Stop by for a coffee and a chat.",
-  },
-  {
-    icon: Clock,
-    title: "Working Hours",
-    value: "08:00 AM - 06:00 PM",
-    description: "Monday to Saturday.",
-  },
-];
+interface ContactInfoProps {
+  /** From Portal → Company Settings; falls back to the shipped constants. */
+  contact?: {
+    email: string;
+    phone: string;
+    address: string;
+  };
+}
 
-export function ContactInfo() {
+export function ContactInfo({ contact }: ContactInfoProps) {
+  const details = contact ?? SITE_CONFIG.contact;
+
+  const contactDetails = [
+    {
+      icon: Phone,
+      title: "Call Us",
+      value: details.phone,
+      description: "Mon-Fri from 8am to 6pm.",
+    },
+    {
+      icon: Mail,
+      title: "Email Us",
+      value: details.email,
+      description: "We'll respond within 24 hours.",
+    },
+    {
+      icon: MapPin,
+      title: "Visit Our Office",
+      value: details.address,
+      description: "Stop by for a coffee and a chat.",
+    },
+    {
+      icon: Clock,
+      title: "Working Hours",
+      value: "08:00 AM - 06:00 PM",
+      description: "Monday to Saturday.",
+    },
+  ];
+
   return (
     <div className="grid sm:grid-cols-2 gap-8">
       {contactDetails.map((item) => (

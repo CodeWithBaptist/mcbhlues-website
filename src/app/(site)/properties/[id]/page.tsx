@@ -9,6 +9,7 @@ import { PropertyMap } from "@/components/sections/properties/details/property-m
 import { FeaturedProperties } from "@/components/sections/home/featured-properties";
 import { listPublishedProperties, getPropertyBySlug } from "@/lib/properties/property-service";
 import { toPublicProperty } from "@/lib/properties/public-property";
+import { getCompanyInfo } from "@/lib/settings/company";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,10 @@ export default async function PropertyDetailsPage({ params }: Props) {
   }
 
   const property = toPublicProperty(details);
-  const [allProperties] = await Promise.all([listPublishedProperties()]);
+  const [allProperties, company] = await Promise.all([
+    listPublishedProperties(),
+    getCompanyInfo(),
+  ]);
   const featured = allProperties.map(toPublicProperty);
 
   return (
@@ -55,6 +59,7 @@ export default async function PropertyDetailsPage({ params }: Props) {
               location={property.location}
               latitude={property.latitude}
               longitude={property.longitude}
+              defaultOrigin={company.address}
             />
           </div>
           <div className="lg:col-span-1">
