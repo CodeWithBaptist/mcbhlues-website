@@ -6,6 +6,7 @@ import { ChevronRight, ExternalLink, Loader2, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "./permission-provider";
 import { NotificationBell } from "./notification-bell";
+import { PortalThemeToggle } from "@/components/theme/portal-theme-toggle";
 
 function labelFor(segment: string): string {
   return segment
@@ -63,6 +64,7 @@ export function PortalTopbar() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <PortalThemeToggle />
           <Link
             href="/"
             target="_blank"

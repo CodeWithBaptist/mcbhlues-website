@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Font from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG } from "@/constants";
+import { StaffThemeProvider } from "@/components/theme/staff-theme-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
 // Fonts are self-hosted (src/fonts) so builds don't need to reach
@@ -53,12 +54,14 @@ export default function RootLayout({
         {/* Apply the saved public theme before the first paint to avoid a flash. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try { var theme = localStorage.getItem("mcbhlues-public-theme"); if (theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("public-dark"); } catch (error) {}`,
+            __html: `try { var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; var publicTheme = localStorage.getItem("mcbhlues-public-theme"); var portalTheme = localStorage.getItem("mcbhlues-portal-theme"); if (publicTheme === "dark" || (!publicTheme && prefersDark)) document.documentElement.classList.add("public-dark"); if (portalTheme === "dark" || (!portalTheme && prefersDark)) document.documentElement.classList.add("portal-dark"); } catch (error) {}`,
           }}
         />
       </head>
       <body className="antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <StaffThemeProvider>{children}</StaffThemeProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

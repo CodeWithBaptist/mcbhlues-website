@@ -268,3 +268,298 @@
     transition: none;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Staff Portal theme                                                         */
+/* -------------------------------------------------------------------------- */
+
+/* The portal gets an independent preference from the public website. These
+   selectors deliberately require `.staff-portal` or `.staff-auth`, so the
+   private UI can switch themes without affecting public pages. */
+.staff-portal {
+  --portal-background: #f8fafc;
+  --portal-surface: #ffffff;
+  --portal-surface-soft: #f8fafc;
+  --portal-surface-muted: #f1f5f9;
+  --portal-foreground: #111827;
+  --portal-copy: #475569;
+  --portal-copy-muted: #64748b;
+  --portal-border: #e2e8f0;
+  --portal-border-soft: #f1f5f9;
+  color: var(--portal-foreground);
+}
+
+.portal-dark .staff-portal {
+  --portal-background: #0a1220;
+  --portal-surface: #111c2d;
+  --portal-surface-soft: #0f1a2b;
+  --portal-surface-muted: #17253a;
+  --portal-foreground: #f4f7fb;
+  --portal-copy: #c3cfdf;
+  --portal-copy-muted: #91a1b7;
+  --portal-border: #2a3b55;
+  --portal-border-soft: #1c2b41;
+  background-image: radial-gradient(1200px 600px at 10% -10%, rgb(37 99 235 / 0.16), transparent), linear-gradient(to bottom, #0f1a2b, #09111e) !important;
+  color-scheme: dark;
+}
+
+.staff-auth {
+  color-scheme: light;
+}
+
+.portal-dark .staff-auth {
+  background-image: linear-gradient(to bottom right, #071120, #102b58, #193a75) !important;
+  color-scheme: dark;
+}
+
+.portal-dark .staff-portal .portal-theme-moon,
+.portal-dark .staff-auth .portal-theme-moon {
+  display: none;
+}
+
+.portal-dark .staff-portal .portal-theme-sun,
+.portal-dark .staff-auth .portal-theme-sun {
+  display: block;
+}
+
+.portal-dark .staff-portal [class~="bg-white"],
+.portal-dark .staff-auth [class~="bg-white"] {
+  background-color: var(--portal-surface) !important;
+}
+
+.portal-dark .staff-portal [class~="bg-white/80"],
+.portal-dark .staff-portal [class~="bg-white/90"],
+.portal-dark .staff-portal [class~="bg-white/95"],
+.portal-dark .staff-auth [class~="bg-white/80"] {
+  background-color: rgb(17 28 45 / 0.9) !important;
+}
+
+.portal-dark .staff-portal [class~="bg-gray-50"],
+.portal-dark .staff-portal [class~="bg-gray-50/50"],
+.portal-dark .staff-portal [class~="bg-gray-50/60"],
+.portal-dark .staff-portal [class~="bg-gray-50/80"],
+.portal-dark .staff-auth [class~="bg-gray-50"] {
+  background-color: var(--portal-surface-soft) !important;
+}
+
+.portal-dark .staff-portal [class~="bg-gray-100"] {
+  background-color: var(--portal-surface-muted) !important;
+}
+
+.portal-dark .staff-portal [class~="bg-gray-200"],
+.portal-dark .staff-portal [class~="bg-gray-200/60"] {
+  background-color: #22334d !important;
+}
+
+.portal-dark .staff-portal [class~="bg-gray-700"] {
+  background-color: #293e5b !important;
+}
+
+.portal-dark .staff-portal [class~="bg-blue-50"],
+.portal-dark .staff-auth [class~="bg-blue-50"] {
+  background-color: #122944 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-green-50"],
+.portal-dark .staff-auth [class~="bg-green-50"] {
+  background-color: #102d25 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-amber-50"],
+.portal-dark .staff-portal [class~="bg-amber-50/60"],
+.portal-dark .staff-auth [class~="bg-amber-50"] {
+  background-color: #352914 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-red-50"],
+.portal-dark .staff-portal [class~="bg-red-50/50"],
+.portal-dark .staff-auth [class~="bg-red-50"] {
+  background-color: #351a25 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-sky-50"] {
+  background-color: #102b3e !important;
+}
+
+.portal-dark .staff-portal [class~="bg-violet-50"] {
+  background-color: #261c47 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-blue-100"] {
+  background-color: #1b3654 !important;
+}
+
+.portal-dark .staff-portal [class~="bg-green-100"] {
+  background-color: #174335 !important;
+}
+
+.portal-dark .staff-portal [class~="text-dark"],
+.portal-dark .staff-auth [class~="text-dark"] {
+  color: var(--portal-foreground) !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-800"],
+.portal-dark .staff-portal [class~="text-gray-700"],
+.portal-dark .staff-auth [class~="text-gray-700"] {
+  color: #dbe5f2 !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-600"],
+.portal-dark .staff-auth [class~="text-gray-600"] {
+  color: var(--portal-copy) !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-500"],
+.portal-dark .staff-auth [class~="text-gray-500"] {
+  color: var(--portal-copy-muted) !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-400"],
+.portal-dark .staff-auth [class~="text-gray-400"] {
+  color: #8fa1b8 !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-300"] {
+  color: #c0ccdc !important;
+}
+
+.portal-dark .staff-portal [class~="text-gray-200"] {
+  color: #dce5f0 !important;
+}
+
+.portal-dark .staff-portal [class~="text-blue-600"] {
+  color: #60a5fa !important;
+}
+
+.portal-dark .staff-portal [class~="text-blue-700"] {
+  color: #93c5fd !important;
+}
+
+.portal-dark .staff-portal [class~="text-blue-800"] {
+  color: #bfdbfe !important;
+}
+
+.portal-dark .staff-portal [class~="text-sky-600"],
+.portal-dark .staff-portal [class~="text-sky-700"] {
+  color: #7dd3fc !important;
+}
+
+.portal-dark .staff-portal [class~="text-green-600"],
+.portal-dark .staff-portal [class~="text-green-700"],
+.portal-dark .staff-portal [class~="text-green-800"] {
+  color: #86efac !important;
+}
+
+.portal-dark .staff-portal [class~="text-emerald-600"] {
+  color: #6ee7b7 !important;
+}
+
+.portal-dark .staff-portal [class~="text-amber-600"],
+.portal-dark .staff-portal [class~="text-amber-700"],
+.portal-dark .staff-portal [class~="text-amber-800"],
+.portal-dark .staff-portal [class~="text-amber-900"] {
+  color: #fcd34d !important;
+}
+
+.portal-dark .staff-portal [class~="text-red-500"],
+.portal-dark .staff-portal [class~="text-red-600"],
+.portal-dark .staff-portal [class~="text-red-700"] {
+  color: #fda4af !important;
+}
+
+.portal-dark .staff-portal [class~="text-rose-600"] {
+  color: #fda4af !important;
+}
+
+.portal-dark .staff-portal [class~="text-violet-600"],
+.portal-dark .staff-portal [class~="text-violet-700"] {
+  color: #c4b5fd !important;
+}
+
+.portal-dark .staff-portal [class~="border-gray-50"],
+.portal-dark .staff-portal [class~="border-gray-100"] {
+  border-color: var(--portal-border-soft) !important;
+}
+
+.portal-dark .staff-portal [class~="border-gray-200"],
+.portal-dark .staff-auth [class~="border-gray-200"] {
+  border-color: var(--portal-border) !important;
+}
+
+.portal-dark .staff-portal [class~="border-gray-300"] {
+  border-color: #38506f !important;
+}
+
+.portal-dark .staff-portal [class~="border-blue-200"] {
+  border-color: #2c557e !important;
+}
+
+.portal-dark .staff-portal [class~="border-green-100"],
+.portal-dark .staff-portal [class~="border-green-200"] {
+  border-color: #28634e !important;
+}
+
+.portal-dark .staff-portal [class~="border-amber-100"],
+.portal-dark .staff-portal [class~="border-amber-200"],
+.portal-dark .staff-portal [class~="border-amber-300"] {
+  border-color: #705621 !important;
+}
+
+.portal-dark .staff-portal [class~="border-red-100"],
+.portal-dark .staff-portal [class~="border-red-200"],
+.portal-dark .staff-portal [class~="border-red-300"],
+.portal-dark .staff-auth [class~="border-red-200"] {
+  border-color: #713144 !important;
+}
+
+.portal-dark .staff-portal [class~="border-primary/20"],
+.portal-dark .staff-portal [class~="border-primary/40"] {
+  border-color: rgb(96 165 250 / 0.45) !important;
+}
+
+.portal-dark .staff-portal [class~="divide-gray-50"] > :not(:last-child),
+.portal-dark .staff-portal [class~="divide-gray-100"] > :not(:last-child) {
+  border-color: var(--portal-border-soft) !important;
+}
+
+.portal-dark .staff-portal [class~="hover:bg-gray-50"]:hover {
+  background-color: #17253a !important;
+}
+
+.portal-dark .staff-portal [class~="hover:bg-gray-100"]:hover {
+  background-color: #1d2d45 !important;
+}
+
+.portal-dark .staff-portal [class~="hover:text-dark"]:hover {
+  color: var(--portal-foreground) !important;
+}
+
+.portal-dark .staff-portal input,
+.portal-dark .staff-portal textarea,
+.portal-dark .staff-portal select,
+.portal-dark .staff-auth input,
+.portal-dark .staff-auth textarea,
+.portal-dark .staff-auth select {
+  color: var(--portal-foreground);
+  caret-color: var(--portal-foreground);
+}
+
+.portal-dark .staff-portal input::placeholder,
+.portal-dark .staff-portal textarea::placeholder,
+.portal-dark .staff-auth input::placeholder,
+.portal-dark .staff-auth textarea::placeholder {
+  color: #7f91a9;
+}
+
+.portal-dark .staff-auth [class~="text-red-700"] {
+  color: #fda4af !important;
+}
+
+.portal-dark .staff-auth [class~="text-green-700"] {
+  color: #86efac !important;
+}
+
+.portal-dark .staff-portal hr,
+.portal-dark .staff-auth hr {
+  border-color: var(--portal-border-soft);
+}
