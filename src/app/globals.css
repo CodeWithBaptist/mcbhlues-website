@@ -4,6 +4,7 @@
   --color-primary: #2563EB;
   --color-primary-dark: #1E3A8A;
   --color-primary-light: #60A5FA;
+  --color-primary-soft: #E0ECFF;
   --color-background: #ffffff;
   --color-background-soft: #EFF6FF;
   --color-foreground: #111827;
@@ -91,5 +92,179 @@
   }
   .portal-card-hover:hover {
     transform: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Public website theme                                                       */
+/* -------------------------------------------------------------------------- */
+
+/* The public site has its own theme boundary. The staff portal deliberately
+   sits outside `.public-site`, so changing this preference never restyles or
+   leaks into the private operations UI. */
+.public-site {
+  --public-background: #ffffff;
+  --public-surface: #ffffff;
+  --public-surface-soft: #f8fafc;
+  --public-surface-muted: #f1f5f9;
+  --public-foreground: #111827;
+  --public-copy: #475569;
+  --public-copy-muted: #64748b;
+  --public-border: #e2e8f0;
+  --public-border-soft: #f1f5f9;
+  background-color: var(--public-background);
+  color: var(--public-foreground);
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+.public-dark .public-site {
+  --public-background: #0a1220;
+  --public-surface: #111c2d;
+  --public-surface-soft: #0f1a2b;
+  --public-surface-muted: #17253a;
+  --public-foreground: #f4f7fb;
+  --public-copy: #c3cfdf;
+  --public-copy-muted: #91a1b7;
+  --public-border: #2a3b55;
+  --public-border-soft: #1c2b41;
+  color-scheme: dark;
+}
+
+/* Map the existing public components' utility classes onto the dark palette.
+   Keeping this scoped means the current card/section components, and future
+   CMS-driven public content using the same utilities, all switch together. */
+.public-dark .public-site .public-theme-moon {
+  display: none;
+}
+
+.public-dark .public-site .public-theme-sun {
+  display: block;
+}
+
+.public-dark .public-site [class~="bg-white"] {
+  background-color: var(--public-surface) !important;
+}
+
+.public-dark .public-site [class~="bg-white/80"] {
+  background-color: rgb(17 28 45 / 0.88) !important;
+}
+
+.public-dark .public-site [class~="bg-gray-50"],
+.public-dark .public-site [class~="bg-gray-50/30"],
+.public-dark .public-site [class~="bg-gray-50/60"] {
+  background-color: var(--public-surface-soft) !important;
+}
+
+.public-dark .public-site [class~="bg-gray-100"] {
+  background-color: var(--public-surface-muted) !important;
+}
+
+.public-dark .public-site [class~="bg-gray-200"] {
+  background-color: #22334d !important;
+}
+
+.public-dark .public-site [class~="bg-gray-300"] {
+  background-color: #304563 !important;
+}
+
+.public-dark .public-site [class~="bg-background-soft"],
+.public-dark .public-site [class~="bg-primary-soft"] {
+  background-color: #12243c !important;
+}
+
+.public-dark .public-site [class~="bg-dark"] {
+  background-color: #060b14 !important;
+}
+
+.public-dark .public-site [class~="text-dark"] {
+  color: var(--public-foreground) !important;
+}
+
+.public-dark .public-site [class~="text-gray-700"] {
+  color: #dbe5f2 !important;
+}
+
+.public-dark .public-site [class~="text-gray-600"] {
+  color: var(--public-copy) !important;
+}
+
+.public-dark .public-site [class~="text-gray-500"] {
+  color: var(--public-copy-muted) !important;
+}
+
+.public-dark .public-site [class~="text-gray-400"] {
+  color: #8fa1b8 !important;
+}
+
+.public-dark .public-site [class~="text-gray-300"] {
+  color: #c0ccdc !important;
+}
+
+.public-dark .public-site [class~="text-gray-200"] {
+  color: #dce5f0 !important;
+}
+
+.public-dark .public-site [class~="text-primary-dark"],
+.public-dark .public-site [class~="text-primary-dark/50"] {
+  color: #a7c9ff !important;
+}
+
+.public-dark .public-site [class~="text-primary-light"] {
+  color: #83b8ff !important;
+}
+
+.public-dark .public-site [class~="border-gray-100"],
+.public-dark .public-site [class~="border-gray-50"] {
+  border-color: var(--public-border-soft) !important;
+}
+
+.public-dark .public-site [class~="border-gray-200"] {
+  border-color: var(--public-border) !important;
+}
+
+.public-dark .public-site [class~="border-gray-300"] {
+  border-color: #38506f !important;
+}
+
+.public-dark .public-site [class~="border-white"] {
+  border-color: #263750 !important;
+}
+
+.public-dark .public-site [class~="divide-gray-50"] > :not(:last-child),
+.public-dark .public-site [class~="divide-gray-100"] > :not(:last-child) {
+  border-color: var(--public-border-soft) !important;
+}
+
+.public-dark .public-site [class~="hover:bg-gray-50"]:hover {
+  background-color: #17253a !important;
+}
+
+.public-dark .public-site [class~="hover:bg-gray-100"]:hover {
+  background-color: #1d2d45 !important;
+}
+
+.public-dark .public-site [class~="hover:text-dark"]:hover {
+  color: var(--public-foreground) !important;
+}
+
+.public-dark .public-site input,
+.public-dark .public-site textarea,
+.public-dark .public-site select {
+  color: var(--public-foreground);
+  caret-color: var(--public-foreground);
+}
+
+.public-dark .public-site input::placeholder,
+.public-dark .public-site textarea::placeholder {
+  color: #7f91a9;
+}
+
+.public-dark .public-site hr {
+  border-color: var(--public-border-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-site {
+    transition: none;
   }
 }

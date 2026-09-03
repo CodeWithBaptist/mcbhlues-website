@@ -10,6 +10,7 @@ import { NAV_LINKS, SITE_CONFIG } from "@/constants";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 interface NavbarProps {
   /** From Portal → Company Settings; falls back to the shipped constants. */
@@ -71,7 +72,8 @@ export function Navbar({
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-4">
+            <ThemeToggle />
             <Link 
               href="/favorites" 
               className={cn(
@@ -127,7 +129,9 @@ export function Navbar({
                   {link.title}
                 </Link>
               ))}
-              <hr />
+              <div className="border-t border-gray-100 pt-6">
+                <ThemeToggle showLabel />
+              </div>
               <div className="flex flex-col gap-4">
                 <a
                   href={`tel:${phone}`}

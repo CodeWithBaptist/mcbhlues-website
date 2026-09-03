@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Font from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG } from "@/constants";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 // Fonts are self-hosted (src/fonts) so builds don't need to reach
 // fonts.googleapis.com — `next/font/google` fetches at build time and
@@ -47,8 +48,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <body className="antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
+      <head>
+        {/* Apply the saved public theme before the first paint to avoid a flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try { var theme = localStorage.getItem("mcbhlues-public-theme"); if (theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)) document.documentElement.classList.add("public-dark"); } catch (error) {}`,
+          }}
+        />
+      </head>
+      <body className="antialiased">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
