@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Font from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG } from "@/constants";
+import { StaffThemeProvider } from "@/components/theme/staff-theme-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 // Fonts are self-hosted (src/fonts) so builds don't need to reach
 // fonts.googleapis.com — `next/font/google` fetches at build time and
@@ -47,8 +49,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
-      <body className="antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
+      <head>
+        {/* Apply the saved public theme before the first paint to avoid a flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try { var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; var publicTheme = localStorage.getItem("mcbhlues-public-theme"); var portalTheme = localStorage.getItem("mcbhlues-portal-theme"); if (publicTheme === "dark" || (!publicTheme && prefersDark)) document.documentElement.classList.add("public-dark"); if (portalTheme === "dark" || (!portalTheme && prefersDark)) document.documentElement.classList.add("portal-dark"); } catch (error) {}`,
+          }}
+        />
+      </head>
+      <body className="antialiased">
+        <ThemeProvider>
+          <StaffThemeProvider>{children}</StaffThemeProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

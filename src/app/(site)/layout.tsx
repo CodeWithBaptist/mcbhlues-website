@@ -14,7 +14,7 @@ export default async function SiteLayout({
   const company = await getCompanyInfo();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="public-site flex min-h-screen flex-col">
       <AnnouncementBanner />
       <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
       <main className="flex-grow pt-20">{children}</main>

@@ -8,6 +8,10 @@ import { PortalTopbar } from "@/components/portal/portal-topbar";
 
 export const metadata: Metadata = {
   title: "Staff Portal",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -31,7 +35,7 @@ export default async function PortalLayout({ children }: { children: React.React
         permissions: user.permissions,
       }}
     >
-      <div className="flex min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(37,99,235,0.08),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
+      <div className="staff-portal flex min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(37,99,235,0.08),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
         <PortalSidebar navigation={navigation} />
         <div className="flex min-w-0 flex-1 flex-col">
           <PortalTopbar />
