@@ -69,7 +69,7 @@ export default function AcceptInvitePage({ params }: { params: Promise<{ token: 
         <h1 className="font-heading text-xl font-bold text-dark">Set your password</h1>
         {invite && (
           <p className="mt-1 text-sm text-gray-500">
-            Welcome {invite.firstName} — activate {invite.email}
+            Welcome {invite.firstName}. Activating the account for {invite.email}
           </p>
         )}
       </div>

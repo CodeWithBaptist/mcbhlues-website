@@ -196,6 +196,7 @@ export async function seedDatabase(db: Database) {
       .insert(properties)
       .values({
         title: seed.title,
+        name: seed.name,
         slug: seed.slug,
         description: seed.description,
         type: seed.type,
@@ -208,7 +209,6 @@ export async function seedDatabase(db: Database) {
         address: seed.address,
         city: seed.city,
         state: seed.state,
-        postalCode: seed.postalCode,
         country: seed.country,
         latitude: seed.latitude,
         longitude: seed.longitude,
@@ -225,7 +225,7 @@ export async function seedDatabase(db: Database) {
         seed.images.map((url, index) => ({
           propertyId: created.id,
           url,
-          alt: seed.title,
+          alt: seed.name,
           sortOrder: index,
           isPrimary: index === 0,
         }))
@@ -377,7 +377,7 @@ async function seedContent(db: Database, demo: boolean) {
 
   /* ---- testimonials -------------------------------------------------------- */
   const testimonialCount = await db.select({ id: testimonials.id }).from(testimonials).limit(1);
-  if (testimonialCount.length === 0) {
+  if (testimonialCount.length === 0 && TESTIMONIAL_SEED.length > 0) {
     await db.insert(testimonials).values(
       TESTIMONIAL_SEED.map((seed) => ({
         name: seed.name,

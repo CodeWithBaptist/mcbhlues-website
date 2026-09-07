@@ -35,7 +35,8 @@ export function PropertyContent({ property, amenities = [], features = [] }: Pro
       <div>
         <h3 className="mb-6 font-heading text-2xl font-bold text-dark">Property Description</h3>
         <p className="text-lg leading-relaxed text-gray-600">
-          {property.description || `This stunning property offers an unparalleled living experience, nestled in the heart of ${property.location}.`}
+          {property.description ||
+            `${property.name} is located in ${property.location}. Contact us to arrange a viewing or ask for more details.`}
         </p>
       </div>
 

@@ -19,7 +19,7 @@ export default async function ChangePasswordPage() {
     <div className="max-w-xl">
       <PageHeader
         title="Change your password"
-        description="Set a new password for your own account. You'll stay signed in — other active sessions are revoked."
+        description="Set a new password for your own account. You'll stay signed in, other active sessions are revoked."
       />
       <Card title="Update password" description="Enter your current password to confirm your identity.">
         <ChangePasswordForm />

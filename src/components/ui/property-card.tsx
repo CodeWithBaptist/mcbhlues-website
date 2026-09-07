@@ -29,7 +29,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={property.image}
-            alt={property.title}
+            alt={property.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
@@ -43,7 +43,7 @@ export function PropertyCard({ property, className }: PropertyCardProps) {
       <div className="p-6 flex flex-col gap-4">
         <div className="flex justify-between items-start">
           <h3 className="text-xl font-bold text-dark group-hover:text-primary transition-colors line-clamp-1">
-            {property.title}
+            {property.name}
           </h3>
           <p className="text-lg font-bold text-primary shrink-0 ml-2">
             {formatCurrency(property.price, property.currency)}

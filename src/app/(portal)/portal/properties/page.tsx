@@ -37,7 +37,7 @@ export default async function PropertiesPage() {
     <div>
       <PageHeader
         title="Properties"
-        description="Full listing control — images, amenities, features, pricing, status and Google Maps locations."
+        description="Full listing control, images, amenities, features, pricing, status and Google Maps locations."
       />
       <PropertiesManager
         initialProperties={properties}

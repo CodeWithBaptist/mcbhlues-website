@@ -16,14 +16,15 @@ export function ContactHero() {
           animate={{ opacity: 1, y: 0 }}
         >
           <span className="text-primary-light font-bold tracking-widest uppercase text-sm mb-4 block">
-            Get In Touch
+            Contact us
           </span>
           <h1 className="text-4xl md:text-6xl font-extrabold font-heading mb-6">
-            Let&rsquo;s Start a Conversation
+            Tell us what you are planning
           </h1>
           <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed">
-            Whether you&rsquo;re looking to buy, rent, list a property, or need expert consulting, 
-            our team is here to provide world-class service.
+            Buying, selling, developing or managing a property. Send us a message
+            and a consultant will reply with the next steps, what it involves and
+            what it costs.
           </p>
         </motion.div>
       </Container>

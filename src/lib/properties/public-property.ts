@@ -10,9 +10,29 @@ export function locationLabel(property: {
 }): string {
   const parts = [property.city, property.state].filter(Boolean);
   if (parts.length > 0) return parts.join(", ");
-  if (property.address) return property.address;
   if (property.country) return property.country;
+  if (property.address) return property.address;
   return "Location on request";
+}
+
+/** True when a listing has enough detail to render a map on the public page. */
+export function hasMapLocation(property: {
+  latitude?: string;
+  longitude?: string;
+  city?: string;
+  state?: string;
+  address?: string;
+}): boolean {
+  const hasCoords = Boolean(
+    property.latitude &&
+      property.longitude &&
+      Number.isFinite(Number(property.latitude)) &&
+      Number.isFinite(Number(property.longitude))
+  );
+  const hasText = Boolean(
+    property.address || property.city || property.state
+  );
+  return hasCoords || hasText;
 }
 
 /** Pick the primary image (or the first available image), else a placeholder. */
@@ -27,6 +47,7 @@ export function toPublicProperty(details: PropertyWithDetails): Property {
     id: details.id,
     slug: details.slug,
     title: details.title,
+    name: details.name,
     description: details.description,
     price: details.price,
     currency: details.currency,
@@ -40,6 +61,7 @@ export function toPublicProperty(details: PropertyWithDetails): Property {
     address: details.address,
     city: details.city,
     state: details.state,
+    country: details.country,
     image: primaryImage(details),
     images: details.images.map((row) => row.url),
     amenities: details.amenities.map((row) => row.name),

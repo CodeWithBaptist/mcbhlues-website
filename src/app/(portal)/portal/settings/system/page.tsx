@@ -172,9 +172,10 @@ export default async function SystemSettingsPage() {
               options: [
                 { value: "Africa/Lagos", label: "Africa/Lagos (WAT)" },
                 { value: "Africa/Accra", label: "Africa/Accra (GMT)" },
-                { value: "Europe/London", label: "Europe/London" },
-                { value: "America/New_York", label: "America/New York" },
-                { value: "Asia/Dubai", label: "Asia/Dubai" },
+                { value: "Africa/Casablanca", label: "Africa/Casablanca" },
+                { value: "Africa/Nairobi", label: "Africa/Nairobi (EAT)" },
+                { value: "Africa/Johannesburg", label: "Africa/Johannesburg (SAST)" },
+                { value: "Africa/Cairo", label: "Africa/Cairo (EET)" },
                 { value: "UTC", label: "UTC" },
               ],
               help: "Used when timestamps are rendered for staff.",
@@ -256,7 +257,7 @@ export default async function SystemSettingsPage() {
             scope="system"
             requiredPermission="settings:system"
             title="Email delivery (SMTP)"
-            description="Where outgoing mail is sent from — customer enquiry replies, auto-replies, staff invitations and password resets."
+            description="Where outgoing mail is sent from, customer enquiry replies, auto-replies, staff invitations and password resets."
             initial={systemInitial}
             fields={[
               {
@@ -370,7 +371,7 @@ export default async function SystemSettingsPage() {
 
       <Card
         title="Sensitive configuration"
-        description="Live status of every guarded area — each is protected by its own permission, and the badge shows your effective access."
+        description="Live status of every guarded area, each is protected by its own permission, and the badge shows your effective access."
       >
         <ul className="space-y-3">
           <SensitiveRow

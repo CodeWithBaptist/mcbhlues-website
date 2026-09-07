@@ -21,23 +21,24 @@ export function CTASection() {
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-dark/50 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl" />
 
           <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-6xl font-extrabold font-heading mb-6 leading-tight">
-              Ready to Secure Your <br /> Future Investment?
+            <h2 className="text-3xl md:text-5xl font-extrabold font-heading mb-6 leading-tight">
+              Not sure where to start?
             </h2>
-            <p className="text-xl text-primary-light mb-10 leading-relaxed">
-              Connect with our experts today for a personalized consultation. 
-              Let&rsquo;s find the perfect property that aligns with your lifestyle and goals.
+            <p className="text-lg text-white/90 mb-10 leading-relaxed max-w-2xl mx-auto">
+              Send us a message describing what you want to do. We will reply with a
+              plain explanation of the options, the process and the cost, with no
+              obligation to proceed.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">
                 <Button size="lg" className="bg-white text-primary hover:bg-gray-100 px-10 gap-2 font-bold">
-                  Get Started
+                  Message us
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/contact">
+              <Link href="/properties">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary px-10 font-bold">
-                  Contact Sales
+                  Browse listings
                 </Button>
               </Link>
             </div>

@@ -48,7 +48,7 @@ export function PropertySidebar({
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setResult({ ok: false, text: data.error ?? "Something went wrong — please try again." });
+        setResult({ ok: false, text: data.error ?? "Something went wrong. Please try again." });
         return;
       }
       setResult({
@@ -60,7 +60,7 @@ export function PropertySidebar({
       setPhone("");
       setMessage("");
     } catch {
-      setResult({ ok: false, text: "Network error — please try again." });
+      setResult({ ok: false, text: "Network error. Please try again." });
     } finally {
       setSending(false);
     }
@@ -69,7 +69,7 @@ export function PropertySidebar({
   return (
     <div className="flex flex-col gap-8 sticky top-32">
       {/* Contact Form */}
-      <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
+      <div id="inquiry" className="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
         <h4 className="text-xl font-bold text-dark font-heading mb-6">Inquire About This Property</h4>
         {result?.ok ? (
           <div className="flex flex-col items-center gap-3 py-10 text-center">
@@ -123,22 +123,6 @@ export function PropertySidebar({
             </Button>
           </form>
         )}
-      </div>
-
-      {/* Agent Info */}
-      <div className="bg-dark text-white p-8 rounded-2xl">
-         <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-               <User className="w-8 h-8 text-primary" />
-            </div>
-            <div>
-               <h5 className="font-bold text-lg">Marcus Blue</h5>
-               <p className="text-primary-light text-sm">Senior Listing Agent</p>
-            </div>
-         </div>
-         <Button variant="outline" className="w-full border-white/20 text-white hover:bg-white hover:text-dark">
-            View Agent Profile
-         </Button>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export function PropertiesList({ properties }: { properties: Property[] }) {
 
   const filteredProperties = properties.filter((p) => {
     const matchesSearch = 
-      p.title.toLowerCase().includes(search.toLowerCase()) || 
+      p.name.toLowerCase().includes(search.toLowerCase()) || 
       p.location.toLowerCase().includes(search.toLowerCase());
     const matchesType = type === "all" || p.type === type;
     return matchesSearch && matchesType;

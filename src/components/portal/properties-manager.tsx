@@ -52,6 +52,9 @@ interface AmenityDraft {
 
 interface EditorState {
   id: string | null; // null = creating
+  /** Plain listing/building name shown on cards (drives the URL slug). */
+  name: string;
+  /** Short marketing headline for the listing header. */
   title: string;
   description: string;
   type: "sale" | "rent";
@@ -65,11 +68,9 @@ interface EditorState {
   address: string;
   city: string;
   state: string;
-  postalCode: string;
   country: string;
   latitude: string;
   longitude: string;
-  googleMapsUrl: string;
   isFeatured: boolean;
   isPublished: boolean;
   images: ImageDraft[];
@@ -81,6 +82,7 @@ interface EditorState {
 function emptyEditor(): EditorState {
   return {
     id: null,
+    name: "",
     title: "",
     description: "",
     type: "sale",
@@ -94,11 +96,9 @@ function emptyEditor(): EditorState {
     address: "",
     city: "",
     state: "",
-    postalCode: "",
-    country: "",
+    country: "Nigeria",
     latitude: "",
     longitude: "",
-    googleMapsUrl: "",
     isFeatured: false,
     isPublished: true,
     images: [],
@@ -111,6 +111,7 @@ function emptyEditor(): EditorState {
 function fromProperty(property: PropertyWithDetails): EditorState {
   return {
     id: property.id,
+    name: property.name,
     title: property.title,
     description: property.description,
     type: property.type,
@@ -124,11 +125,9 @@ function fromProperty(property: PropertyWithDetails): EditorState {
     address: property.address,
     city: property.city,
     state: property.state,
-    postalCode: property.postalCode,
     country: property.country,
     latitude: property.latitude,
     longitude: property.longitude,
-    googleMapsUrl: property.googleMapsUrl,
     isFeatured: property.isFeatured,
     isPublished: property.isPublished,
     images: property.images.map((image) => ({
@@ -168,7 +167,7 @@ export function PropertiesManager({
   const filtered = useMemo(() => {
     return properties.filter((property) => {
       const matchesSearch =
-        property.title.toLowerCase().includes(search.toLowerCase()) ||
+        property.name.toLowerCase().includes(search.toLowerCase()) ||
         property.city.toLowerCase().includes(search.toLowerCase()) ||
         property.state.toLowerCase().includes(search.toLowerCase());
       const matchesType = typeFilter === "all" || property.type === typeFilter;
@@ -228,7 +227,7 @@ export function PropertiesManager({
   }
 
   async function remove(property: PropertyWithDetails) {
-    if (!confirm(`Delete "${property.title}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete "${property.name}"? This cannot be undone.`)) return;
     setBusyId(property.id);
     const data = await call(`/api/portal/properties/${property.id}`, { method: "DELETE" });
     setBusyId(null);
@@ -330,7 +329,7 @@ export function PropertiesManager({
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={property.images[0].url}
-                              alt={property.title}
+                              alt={property.name}
                               className="h-full w-full object-cover"
                             />
                           ) : (
@@ -339,7 +338,7 @@ export function PropertiesManager({
                         </div>
                         <div className="min-w-0">
                           <p className="flex items-center gap-1.5 font-semibold text-dark">
-                            <span className="truncate">{property.title}</span>
+                            <span className="truncate">{property.name}</span>
                             {property.isFeatured && <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" />}
                           </p>
                           <p className="flex items-center gap-1 text-xs text-gray-500">
@@ -528,7 +527,7 @@ function PropertyEditor({
   function addImage() {
     const url = imageUrl.trim();
     if (!url) return;
-    const images = [...form.images, { url, alt: form.title, isPrimary: form.images.length === 0 }];
+    const images = [...form.images, { url, alt: form.name, isPrimary: form.images.length === 0 }];
     set("images", images);
     setImageUrl("");
   }
@@ -561,6 +560,7 @@ function PropertyEditor({
     setError(null);
 
     const base = {
+      name: form.name,
       title: form.title,
       description: form.description,
       type: form.type,
@@ -574,11 +574,9 @@ function PropertyEditor({
       address: form.address,
       city: form.city,
       state: form.state,
-      postalCode: form.postalCode,
       country: form.country,
       latitude: form.latitude,
       longitude: form.longitude,
-      googleMapsUrl: form.googleMapsUrl,
       isFeatured: form.isFeatured,
       isPublished: form.isPublished,
     };
@@ -674,7 +672,7 @@ function PropertyEditor({
               {isEdit ? "Edit property" : "Add property"}
             </h2>
             <p className="text-xs text-gray-500">
-              {isEdit ? form.title : "Create a new property listing"}
+              {isEdit ? form.name : "Create a new property listing"}
             </p>
           </div>
           <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
@@ -685,12 +683,20 @@ function PropertyEditor({
         <div className="max-h-[70vh] space-y-6 overflow-y-auto px-6 py-5">
           {/* Basics */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Title" className="sm:col-span-2">
+            <Field label="Name" hint="Building or project name shown on cards (also forms the web address)." className="sm:col-span-2">
+              <Input
+                required
+                value={form.name}
+                onChange={(event) => set("name", event.target.value)}
+                placeholder="e.g. Azure Sky Penthouse"
+              />
+            </Field>
+            <Field label="Title" hint="Short marketing headline shown on the listing page." className="sm:col-span-2">
               <Input
                 required
                 value={form.title}
                 onChange={(event) => set("title", event.target.value)}
-                placeholder="e.g. Azure Sky Penthouse"
+                placeholder="e.g. Skyline living above Victoria Island"
               />
             </Field>
             <Field label="Listing type">
@@ -748,37 +754,31 @@ function PropertyEditor({
           {/* Location */}
           <div>
             <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-dark">
-              <MapPin className="h-4 w-4 text-primary" /> Location &amp; Google Maps
+              <MapPin className="h-4 w-4 text-primary" /> Location &amp; map (optional)
             </h3>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Street address" className="sm:col-span-2">
                 <Input value={form.address} onChange={(event) => set("address", event.target.value)} />
               </Field>
-              <Field label="City">
-                <Input value={form.city} onChange={(event) => set("city", event.target.value)} />
+              <Field label="City / Area">
+                <Input value={form.city} onChange={(event) => set("city", event.target.value)} placeholder="e.g. Lekki" />
               </Field>
-              <Field label="State / Province">
-                <Input value={form.state} onChange={(event) => set("state", event.target.value)} />
+              <Field label="State">
+                <Input value={form.state} onChange={(event) => set("state", event.target.value)} placeholder="e.g. Lagos" />
               </Field>
-              <Field label="Postal code">
-                <Input value={form.postalCode} onChange={(event) => set("postalCode", event.target.value)} />
+              <Field label="Country" className="sm:col-span-2">
+                <Input value={form.country} onChange={(event) => set("country", event.target.value)} placeholder="Nigeria" />
               </Field>
-              <Field label="Country">
-                <Input value={form.country} onChange={(event) => set("country", event.target.value)} />
+              <Field label="Latitude" hint="Optional. Leave blank to show no map for this listing.">
+                <Input value={form.latitude} onChange={(event) => set("latitude", event.target.value)} placeholder="e.g. 6.4281" />
               </Field>
-              <Field label="Latitude">
-                <Input value={form.latitude} onChange={(event) => set("latitude", event.target.value)} placeholder="40.7580" />
-              </Field>
-              <Field label="Longitude">
-                <Input value={form.longitude} onChange={(event) => set("longitude", event.target.value)} placeholder="-73.9855" />
-              </Field>
-              <Field label="Google Maps embed / link URL" className="sm:col-span-2">
-                <Input value={form.googleMapsUrl} onChange={(event) => set("googleMapsUrl", event.target.value)} />
+              <Field label="Longitude" hint="Optional. Leave blank to show no map for this listing.">
+                <Input value={form.longitude} onChange={(event) => set("longitude", event.target.value)} placeholder="e.g. 3.4219" />
               </Field>
             </div>
             <p className="mt-2 text-xs text-gray-500">
-              The public detail page pins the map using latitude/longitude when provided, otherwise it falls back to the
-              address text.
+              The map is optional. When both latitude and longitude are empty, the public listing page will not show a
+              map at all.
             </p>
           </div>
 
@@ -796,7 +796,7 @@ function PropertyEditor({
                   onUploaded={(file) =>
                     set("images", [
                       ...form.images,
-                      { url: file.url, alt: form.title || file.fileName, isPrimary: form.images.length === 0 },
+                      { url: file.url, alt: form.name || file.fileName, isPrimary: form.images.length === 0 },
                     ])
                   }
                 />
@@ -989,10 +989,12 @@ function PropertyEditor({
 
 function Field({
   label,
+  hint,
   children,
   className,
 }: {
   label: string;
+  hint?: string;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -1000,6 +1002,7 @@ function Field({
     <label className={cn("block", className)}>
       <span className="mb-1.5 block text-sm font-medium text-gray-700">{label}</span>
       {children}
+      {hint && <span className="mt-1 block text-xs text-gray-400">{hint}</span>}
     </label>
   );
 }

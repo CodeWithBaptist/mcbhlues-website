@@ -25,7 +25,7 @@ export default async function MediaPage() {
     <div>
       <PageHeader
         title="Media Library"
-        description="Images, documents and brand assets — copy any URL straight into listings or CMS content."
+        description="Images, documents and brand assets, copy any URL straight into listings or CMS content."
       />
       <MediaManager initialAssets={assets} permissions={access.user.permissions} />
     </div>

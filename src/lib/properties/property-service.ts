@@ -36,7 +36,10 @@ export interface PropertyFeatureRow {
 
 export interface PropertyWithDetails {
   id: string;
+  /** Short marketing headline for the listing header. */
   title: string;
+  /** Plain listing/building name shown on cards. */
+  name: string;
   slug: string;
   description: string;
   type: "sale" | "rent";
@@ -50,11 +53,9 @@ export interface PropertyWithDetails {
   address: string;
   city: string;
   state: string;
-  postalCode: string;
   country: string;
   latitude: string;
   longitude: string;
-  googleMapsUrl: string;
   isFeatured: boolean;
   isPublished: boolean;
   publishedAt: string | null;
@@ -68,6 +69,7 @@ export interface PropertyWithDetails {
 
 export interface PropertyInput {
   title?: string;
+  name?: string;
   description?: string;
   type?: "sale" | "rent";
   status?: string;
@@ -80,11 +82,9 @@ export interface PropertyInput {
   address?: string;
   city?: string;
   state?: string;
-  postalCode?: string;
   country?: string;
   latitude?: string;
   longitude?: string;
-  googleMapsUrl?: string;
   isFeatured?: boolean;
   isPublished?: boolean;
 }
@@ -169,6 +169,7 @@ async function assemble(
   return rows.map((row) => ({
     id: row.id,
     title: row.title,
+    name: row.name,
     slug: row.slug,
     description: row.description,
     type: row.type as "sale" | "rent",
@@ -182,11 +183,9 @@ async function assemble(
     address: row.address,
     city: row.city,
     state: row.state,
-    postalCode: row.postalCode,
     country: row.country,
     latitude: row.latitude,
     longitude: row.longitude,
-    googleMapsUrl: row.googleMapsUrl,
     isFeatured: row.isFeatured,
     isPublished: row.isPublished,
     publishedAt: row.publishedAt ? row.publishedAt.toISOString() : null,
@@ -272,10 +271,10 @@ export async function listPublishedProperties(): Promise<PropertyWithDetails[]> 
  * curate the homepage without necessarily holding any property:* read scope.
  */
 export async function listPropertiesForCuration(): Promise<
-  { id: string; title: string; city: string; status: string; isPublished: boolean; isFeatured: boolean; imageUrl: string }[]
+  { id: string; name: string; city: string; status: string; isPublished: boolean; isFeatured: boolean; imageUrl: string }[]
 > {
   const db = await getDb();
-  const rows = await db.select().from(properties).orderBy(asc(properties.title));
+  const rows = await db.select().from(properties).orderBy(asc(properties.name));
   if (rows.length === 0) return [];
   const imageRows = await db
     .select()
@@ -290,7 +289,7 @@ export async function listPropertiesForCuration(): Promise<
   }
   return rows.map((row) => ({
     id: row.id,
-    title: row.title,
+    name: row.name,
     city: row.city,
     status: row.status,
     isPublished: row.isPublished,
@@ -303,15 +302,19 @@ export async function listPropertiesForCuration(): Promise<
 /*  Writes                                                                     */
 /* -------------------------------------------------------------------------- */
 
-export async function createProperty(input: PropertyInput & { title: string }, actorId: string): Promise<PropertyWithDetails> {
+export async function createProperty(
+  input: PropertyInput & { title: string; name: string },
+  actorId: string
+): Promise<PropertyWithDetails> {
   const db = await getDb();
-  const baseSlug = slugify(input.title);
+  const baseSlug = slugify(input.name || input.title);
   const slug = await uniqueSlug(baseSlug);
 
   const [created] = await db
     .insert(properties)
     .values({
       title: input.title,
+      name: input.name,
       slug,
       description: input.description ?? "",
       type: input.type ?? "sale",
@@ -325,11 +328,9 @@ export async function createProperty(input: PropertyInput & { title: string }, a
       address: input.address ?? "",
       city: input.city ?? "",
       state: input.state ?? "",
-      postalCode: input.postalCode ?? "",
       country: input.country ?? "",
       latitude: input.latitude ?? "",
       longitude: input.longitude ?? "",
-      googleMapsUrl: input.googleMapsUrl ?? "",
       isFeatured: input.isFeatured ?? false,
       isPublished: input.isPublished ?? false,
       publishedAt: input.isPublished ? new Date() : null,
@@ -352,6 +353,7 @@ export async function updateProperty(
   const patch: Record<string, unknown> = { updatedAt: new Date() };
 
   if (input.title !== undefined) patch.title = input.title.trim();
+  if (input.name !== undefined) patch.name = input.name.trim();
   if (input.description !== undefined) patch.description = input.description;
   if (input.type !== undefined) patch.type = input.type;
   if (input.status !== undefined) patch.status = input.status;
@@ -364,11 +366,9 @@ export async function updateProperty(
   if (input.address !== undefined) patch.address = input.address;
   if (input.city !== undefined) patch.city = input.city;
   if (input.state !== undefined) patch.state = input.state;
-  if (input.postalCode !== undefined) patch.postalCode = input.postalCode;
   if (input.country !== undefined) patch.country = input.country;
   if (input.latitude !== undefined) patch.latitude = input.latitude;
   if (input.longitude !== undefined) patch.longitude = input.longitude;
-  if (input.googleMapsUrl !== undefined) patch.googleMapsUrl = input.googleMapsUrl;
   if (input.isFeatured !== undefined) patch.isFeatured = input.isFeatured;
 
   // Publishing state changes the publishedAt stamp.
@@ -377,9 +377,9 @@ export async function updateProperty(
     patch.publishedAt = input.isPublished ? (existing.publishedAt ?? new Date()) : null;
   }
 
-  // Keep the slug in sync with the title when the title changes.
-  if (patch.title && patch.title !== existing.title) {
-    patch.slug = await uniqueSlug(slugify(patch.title as string), id);
+  // Keep the slug in sync with the name (the stable listing name) when it changes.
+  if (typeof patch.name === "string" && patch.name !== existing.name) {
+    patch.slug = await uniqueSlug(slugify(patch.name), id);
   }
 
   const [updated] = await db.update(properties).set(patch).where(eq(properties.id, id)).returning();

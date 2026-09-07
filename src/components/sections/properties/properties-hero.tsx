@@ -13,14 +13,14 @@ export function PropertiesHero() {
           className="max-w-3xl"
         >
           <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">
-            Our Portfolio
+            Current Listings
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-dark mb-4">
-            Find Your Dream Property
+            Browse property for sale and rent
           </h1>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Browse our exclusive collection of luxury residences, commercial spaces, 
-            and premium land developments.
+            Filter the list below by type, title or location. Select any listing to
+            see the full details and arrange a viewing.
           </p>
         </motion.div>
       </Container>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, MousePointer2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
@@ -15,33 +15,16 @@ export interface HeroContent {
 /**
  * Homepage hero. Copy comes from the CMS (Content → Website CMS) via props;
  * the defaults are applied by the page when no override has been saved.
- * The word "Luxury" is highlighted when present.
  */
 export function Hero({ content }: { content?: HeroContent }) {
-  const badge = content?.badge || "Welcome to MCBHLUES ENTERPRISES";
-  const title = content?.title || "Redefining Luxury & Innovation in Real Estate";
+  const badge = content?.badge || "Property consulting, development and management";
+  const title = content?.title || "We help you buy, build and manage property";
   const subtitle =
     content?.subtitle ||
-    "Specializing in high-end consulting, avant-garde property development, and elite facility management for discerning clients.";
-
-  const highlightIndex = title.indexOf("Luxury");
-  const renderedTitle =
-    highlightIndex === -1 ? (
-      title
-    ) : (
-      <>
-        {title.slice(0, highlightIndex)}
-        <span className="text-primary">Luxury</span>
-        {title.slice(highlightIndex + "Luxury".length)}
-      </>
-    );
+    "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.";
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-primary-soft/30 -z-10 skew-x-12 translate-x-1/4" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/5 rounded-full blur-3xl -z-10" />
-
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background-soft">
       <Container className="relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -49,13 +32,13 @@ export function Hero({ content }: { content?: HeroContent }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wider uppercase mb-6">
+            <span className="inline-block px-4 py-2 border border-primary/20 text-primary text-sm font-semibold tracking-wide uppercase mb-6">
               {badge}
             </span>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-dark leading-[1.1] mb-6 font-heading">
-              {renderedTitle}
+            <h1 className="text-5xl md:text-6xl font-extrabold text-dark leading-[1.08] mb-6 font-heading">
+              {title}
             </h1>
-            <p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-xl font-body">
+            <p className="text-lg text-gray-600 leading-relaxed mb-10 max-w-xl font-body">
               {subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -67,48 +50,31 @@ export function Hero({ content }: { content?: HeroContent }) {
               </Link>
               <Link href="/about">
                 <Button size="lg" variant="outline">
-                  Our Services
+                  How we work
                 </Button>
               </Link>
             </div>
-            
-            <div className="mt-12 flex items-center gap-8">
-              <div>
-                <p className="text-3xl font-extrabold text-dark">500+</p>
-                <p className="text-sm text-gray-500 uppercase tracking-wider">Properties Managed</p>
-              </div>
-              <div className="w-px h-10 bg-gray-200" />
-              <div>
-                <p className="text-3xl font-extrabold text-dark">$2B+</p>
-                <p className="text-sm text-gray-500 uppercase tracking-wider">Asset Value</p>
-              </div>
-            </div>
+
+            <p className="mt-12 text-sm text-gray-500 leading-relaxed max-w-md">
+              Give us a call or send a message. A consultant who knows your case
+              stays on it for the whole transaction. No call centres and no hand
+              offs between departments.
+            </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.15 }}
             className="relative hidden lg:block"
           >
-            <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-              <div className="aspect-[4/5] bg-gradient-to-br from-primary-light to-primary-dark flex items-center justify-center">
-                 <div className="text-white text-center p-8">
-                    <MousePointer2 className="w-20 h-20 mx-auto mb-6 opacity-50" />
-                    <p className="text-2xl font-bold font-heading">Luxury Living Defined</p>
-                 </div>
-              </div>
-            </div>
-            {/* Decorative Card */}
-            <div className="absolute -bottom-10 -right-10 z-20 bg-white p-6 rounded-2xl shadow-xl max-w-[240px] border border-gray-100 animate-bounce-slow">
-              <p className="text-sm font-bold text-primary mb-2 italic">&ldquo;Exceptional Service&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-200" />
-                <div>
-                  <p className="text-xs font-bold text-dark">James Wilson</p>
-                  <p className="text-[10px] text-gray-400">CEO, TechGlobal</p>
-                </div>
-              </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element -- editorial imagery placeholder */}
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"
+                alt="Modern residential building managed by MCBHLUES Enterprises"
+                className="aspect-[4/5] w-full object-cover"
+              />
             </div>
           </motion.div>
         </div>

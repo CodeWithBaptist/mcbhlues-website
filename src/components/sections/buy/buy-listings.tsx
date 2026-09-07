@@ -17,7 +17,7 @@ export function BuyListings({ properties }: { properties: Property[] }) {
   const filtered = saleProperties
     .filter(
       (p) =>
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.location.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {

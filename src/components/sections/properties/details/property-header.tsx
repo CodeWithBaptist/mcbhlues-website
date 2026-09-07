@@ -1,6 +1,6 @@
 "use client";
 
-import { MapPin, Share2, Heart, Printer } from "lucide-react";
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { formatCurrency } from "@/lib/utils";
@@ -25,8 +25,13 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
               <Badge variant="light">{property.status}</Badge>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-dark font-heading mb-2">
-              {property.title}
+              {property.name}
             </h1>
+            {property.title && (
+              <p className="text-xl md:text-2xl text-gray-600 font-medium mb-2">
+                {property.title}
+              </p>
+            )}
             <div className="flex items-center gap-2 text-gray-500">
               <MapPin className="w-5 h-5 text-primary" />
               <span className="text-lg">{property.location}</span>
@@ -38,19 +43,9 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
               {formatCurrency(property.price, property.currency)}
               {property.type === "rent" && <span className="text-xl font-bold text-gray-400">/mo</span>}
             </p>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full">
-                <Share2 className="w-4 h-4" />
-              </Button>
-              <Link href="/favorites">
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full">
-                <Heart className="w-4 h-4" />
-              </Button>
+            <Link href="#inquiry">
+              <Button size="lg">Arrange a viewing</Button>
             </Link>
-              <Button variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full">
-                <Printer className="w-4 h-4" />
-              </Button>
-            </div>
           </div>
         </div>
       </Container>

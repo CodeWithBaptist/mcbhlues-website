@@ -20,16 +20,17 @@ export function RentHero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold tracking-wider uppercase mb-6">
-              Premium Rentals
+            <span className="inline-block px-4 py-2 border border-primary/20 text-primary text-sm font-semibold tracking-wide uppercase mb-6">
+              Residential and commercial rentals
             </span>
             <h1 className="text-4xl md:text-6xl font-extrabold font-heading text-dark leading-tight mb-6">
-              Experience Luxury <br />
-              <span className="text-primary">Without Commitment</span>
+              Rent homes and <br />
+              <span className="text-primary">workspace</span>
             </h1>
             <p className="text-xl text-gray-600 leading-relaxed mb-10 max-w-xl">
-              From high-end penthouses to modern commercial spaces, find the perfect 
-              rental that fits your lifestyle and business needs.
+              Search residential and commercial spaces, check the monthly rent and
+              the terms, and arrange a viewing. Every lease is reviewed by our
+              team before you sign.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="#rent-listings">
@@ -63,15 +64,14 @@ export function RentHero() {
             className="hidden lg:block relative"
           >
             <div className="aspect-[4/3] rounded-[2rem] bg-white shadow-2xl overflow-hidden border-8 border-white">
-               <div className="w-full h-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
-                  <Key className="w-32 h-32 text-white/20" />
-               </div>
-            </div>
-            {/* Overlay card */}
-            <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 max-w-[200px]">
-               <p className="text-xs font-bold text-primary uppercase mb-1">New Listing</p>
-               <p className="font-bold text-dark">Harbor View Suite</p>
-               <p className="text-sm text-gray-500">$3,200/mo</p>
+              <div className="relative h-full w-full">
+                {/* eslint-disable-next-line @next/next/no-img-element -- editorial imagery placeholder */}
+                <img
+                  src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80"
+                  alt="Apartment interior available to rent through MCBHLUES Enterprises"
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
           </motion.div>
         </div>

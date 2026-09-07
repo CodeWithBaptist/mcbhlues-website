@@ -4,11 +4,13 @@ import Link from "next/link";
 import * as Icons from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Note: the "violet" tone key is kept for backwards compatibility with existing
+// callers but is coloured blue (sky) so no purple gradients render in the portal.
 const TONES = {
   primary: "from-blue-500/10 to-blue-500/0 text-blue-600 ring-blue-500/20",
   emerald: "from-emerald-500/10 to-emerald-500/0 text-emerald-600 ring-emerald-500/20",
   amber: "from-amber-500/10 to-amber-500/0 text-amber-600 ring-amber-500/20",
-  violet: "from-violet-500/10 to-violet-500/0 text-violet-600 ring-violet-500/20",
+  violet: "from-sky-500/10 to-sky-500/0 text-sky-600 ring-sky-500/20",
   sky: "from-sky-500/10 to-sky-500/0 text-sky-600 ring-sky-500/20",
   rose: "from-rose-500/10 to-rose-500/0 text-rose-600 ring-rose-500/20",
   slate: "from-slate-500/10 to-slate-500/0 text-slate-600 ring-slate-500/20",

@@ -28,7 +28,7 @@ const TONE_BY_PREFIX: Record<string, string> = {
   auth: "bg-sky-500",
   property: "bg-emerald-500",
   enquiry: "bg-amber-500",
-  booking: "bg-violet-500",
+  booking: "bg-sky-500",
   staff: "bg-rose-500",
   settings: "bg-slate-500",
 };
