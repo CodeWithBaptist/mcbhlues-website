@@ -20,6 +20,10 @@ export const GET = withPermission(
 export const POST = withPermission("property:create", async (request, { user }) => {
   const body = await request.json().catch(() => null);
   const title = typeof body?.title === "string" ? body.title.trim() : "";
+  const name = typeof body?.name === "string" ? body.name.trim() : "";
+  if (!name) {
+    return NextResponse.json({ error: "Property name is required." }, { status: 400 });
+  }
   if (!title) {
     return NextResponse.json({ error: "Property title is required." }, { status: 400 });
   }
@@ -27,6 +31,7 @@ export const POST = withPermission("property:create", async (request, { user }) 
   const property = await createProperty(
     {
       title,
+      name,
       description: typeof body?.description === "string" ? body.description : "",
       type: body?.type === "rent" ? "rent" : "sale",
       status: typeof body?.status === "string" ? body.status : "available",
@@ -39,11 +44,9 @@ export const POST = withPermission("property:create", async (request, { user }) 
       address: typeof body?.address === "string" ? body.address : "",
       city: typeof body?.city === "string" ? body.city : "",
       state: typeof body?.state === "string" ? body.state : "",
-      postalCode: typeof body?.postalCode === "string" ? body.postalCode : "",
       country: typeof body?.country === "string" ? body.country : "",
       latitude: typeof body?.latitude === "string" ? body.latitude : "",
       longitude: typeof body?.longitude === "string" ? body.longitude : "",
-      googleMapsUrl: typeof body?.googleMapsUrl === "string" ? body.googleMapsUrl : "",
       isFeatured: Boolean(body?.isFeatured),
       isPublished: Boolean(body?.isPublished),
     },
@@ -55,7 +58,7 @@ export const POST = withPermission("property:create", async (request, { user }) 
     action: AUDIT_ACTIONS.PROPERTY_CREATED,
     resource: "property",
     resourceId: property.id,
-    metadata: { title: property.title, type: property.type },
+    metadata: { name: property.name, type: property.type },
   });
 
   return NextResponse.json({ property }, { status: 201 });

@@ -24,7 +24,7 @@ export default async function FaqsPage() {
     <div>
       <PageHeader
         title="FAQs"
-        description="Frequently asked questions — published entries appear on the public website."
+        description="Frequently asked questions, published entries appear on the public website."
       />
       <FaqsManager initialFaqs={faqs} canManage={access.user.permissions.includes("cms:faqs")} />
     </div>

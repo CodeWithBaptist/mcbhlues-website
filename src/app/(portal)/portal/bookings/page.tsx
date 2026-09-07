@@ -42,7 +42,7 @@ export default async function BookingsPage() {
     <div>
       <PageHeader
         title="Bookings"
-        description="Viewings, consultations and inspections — confirmation, rejection and rescheduling."
+        description="Viewings, consultations and inspections, confirmation, rejection and rescheduling."
       />
       <BookingsManager
         initialBookings={bookingList}

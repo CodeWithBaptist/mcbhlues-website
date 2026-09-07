@@ -32,6 +32,7 @@ export const PATCH = withPermission("property:update", async (request, { params,
   const body = await request.json().catch(() => null);
   const property = await updateProperty(id, {
     title: typeof body?.title === "string" ? body.title : undefined,
+    name: typeof body?.name === "string" ? body.name : undefined,
     description: typeof body?.description === "string" ? body.description : undefined,
     type: body?.type === "rent" || body?.type === "sale" ? body.type : undefined,
     status: typeof body?.status === "string" ? body.status : undefined,
@@ -44,11 +45,9 @@ export const PATCH = withPermission("property:update", async (request, { params,
     address: typeof body?.address === "string" ? body.address : undefined,
     city: typeof body?.city === "string" ? body.city : undefined,
     state: typeof body?.state === "string" ? body.state : undefined,
-    postalCode: typeof body?.postalCode === "string" ? body.postalCode : undefined,
     country: typeof body?.country === "string" ? body.country : undefined,
     latitude: typeof body?.latitude === "string" ? body.latitude : undefined,
     longitude: typeof body?.longitude === "string" ? body.longitude : undefined,
-    googleMapsUrl: typeof body?.googleMapsUrl === "string" ? body.googleMapsUrl : undefined,
     isFeatured: typeof body?.isFeatured === "boolean" ? body.isFeatured : undefined,
     isPublished: typeof body?.isPublished === "boolean" ? body.isPublished : undefined,
   }, user.id);
@@ -61,13 +60,15 @@ export const PATCH = withPermission("property:update", async (request, { params,
     resource: "property",
     resourceId: id,
     metadata: {
-      title: property.title,
+      name: property.name,
       priceChanged: property.price !== existing.price,
       statusChanged: property.status !== existing.status,
       locationChanged:
         property.latitude !== existing.latitude ||
         property.longitude !== existing.longitude ||
-        property.googleMapsUrl !== existing.googleMapsUrl,
+        property.address !== existing.address ||
+        property.city !== existing.city ||
+        property.state !== existing.state,
     },
   });
 

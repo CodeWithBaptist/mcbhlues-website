@@ -18,7 +18,10 @@ export interface Service {
 export interface Property {
   id: string;
   slug: string;
+  /** Short marketing headline for the listing header. */
   title: string;
+  /** Plain listing/building name shown on cards. */
+  name: string;
   description: string;
   price: number;
   currency: string;
@@ -32,6 +35,7 @@ export interface Property {
   address: string;
   city: string;
   state: string;
+  country: string;
   image: string;
   images: string[];
   amenities: string[];

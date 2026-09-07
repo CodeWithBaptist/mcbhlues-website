@@ -18,9 +18,9 @@ export function OurStory() {
           >
             <SectionHeading
               align="left"
-              eyebrow="Our Journey"
-              title="Built on Trust and Innovation"
-              description="Founded with a vision to transform the luxury real estate landscape, MCBHLUES ENTERPRISES has grown from a specialized consulting boutique to a full-service property powerhouse."
+              eyebrow="What we do"
+              title="Consulting, development and management under one roof"
+              description="Buying, building and running property each need different skills. We keep them in one firm so the handover from one stage to the next does not fall through the cracks."
               className="mb-8"
             />
             <div className="space-y-6">
@@ -29,8 +29,8 @@ export function OurStory() {
                   <Target className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-dark mb-1">Our Mission</h4>
-                  <p className="text-gray-600 text-sm">To provide elite property solutions that exceed client expectations through innovation and integrity.</p>
+                  <h4 className="font-bold text-dark mb-1">Our approach to projects</h4>
+                  <p className="text-gray-600 text-sm">Every job starts with a written brief and an agreed budget, then moves through the stages we sign off on together, in writing.</p>
                 </div>
               </div>
               <div className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
@@ -38,8 +38,8 @@ export function OurStory() {
                   <Heart className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="font-bold text-dark mb-1">Our Values</h4>
-                  <p className="text-gray-600 text-sm">Excellence, Transparency, and a Client-First approach guide every decision we make.</p>
+                  <h4 className="font-bold text-dark mb-1">How we work</h4>
+                  <p className="text-gray-600 text-sm">A named consultant stays on your case, progress is reported at set intervals, and you review and approve before any money moves.</p>
                 </div>
               </div>
             </div>
@@ -58,9 +58,11 @@ export function OurStory() {
                 <Building2 className="w-24 h-24 text-white opacity-50 group-hover:scale-110 transition-transform duration-500" />
               </div>
             </div>
-            <div className="absolute -bottom-6 -right-6 bg-white p-8 rounded-2xl shadow-xl border border-gray-100 hidden md:block z-30">
-              <p className="text-primary font-black text-4xl">15+</p>
-              <p className="text-gray-500 text-xs font-bold uppercase tracking-tighter">Years of Legacy</p>
+            <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hidden md:block z-30 max-w-[240px]">
+              <p className="text-primary font-black text-4xl mb-1">One team</p>
+              <p className="text-gray-500 text-xs font-bold uppercase tracking-tight">
+                From first viewing through handover and beyond
+              </p>
             </div>
           </motion.div>
         </div>

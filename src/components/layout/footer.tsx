@@ -32,7 +32,8 @@ export function Footer({ company }: { company?: CompanyInfo }) {
           <div className="flex flex-col gap-6">
             <Logo light logoUrl={company?.logoUrl} name={companyName} />
             <p className="text-gray-400 leading-relaxed">
-              Leading the way in luxury real estate, property development, and high-end facility management. Elevating lifestyles through excellence.
+              Real estate consulting, property development and facility management.
+              We help clients buy, build and manage property through one team.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => {

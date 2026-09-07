@@ -314,7 +314,7 @@ function TestimonialEditor({
             </label>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Role / location</span>
-              <Input value={form.role} onChange={(e) => set("role", e.target.value)} placeholder="e.g. Homeowner, Miami" />
+              <Input value={form.role} onChange={(e) => set("role", e.target.value)} placeholder="e.g. Homeowner, Lekki" />
             </label>
           </div>
           <label className="block">

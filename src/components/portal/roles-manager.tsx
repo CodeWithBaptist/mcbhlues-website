@@ -46,7 +46,7 @@ const SUPER_LEVEL = 100;
 
 /** Colour-codes hierarchy bands so level numbers are scannable at a glance. */
 function levelChipClass(level: number): string {
-  if (level >= SUPER_LEVEL) return "bg-violet-50 text-violet-700 ring-violet-200";
+  if (level >= SUPER_LEVEL) return "bg-blue-50 text-blue-700 ring-blue-200";
   if (level >= 50) return "bg-amber-50 text-amber-700 ring-amber-200";
   return "bg-sky-50 text-sky-700 ring-sky-200";
 }

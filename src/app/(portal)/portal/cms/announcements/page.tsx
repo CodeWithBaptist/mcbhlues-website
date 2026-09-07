@@ -25,7 +25,7 @@ export default async function AnnouncementsPage() {
     <div>
       <PageHeader
         title="Announcements"
-        description="Site-wide banners — active announcements appear at the top of the public website."
+        description="Site-wide banners, active announcements appear at the top of the public website."
       />
       <AnnouncementsManager
         initialAnnouncements={announcements}

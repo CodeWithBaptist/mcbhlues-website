@@ -244,7 +244,10 @@ export const properties = pgTable(
   "properties",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Short marketing headline shown on the listing header and page title. */
     title: text("title").notNull(),
+    /** Plain listing/building name shown on property cards. */
+    name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description").notNull().default(""),
     /** sale | rent */
@@ -260,11 +263,10 @@ export const properties = pgTable(
     address: text("address").notNull().default(""),
     city: text("city").notNull().default(""),
     state: text("state").notNull().default(""),
-    postalCode: text("postal_code").notNull().default(""),
     country: text("country").notNull().default(""),
+    /** Map coordinates are optional. When empty, the public page hides the map. */
     latitude: text("latitude").notNull().default(""),
     longitude: text("longitude").notNull().default(""),
-    googleMapsUrl: text("google_maps_url").notNull().default(""),
     isFeatured: boolean("is_featured").notNull().default(false),
     isPublished: boolean("is_published").notNull().default(false),
     publishedAt: timestamp("published_at", { withTimezone: true }),

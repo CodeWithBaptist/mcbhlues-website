@@ -1,10 +1,16 @@
 export const SITE_CONFIG = {
   name: "MCBHLUES ENTERPRISES",
-  description: "Luxury Real Estate Consulting, Property Development & Facility Management",
+  description:
+    "Real estate consulting, property development and facility management in Lagos, Nigeria from MCBHLUES Enterprises.",
   contact: {
     email: "info@mcbhlues.com",
-    phone: "+1 (555) 000-0000",
-    address: "123 Business Avenue, Suite 100, Financial District",
+    phone: "+234 800 000 0000",
+    address: "14 Akin Adesola Street, Victoria Island, Lagos, Nigeria",
+  },
+  location: {
+    city: "Lagos",
+    state: "Lagos",
+    country: "Nigeria",
   },
 };
 
@@ -29,19 +35,19 @@ export const SERVICES = [
   {
     id: "consulting",
     title: "Real Estate Consulting",
-    description: "Expert guidance for luxury investments, market analysis, and strategic property acquisitions tailored to your portfolio goals.",
+    description: "Buyer and investor advice on search, valuation, financing and purchase. We turn your brief into a shortlist you approve before any viewing.",
     icon: "Briefcase",
   },
   {
     id: "development",
     title: "Property Development",
-    description: "From visionary concept to architectural masterpiece, we develop premium residential and commercial properties that redefine skylines.",
+    description: "We plan, build and deliver residential and commercial projects, from land and design through construction to inspection and handover.",
     icon: "Building2",
   },
   {
     id: "facility",
     title: "Facility Management",
-    description: "Comprehensive, high-touch management services ensuring your properties maintain impeccable standards and operational excellence.",
+    description: "Ongoing management for owners and tenants: maintenance, cleaning, security and building operations, run by one accountable team.",
     icon: "ShieldCheck",
   },
 ];

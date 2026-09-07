@@ -1,52 +1,53 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, Award, Users2, Rocket } from "lucide-react";
+import { CheckCircle2, FileCheck2, Handshake, ScrollText, UserCheck } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 const features = [
   {
-    title: "Market Leadership",
-    description: "Decades of experience in the luxury real estate sector with a proven track record.",
-    icon: Award,
+    title: "One accountable team",
+    description: "The consultants, developers and managers you meet are the people who handle your project. You are not passed between departments.",
+    icon: UserCheck,
   },
   {
-    title: "Expert Team",
-    description: "Highly skilled professionals dedicated to excellence in consulting and management.",
-    icon: Users2,
+    title: "Costs agreed up front",
+    description: "Budgets, fees and timelines are set out in writing before work starts, and payments are released against agreed milestones.",
+    icon: ScrollText,
   },
   {
-    title: "Innovative Approach",
-    description: "Utilizing modern technology and sustainable practices in property development.",
-    icon: Rocket,
+    title: "Advice that is not sales",
+    description: "When we advise you on what to buy, the recommendation follows the brief you set, not whatever we happen to have on our books.",
+    icon: Handshake,
   },
   {
-    title: "Unmatched Standards",
-    description: "We don't just meet expectations; we redefine them through meticulous attention to detail.",
-    icon: CheckCircle2,
+    title: "Contracts we can defend",
+    description: "Purchase, tenancy and management agreements are reviewed by our own legal team before you sign anything.",
+    icon: FileCheck2,
   },
+];
+
+const expectations = [
+  "A written brief and a shortlist you approve before any viewing.",
+  "Scheduled progress updates and a named contact who answers when you call.",
+  "An inspection and formal sign off at handover, with defects followed up.",
+  "One clear monthly statement covering management fees and property spend.",
 ];
 
 export function WhyChooseUs() {
   return (
-    <section className="py-24 bg-dark text-white overflow-hidden relative">
-      {/* Background patterns */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
-         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(#2563EB_1px,transparent_1px)] [background-size:40px_40px]" />
-      </div>
-
-      <Container className="relative z-10">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+    <section className="py-24 bg-white">
+      <Container>
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
             <SectionHeading
               align="left"
-              eyebrow="Our Value Proposition"
-              title="Why Choose MCBHLUES ENTERPRISES?"
-              description="We combine local expertise with global standards to deliver exceptional value in every project we undertake."
-              className="text-white"
+              eyebrow="How we operate"
+              title="What you can expect when you work with us"
+              description="We keep the working relationship straightforward: clear scope, agreed costs and one team that sees the job through."
             />
-            
+
             <div className="grid sm:grid-cols-2 gap-8 mt-12">
               {features.map((feature, index) => (
                 <motion.div
@@ -54,15 +55,15 @@ export function WhyChooseUs() {
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                   className="flex flex-col gap-4"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                  <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center text-primary">
                     <feature.icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold font-heading mb-2">{feature.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                    <h4 className="text-lg font-bold font-heading mb-2">{feature.title}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -70,19 +71,30 @@ export function WhyChooseUs() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative"
+            className="lg:mt-16"
           >
-            <div className="aspect-square bg-gradient-to-tr from-primary-dark to-primary rounded-3xl relative overflow-hidden group">
-               <div className="absolute inset-0 flex items-center justify-center opacity-20 group-hover:scale-110 transition-transform duration-700">
-                  <Award className="w-64 h-64 text-white" />
-               </div>
-               <div className="absolute bottom-8 left-8 right-8 bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/10">
-                  <p className="text-4xl font-black mb-2">25+</p>
-                  <p className="text-sm uppercase tracking-widest font-bold text-primary-light">Years of Industry Excellence</p>
-               </div>
+            <div className="rounded-2xl border border-gray-200 bg-background-soft p-8 md:p-10">
+              <div className="flex items-center gap-3 mb-6">
+                <CheckCircle2 className="w-6 h-6 text-primary" />
+                <h3 className="text-xl font-bold font-heading">How a typical project runs</h3>
+              </div>
+              <ul className="space-y-5">
+                {expectations.map((item) => (
+                  <li key={item} className="flex gap-3 text-gray-600 text-[15px] leading-relaxed">
+                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 border-t border-gray-200 pt-6 text-sm text-gray-500 leading-relaxed">
+                Every scope is put in writing before we begin, so you know what is
+                included, what it costs and when it will be done.
+              </p>
             </div>
           </motion.div>
         </div>

@@ -32,7 +32,7 @@ export default async function EnquiriesPage() {
     <div>
       <PageHeader
         title="Enquiries"
-        description="Incoming website and walk-in enquiries — assignment, responses and internal notes."
+        description="Incoming website and walk-in enquiries, assignment, responses and internal notes."
       />
       <EnquiriesManager
         initialEnquiries={enquiryList}

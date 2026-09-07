@@ -357,10 +357,10 @@ export const NAV_SEED: NavSeed[] = [
 
 /** Demo accounts created on first boot so every role can be inspected. */
 export const USER_SEED = [
-  { firstName: "System", lastName: "Owner", email: "superadmin@mcbhlues.com", phone: "+1 (555) 100-0001", role: "super_admin", password: "SuperAdmin@123" },
-  { firstName: "Amara", lastName: "Okafor", email: "admin@mcbhlues.com", phone: "+1 (555) 100-0002", role: "admin", password: "Admin@123" },
-  { firstName: "Daniel", lastName: "Mensah", email: "propertymanager@mcbhlues.com", phone: "+1 (555) 100-0003", role: "property_manager", password: "Property@123" },
-  { firstName: "Grace", lastName: "Bello", email: "salesagent@mcbhlues.com", phone: "+1 (555) 100-0004", role: "sales_agent", password: "Sales@123" },
-  { firstName: "Tobi", lastName: "Adeyemi", email: "reception@mcbhlues.com", phone: "+1 (555) 100-0005", role: "reception", password: "Reception@123" },
-  { firstName: "Zara", lastName: "Nwosu", email: "contentmanager@mcbhlues.com", phone: "+1 (555) 100-0006", role: "content_manager", password: "Content@123" },
+  { firstName: "System", lastName: "Owner", email: "superadmin@mcbhlues.com", phone: "+234 800 100 0001", role: "super_admin", password: "SuperAdmin@123" },
+  { firstName: "Amara", lastName: "Okafor", email: "admin@mcbhlues.com", phone: "+234 800 100 0002", role: "admin", password: "Admin@123" },
+  { firstName: "Daniel", lastName: "Mensah", email: "propertymanager@mcbhlues.com", phone: "+234 800 100 0003", role: "property_manager", password: "Property@123" },
+  { firstName: "Grace", lastName: "Bello", email: "salesagent@mcbhlues.com", phone: "+234 800 100 0004", role: "sales_agent", password: "Sales@123" },
+  { firstName: "Tobi", lastName: "Adeyemi", email: "reception@mcbhlues.com", phone: "+234 800 100 0005", role: "reception", password: "Reception@123" },
+  { firstName: "Zara", lastName: "Nwosu", email: "contentmanager@mcbhlues.com", phone: "+234 800 100 0006", role: "content_manager", password: "Content@123" },
 ];

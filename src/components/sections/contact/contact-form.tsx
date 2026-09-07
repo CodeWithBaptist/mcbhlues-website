@@ -41,12 +41,12 @@ export function ContactForm() {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setResult({ ok: false, text: data.error ?? "Something went wrong — please try again." });
+        setResult({ ok: false, text: data.error ?? "Something went wrong. Please try again." });
         return;
       }
       setResult({
         ok: true,
-        text: `Thank you, ${name.split(" ")[0]} — your enquiry (${data.reference ?? "received"}) has been logged and a consultant will reach out shortly.`,
+        text: `Thank you, ${name.split(" ")[0]}. Your enquiry (${data.reference ?? "received"}) has been logged and a consultant will reach out shortly.`,
       });
       setName("");
       setEmail("");
@@ -54,7 +54,7 @@ export function ContactForm() {
       setSubject(SUBJECTS[0]);
       setMessage("");
     } catch {
-      setResult({ ok: false, text: "Network error — please try again." });
+      setResult({ ok: false, text: "Network error. Please try again." });
     } finally {
       setSending(false);
     }
@@ -88,7 +88,7 @@ export function ContactForm() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Phone Number</label>
-              <Input placeholder="+1 (555) 000-0000" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Input placeholder="+234 800 000 0000" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Subject</label>

@@ -26,7 +26,7 @@ export default async function TestimonialsPage() {
     <div>
       <PageHeader
         title="Testimonials"
-        description="Client testimonials — published entries appear on the public homepage."
+        description="Client testimonials, published entries appear on the public homepage."
       />
       <TestimonialsManager
         initialTestimonials={testimonials}

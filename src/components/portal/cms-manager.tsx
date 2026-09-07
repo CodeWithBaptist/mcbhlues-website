@@ -11,7 +11,7 @@ import { Card } from "./ui";
 
 export interface CmsProperty {
   id: string;
-  title: string;
+  name: string;
   city: string;
   status: string;
   isPublished: boolean;
@@ -176,7 +176,7 @@ function FeaturedPicker({
     setItems((current) =>
       current.map((item) => (item.id === property.id ? { ...item, isFeatured: !item.isFeatured } : item))
     );
-    notify(property.isFeatured ? `“${property.title}” removed from the homepage.` : `“${property.title}” now featured on the homepage.`);
+    notify(property.isFeatured ? `“${property.name}” removed from the homepage.` : `“${property.name}” now featured on the homepage.`);
   }
 
   if (items.length === 0) {
@@ -199,12 +199,12 @@ function FeaturedPicker({
           <div className="h-24 w-full bg-gray-100">
             {property.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={property.imageUrl} alt={property.title} className="h-full w-full object-cover" />
+              <img src={property.imageUrl} alt={property.name} className="h-full w-full object-cover" />
             ) : null}
           </div>
           <div className="flex items-center justify-between gap-2 px-3 py-2">
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-gray-800">{property.title}</p>
+              <p className="truncate text-sm font-medium text-gray-800">{property.name}</p>
               <p className="text-xs capitalize text-gray-400">
                 {property.city || "—"} · {property.isPublished ? "published" : "draft"}
               </p>

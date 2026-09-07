@@ -471,7 +471,7 @@ function CustomerEditor({
               <Input type="number" min={0} value={form.budgetMax} onChange={(e) => set("budgetMax", e.target.value)} />
             </Field>
             <Field label="Preferred location" className="sm:col-span-2">
-              <Input value={form.preferredLocation} onChange={(e) => set("preferredLocation", e.target.value)} placeholder="e.g. Manhattan, Miami Beach" />
+              <Input value={form.preferredLocation} onChange={(e) => set("preferredLocation", e.target.value)} placeholder="e.g. Lekki, Abuja, Victoria Island" />
             </Field>
             <Field label="Source">
               <Input value={form.source} onChange={(e) => set("source", e.target.value)} placeholder="e.g. Website, Referral" />

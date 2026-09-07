@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const highlights = [
-  { icon: ShieldCheck, label: "Verified Listings" },
-  { icon: TrendingUp, label: "High ROI Properties" },
-  { icon: Award, label: "Premium Locations" },
+  { icon: ShieldCheck, label: "Title and location checked" },
+  { icon: TrendingUp, label: "Priced against recent sales" },
+  { icon: Award, label: "Private viewings arranged" },
 ];
 
 export function BuyHero() {
@@ -28,7 +28,7 @@ export function BuyHero() {
             animate={{ opacity: 1, y: 0 }}
             className="inline-block px-4 py-2 rounded-full bg-primary/20 text-primary-light text-sm font-bold tracking-wider uppercase mb-6"
           >
-            Premium Properties for Sale
+            Homes and commercial space for sale
           </motion.span>
 
           <motion.h1
@@ -37,8 +37,8 @@ export function BuyHero() {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-6xl font-extrabold font-heading leading-tight mb-6"
           >
-            Invest in Your <br />
-            <span className="text-primary">Dream Property</span>
+            Property for sale, <br />
+            <span className="text-primary">with guidance on the way</span>
           </motion.h1>
 
           <motion.p
@@ -47,8 +47,9 @@ export function BuyHero() {
             transition={{ delay: 0.2 }}
             className="text-xl text-gray-400 leading-relaxed mb-10 max-w-2xl"
           >
-            Discover handpicked luxury residences and commercial spaces designed for discerning investors. 
-            Every listing is verified, every location is prime.
+            Search listings below and filter by price. Each one has been checked
+            before it goes live, and our consultants can arrange a private viewing
+            or talk you through the purchase process.
           </motion.p>
 
           <motion.div

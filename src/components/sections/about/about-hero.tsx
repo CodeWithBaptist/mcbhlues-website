@@ -17,14 +17,15 @@ export function AboutHero() {
           transition={{ duration: 0.6 }}
         >
           <span className="text-primary-light font-bold tracking-widest uppercase text-sm mb-4 block">
-            Who We Are
+            About MCBHLUES Enterprises
           </span>
           <h1 className="text-4xl md:text-6xl font-extrabold font-heading mb-6">
-            Leading the Future of <br /> Luxury Real Estate
+            A real estate team that stays <br /> with your project
           </h1>
           <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed">
-            MCBHLUES ENTERPRISES is a premier real estate firm dedicated to providing 
-            unparalleled services in property development, consulting, and management.
+            We advise buyers and investors, develop residential and commercial
+            property, and manage buildings and facilities. The people you meet at
+            the start are the ones who carry the job through to the end.
           </p>
         </motion.div>
       </Container>

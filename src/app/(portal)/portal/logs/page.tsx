@@ -35,7 +35,7 @@ export default async function SystemLogsPage() {
     <div className="space-y-5">
       <PageHeader
         title="System Logs"
-        description="Every email the portal has attempted to send — delivered, queued, or rejected."
+        description="Every email the portal has attempted to send, delivered, queued, or rejected."
       />
 
       {!configured && (
