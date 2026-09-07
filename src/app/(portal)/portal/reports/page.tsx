@@ -10,12 +10,18 @@ export const dynamic = "force-dynamic";
 function BarRow({ label, value, max }: { label: string; value: number; max: number }) {
   const width = max > 0 ? Math.max(4, Math.round((value / max) * 100)) : 0;
   return (
-    <div className="flex items-center gap-3">
-      <span className="w-28 shrink-0 truncate text-xs capitalize text-gray-500">{label}</span>
-      <div className="h-2 flex-1 rounded-full bg-gray-100">
-        <div className="h-2 rounded-full bg-primary" style={{ width: `${width}%` }} />
+    <div className="group flex items-center gap-3 rounded-md px-1 py-0.5 transition-colors duration-200 hover:bg-gray-50">
+      <span className="w-28 shrink-0 truncate text-xs capitalize text-gray-500 transition-colors duration-200 group-hover:text-gray-700">
+        {label}
+      </span>
+      <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+        {/* Grows from zero on mount so the distribution is read, not scanned. */}
+        <div
+          className="bar-grow h-2 rounded-full bg-primary transition-[width] duration-500 ease-soft group-hover:bg-primary-dark"
+          style={{ width: `${width}%` }}
+        />
       </div>
-      <span className="w-8 text-right text-xs font-semibold text-dark">{value}</span>
+      <span className="w-8 text-right text-xs font-semibold tabular-nums text-dark">{value}</span>
     </div>
   );
 }
@@ -55,11 +61,14 @@ export default async function ReportsPage() {
         description="Live operational snapshot across properties, customers, enquiries and bookings."
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {report.totals.map((stat) => (
-          <div key={stat.label} className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div
+            key={stat.label}
+            className="portal-card-hover rounded-xl border border-gray-200 bg-white p-5 shadow-soft"
+          >
             <p className="text-xs uppercase tracking-wide text-gray-500">{stat.label}</p>
-            <p className="mt-2 font-heading text-2xl font-bold text-dark">{stat.value}</p>
+            <p className="mt-2 font-heading text-2xl font-bold tabular-nums text-dark">{stat.value}</p>
           </div>
         ))}
       </div>

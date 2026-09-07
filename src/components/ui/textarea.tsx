@@ -14,13 +14,13 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         aria-invalid={error || undefined}
         className={cn(
           // 16px text stops iOS Safari zooming in when the field is focused.
-          "flex min-h-[120px] w-full rounded-md border bg-white px-4 py-3 text-base text-dark transition-all",
+          "flex min-h-[120px] w-full rounded-md border bg-white px-4 py-3 text-base text-dark shadow-2xs transition-all duration-200 ease-soft",
           "placeholder:text-gray-500",
           "focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-          "disabled:cursor-not-allowed disabled:opacity-60",
+          "disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none",
           error
-            ? "border-red-700 focus-visible:outline-red-700"
-            : "border-gray-500 focus:border-primary",
+            ? "border-red-700 ring-red-700/10 focus:border-red-700 focus:ring-4 focus-visible:outline-red-700"
+            : "border-gray-500 hover:border-gray-700 focus:border-primary focus:ring-4 focus:ring-primary/10",
           className
         )}
         {...props}

@@ -36,17 +36,35 @@ export function StatCard({
     Icons.Circle;
 
   const body = (
-    <div className="portal-card-hover relative h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div
+      className={cn(
+        "group portal-card-hover relative h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-soft",
+        // Linked cards advertise themselves; static ones stay put.
+        href && "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      )}
+    >
       <div
-        className={cn("absolute inset-x-0 top-0 h-24 bg-gradient-to-b", TONES[tone].split(" ")[0], TONES[tone].split(" ")[1])}
+        className={cn(
+          "absolute inset-x-0 top-0 h-24 bg-gradient-to-b",
+          TONES[tone].split(" ")[0],
+          TONES[tone].split(" ")[1]
+        )}
       />
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{label}</p>
-          <p className="mt-2 truncate font-heading text-2xl font-bold text-dark">{value}</p>
+          <p className="mt-2 truncate font-heading text-2xl font-bold tabular-nums text-dark transition-colors duration-200 group-hover:text-primary">
+            {value}
+          </p>
           {hint && <p className="mt-1 truncate text-xs text-gray-500">{hint}</p>}
         </div>
-        <span className={cn("rounded-lg bg-white p-2 ring-1", TONES[tone].split(" ")[2], TONES[tone].split(" ")[3])}>
+        <span
+          className={cn(
+            "rounded-lg bg-white p-2 ring-1 transition-transform duration-300 ease-soft group-hover:scale-110 group-hover:-rotate-3",
+            TONES[tone].split(" ")[2],
+            TONES[tone].split(" ")[3]
+          )}
+        >
           <Resolved className="h-5 w-5" />
         </span>
       </div>

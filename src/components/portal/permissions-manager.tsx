@@ -158,14 +158,15 @@ export function PermissionsManager({
       >
         {visible.length === 0 ? (
           <EmptyState
+            icon={<KeyRound className="h-6 w-6" />}
             title="No permissions match your filters"
             description="Try a different search term or module."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto">
+            <table className="portal-table w-full min-w-[760px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
                   <th className="sticky top-0 z-10 bg-white/95 px-3 py-2.5 font-medium shadow-[0_1px_0_0_rgb(243_244_246)] backdrop-blur">
                     Permission
                   </th>

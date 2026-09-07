@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { LegalDoc } from "@/lib/legal/legal-docs";
 import { LegalDocument } from "@/components/sections/legal/legal-document";
-import { Card } from "./ui";
+import { Card, Notice } from "./ui";
 
 interface LegalManagerProps {
   initialDocs: LegalDoc[];
@@ -118,16 +118,12 @@ export function LegalManager({ initialDocs, canManage }: LegalManagerProps) {
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Legal documents">

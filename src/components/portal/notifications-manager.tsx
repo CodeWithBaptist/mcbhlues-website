@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { NotificationRow } from "@/lib/notifications/notification-service";
-import { Card, EmptyState } from "./ui";
+import { Card, EmptyState, Notice } from "./ui";
 
 const KIND_ICONS: Record<string, React.ReactNode> = {
   enquiry: <MessageSquare className="h-4 w-4 text-blue-600" />,
@@ -82,16 +82,12 @@ export function NotificationsManager({
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -116,7 +112,7 @@ export function NotificationsManager({
 
       <Card title="Your feed" description="Newest first — workflow events arrive here in real time as staff work.">
         {list.length === 0 ? (
-          <EmptyState title="Nothing yet" description="Enquiry and booking events will appear here." />
+          <EmptyState icon={<Bell className="h-6 w-6" />} title="Nothing yet" description="Enquiry and booking events will appear here." />
         ) : (
           <ul className="divide-y divide-gray-50">
             {list.map((row) => {
@@ -224,8 +220,8 @@ function ComposeDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <form onSubmit={submit} className="w-full max-w-md rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">Send notification</h2>
           <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">

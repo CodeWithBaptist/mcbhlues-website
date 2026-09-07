@@ -48,6 +48,11 @@ export function Footer({ company }: { company?: CompanyInfo }) {
 
   return (
     <footer className="bg-dark pb-10 pt-20 text-white">
+      {/* Hairline brand accent along the very top of the footer. */}
+      <div
+        className="mx-auto mb-16 h-px w-full max-w-7xl bg-gradient-to-r from-transparent via-primary-light/50 to-transparent"
+        aria-hidden="true"
+      />
       <Container>
         <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand Column */}
@@ -67,7 +72,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-all duration-300 ease-soft hover:-translate-y-1 hover:bg-primary hover:shadow-lg hover:shadow-primary/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                       >
                         {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
                         <span className="sr-only">
@@ -91,7 +96,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-300 transition-colors hover:text-primary-light"
+                    className="link-underline w-fit text-gray-300 transition-colors duration-200 hover:text-primary-light"
                   >
                     {link.title}
                   </Link>
@@ -123,7 +128,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
               </li>
               <li className="flex gap-4">
                 <Phone className="h-6 w-6 shrink-0 text-primary-light" aria-hidden="true" />
-                <a href={telHref} className="text-gray-300 transition-colors hover:text-white">
+                <a href={telHref} className="link-underline w-fit text-gray-300 transition-colors duration-200 hover:text-white">
                   {contact.phone}
                 </a>
               </li>
@@ -131,7 +136,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
                 <Mail className="h-6 w-6 shrink-0 text-primary-light" aria-hidden="true" />
                 <a
                   href={`mailto:${contact.email}`}
-                  className="break-all text-gray-300 transition-colors hover:text-white"
+                  className="link-underline break-all text-gray-300 transition-colors duration-200 hover:text-white"
                 >
                   {contact.email}
                 </a>
@@ -148,16 +153,16 @@ export function Footer({ company }: { company?: CompanyInfo }) {
             <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               {LEGAL_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="transition-colors hover:text-white">
+                  <Link href={link.href} className="link-underline transition-colors duration-200 hover:text-white">
                     {link.title}
                   </Link>
                 </li>
               ))}
               <li>
-                <CookieSettingsLink className="cursor-pointer underline-offset-4 transition-colors hover:text-white hover:underline" />
+                <CookieSettingsLink className="cursor-pointer underline-offset-4 transition-colors duration-200 hover:text-white hover:underline" />
               </li>
               <li>
-                <Link href="/portal/login" className="transition-colors hover:text-white">
+                <Link href="/portal/login" className="link-underline transition-colors duration-200 hover:text-white">
                   Staff Portal
                 </Link>
               </li>

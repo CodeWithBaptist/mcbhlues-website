@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { EmailTemplateView } from "@/lib/settings/email-templates";
-import { Card } from "./ui";
+import { Card, Notice } from "./ui";
 
 export function EmailTemplatesManager({
   templates: initialTemplates,
@@ -65,16 +65,13 @@ export function EmailTemplatesManager({
       description="Outgoing messages sent by the portal. Use {{placeholders}} for dynamic values. Requires settings:email_templates."
     >
       {message && (
-        <p
-          className={cn(
-            "mb-4 rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
+          className="mb-4"
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">

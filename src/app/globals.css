@@ -12,6 +12,22 @@
 
   --font-heading: "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
+
+  /* Motion language: one soft ease for entrances, one spring for taps, and a
+     shared duration scale so hover/press feedback feels consistent site-wide. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Depth scale — `soft` for resting cards, `lift` for the hovered state. */
+  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 10px 24px -18px rgb(15 23 42 / 0.28);
+  --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.04), 0 24px 44px -22px rgb(15 23 42 / 0.34);
+  --shadow-glow: 0 12px 30px -12px rgb(37 99 235 / 0.45);
+
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-fade-up: fade-up 0.4s var(--ease-soft) both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-pop: pop 0.35s var(--ease-spring) both;
+  --animate-shake: shake 0.4s ease-in-out both;
 }
 
 @layer base {
@@ -23,6 +39,146 @@
     @apply font-heading font-bold;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Shared motion primitives                                                   */
+/* -------------------------------------------------------------------------- */
+/* Small, reusable animation + interaction helpers. Everything here is
+   transform/opacity only (compositor-friendly) and is neutralised by the
+   `prefers-reduced-motion` block at the bottom of this file. */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes sheen {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Skeleton shimmer: a highlight sweeping left→right over the placeholder. */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.65) 45%,
+    rgb(255 255 255 / 0.85) 50%,
+    rgb(255 255 255 / 0.65) 55%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s linear infinite;
+  pointer-events: none;
+}
+.portal-dark .shimmer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.07) 45%,
+    rgb(255 255 255 / 0.14) 50%,
+    rgb(255 255 255 / 0.07) 55%,
+    transparent 100%
+  );
+}
+
+/* Lift-on-hover surface used by cards that are not `<button>`s. */
+.card-lift {
+  transition:
+    transform 0.28s var(--ease-soft),
+    box-shadow 0.28s var(--ease-soft),
+    border-color 0.28s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* Tactile press feedback for buttons/pills. */
+.press:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* Animated underline for text links (footer, in-page anchors). */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.28s var(--ease-soft);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* Staggered entrance for the public site, mirroring `.portal-stagger`. */
+.site-stagger > * {
+  animation: fade-up 0.5s var(--ease-soft) both;
+}
+.site-stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.site-stagger > *:nth-child(2) { animation-delay: 0.09s; }
+.site-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.site-stagger > *:nth-child(4) { animation-delay: 0.21s; }
+.site-stagger > *:nth-child(5) { animation-delay: 0.27s; }
+.site-stagger > *:nth-child(6) { animation-delay: 0.33s; }
+.site-stagger > *:nth-child(n + 7) { animation-delay: 0.39s; }
 
 /* -------------------------------------------------------------------------- */
 /*  Staff Portal motion & polish                                               */
@@ -76,6 +232,7 @@
 
 .portal-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 .portal-scrollbar::-webkit-scrollbar-thumb {
   background: rgb(255 255 255 / 0.2);
@@ -83,6 +240,167 @@
 }
 .portal-scrollbar::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal data tables                                                         */
+/* -------------------------------------------------------------------------- */
+/* Applied to every `<table>` in the Staff Portal so all modules share the same
+   density, hover affordance and header treatment. Styling only — the markup,
+   sorting and row actions stay exactly as they are. */
+
+.portal-table {
+  border-collapse: collapse;
+}
+
+/* Header treatment is owned here so every module shares one density. Borders
+   stay on the rows themselves (the existing markup), so nothing is doubled up. */
+.portal-table thead th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--portal-copy-muted, #64748b);
+  white-space: nowrap;
+}
+
+.portal-table tbody tr {
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.portal-table tbody tr:hover {
+  background-color: rgb(37 99 235 / 0.045);
+}
+
+/* Keyboard users need the row highlight too — a focused control inside the row
+   lights the whole line up. */
+.portal-table tbody tr:focus-within {
+  background-color: rgb(37 99 235 / 0.07);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+}
+
+/* Thin, unobtrusive scrollbar for wide tables on narrow screens. */
+.portal-table-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(148 163 184 / 0.5) transparent;
+}
+.portal-table-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.portal-table-scroll::-webkit-scrollbar-thumb {
+  background: rgb(148 163 184 / 0.45);
+  border-radius: 999px;
+}
+.portal-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(100 116 139 / 0.6);
+}
+.portal-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.portal-dark .portal-table thead th {
+  background-color: rgb(23 37 58 / 0.75);
+}
+.portal-dark .portal-table tbody tr:hover {
+  background-color: rgb(96 165 250 / 0.09);
+}
+.portal-dark .portal-table tbody tr:focus-within {
+  background-color: rgb(96 165 250 / 0.13);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal modals                                                              */
+/* -------------------------------------------------------------------------- */
+
+@keyframes portal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes portal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.portal-modal-backdrop {
+  animation: portal-backdrop-in 0.2s ease-out both;
+  backdrop-filter: blur(3px);
+}
+
+.portal-modal-panel {
+  animation: portal-panel-in 0.28s var(--ease-soft) both;
+}
+
+/* Right-hand detail drawers (customer record, enquiry thread) slide in. */
+@keyframes portal-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.portal-drawer-panel {
+  animation: portal-drawer-in 0.32s var(--ease-soft) both;
+}
+
+/* Segmented filter pills: the selected segment reads as a raised chip. */
+.segmented-pill {
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s var(--ease-soft);
+}
+.segmented-pill:hover:not([aria-checked="true"]) {
+  transform: translateY(-1px);
+}
+
+/* Report bars grow into place instead of appearing at full width. */
+@keyframes bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.bar-grow {
+  transform-origin: left center;
+  animation: bar-grow 0.7s var(--ease-soft) both;
+}
+
+/* A list still waiting on a deferred filter value reads as "working" rather
+   than "wrong" when it is briefly dimmed. */
+[data-stale] {
+  transition: opacity 0.2s ease;
+}
+[data-stale="true"] {
+  opacity: 0.65;
+}
+
+/* Native selects in the portal get the same hover/focus response as `Input`
+   without having to restyle every one of them individually. */
+.staff-portal select,
+.public-site select {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.staff-portal select:hover:not(:disabled),
+.public-site select:hover:not(:disabled) {
+  border-color: #374151;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -651,4 +969,14 @@ html {
 
 .public-dark .public-site [class~="text-green-700"] {
   color: #6ee7a8 !important;
+}
+
+/* While a row action is in flight the whole table dims: one clear signal that
+   the portal is busy, without hiding what the user is looking at. */
+.portal-table {
+  transition: opacity 0.2s ease;
+}
+.portal-table[data-busy] {
+  opacity: 0.55;
+  pointer-events: none;
 }

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Loader2, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -74,7 +74,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => setShow((value) => !value)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition-colors duration-200 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             aria-label={show ? "Hide password" : "Show password"}
           >
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -83,13 +83,15 @@ function LoginForm() {
       </div>
 
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p
+          role="alert"
+          className="animate-shake rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+        >
           {error}
         </p>
       )}
 
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+      <Button type="submit" className="w-full" loading={loading}>
         {loading ? "Signing in..." : "Sign in"}
       </Button>
     </form>
@@ -98,10 +100,10 @@ function LoginForm() {
 
 export default function StaffLoginPage() {
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+    <div className="portal-enter w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl">
       <div className="mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-          <Lock className="h-6 w-6 text-primary" />
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
+          <Lock className="h-6 w-6 text-primary" aria-hidden="true" />
         </div>
         <h1 className="font-heading text-xl font-bold text-dark">MCBHLUES Staff Portal</h1>
         <p className="mt-1 text-sm text-gray-500">
@@ -109,7 +111,18 @@ export default function StaffLoginPage() {
         </p>
       </div>
 
-      <Suspense fallback={<div className="h-40" />}>
+      <Suspense
+        fallback={
+          <div className="space-y-4" aria-hidden="true">
+            <p className="sr-only" role="status">
+              Loading sign in form
+            </p>
+            <div className="shimmer h-12 rounded-md bg-gray-200/90" />
+            <div className="shimmer h-12 rounded-md bg-gray-200/90" />
+            <div className="shimmer h-11 rounded-md bg-gray-200/90" />
+          </div>
+        }
+      >
         <LoginForm />
       </Suspense>
     </div>

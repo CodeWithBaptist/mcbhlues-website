@@ -43,6 +43,7 @@ export function ActivityFeed({ items, className }: { items: ActivityItem[]; clas
     >
       {items.length === 0 ? (
         <EmptyState
+          icon={<History className="h-6 w-6" />}
           title="Nothing yet"
           description="Actions you and your colleagues take will appear here as a timeline."
         />
@@ -51,10 +52,10 @@ export function ActivityFeed({ items, className }: { items: ActivityItem[]; clas
           {items.map((item) => {
             const tone = TONE_BY_PREFIX[item.action.split(".")[0]] ?? "bg-primary";
             return (
-              <li key={item.id} className="relative">
+              <li key={item.id} className="group relative rounded-md py-1 transition-colors duration-200 hover:bg-gray-50/70">
                 <span
                   className={cn(
-                    "absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full ring-4 ring-white",
+                    "absolute -left-[26px] top-2.5 h-2.5 w-2.5 rounded-full ring-4 ring-white transition-transform duration-300 ease-soft group-hover:scale-125",
                     tone
                   )}
                 />

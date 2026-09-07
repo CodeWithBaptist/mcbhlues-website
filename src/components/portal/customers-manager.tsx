@@ -17,9 +17,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import type { CustomerDetail, CustomerListItem } from "@/lib/customers/customer-service";
-import { Card, EmptyState, StatusPill } from "./ui";
+import { Card, EmptyState, StatusPill, Notice } from "./ui";
 
 export interface StaffOption {
   id: string;
@@ -167,16 +168,12 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -187,21 +184,19 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
             onChange={(event) => setSearch(event.target.value)}
             className="sm:max-w-xs"
           />
-          <div className="flex flex-wrap rounded-lg bg-gray-100 p-1">
-            {["all", "buyer", "renter", "investor", "seller"].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setTypeFilter(value)}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors",
-                  typeFilter === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
-                )}
-              >
-                {value === "all" ? "All" : `${value}s`}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            scrollable
+            options={[
+              { label: "All", value: "all" },
+              { label: "Buyers", value: "buyer" },
+              { label: "Renters", value: "renter" },
+              { label: "Investors", value: "investor" },
+              { label: "Sellers", value: "seller" },
+            ]}
+            value={typeFilter}
+            onChange={setTypeFilter}
+            label="Filter customers by type"
+          />
         </div>
         {canCreate && (
           <Button onClick={() => setEditor(emptyEditor())}>
@@ -214,14 +209,17 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
       <Card title="Customer records" description={`${list.length} total · ${filtered.length} shown`}>
         {filtered.length === 0 ? (
           <EmptyState
+            icon={<UserRound className="h-6 w-6" />}
             title="No customers found"
             description={list.length === 0 ? "Add your first customer to get started." : "Try adjusting your search or filters."}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[980px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto">
+            <table
+              data-busy={busyId !== null || undefined}
+              className="portal-table w-full min-w-[980px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
                   <th className="px-3 py-2">Customer</th>
                   <th className="px-3 py-2">Type</th>
                   <th className="px-3 py-2">Budget</th>
@@ -419,8 +417,8 @@ function CustomerEditor({
     "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-      <form onSubmit={submit} className="my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
             <h2 className="font-heading text-base font-bold text-dark">
@@ -587,8 +585,8 @@ function CustomerDetailPanel({
   const staffMember = staff.find((member) => member.id === detail.assignedTo);
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40">
-      <div className="h-full w-full max-w-xl overflow-y-auto bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex justify-end bg-black/40">
+      <div className="portal-drawer-panel h-full w-full max-w-xl overflow-y-auto bg-white shadow-2xl">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-4">
           <div>
             <h2 className="font-heading text-base font-bold text-dark">

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
@@ -7,15 +8,26 @@ type ButtonSize = "sm" | "md" | "lg";
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  /**
+   * Renders an inline spinner, marks the control busy for assistive tech and
+   * blocks further clicks. Children stay mounted so the button never resizes
+   * mid-request.
+   */
+  loading?: boolean;
 }
 
 // Contrast against white / the surface the button sits on:
 //   primary   #2563EB on #FFF  → 5.1:1 (white text on it → 5.1:1)  ✓ AA
 //   secondary #1E3A8A on #FFF  → 10.8:1                            ✓ AAA
+// Each variant also gets a soft resting shadow that deepens on hover, so the
+// control reads as pressable before the pointer moves.
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-white hover:bg-primary-dark",
-  secondary: "bg-primary-dark text-white hover:bg-primary",
-  outline: "border-2 border-primary text-primary hover:bg-primary hover:text-white",
+  primary:
+    "bg-primary text-white shadow-sm shadow-primary/25 hover:bg-primary-dark hover:shadow-md hover:shadow-primary/30",
+  secondary:
+    "bg-primary-dark text-white shadow-sm shadow-primary-dark/25 hover:bg-primary hover:shadow-md hover:shadow-primary/30",
+  outline:
+    "border-2 border-primary text-primary hover:bg-primary hover:text-white hover:shadow-md hover:shadow-primary/25",
   ghost: "text-primary hover:bg-background-soft",
 };
 
@@ -48,10 +60,12 @@ export function buttonClasses({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex cursor-pointer items-center justify-center rounded-md text-center transition-all duration-200",
+    "group inline-flex cursor-pointer items-center justify-center rounded-md text-center transition-all duration-200 ease-soft",
     // focus-visible (not focus) so a mouse click doesn't paint a ring.
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-    "disabled:pointer-events-none disabled:opacity-60",
+    // Sinking 1px on press is the cue that the click landed.
+    "active:translate-y-px active:scale-[0.99]",
+    "disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none",
     VARIANTS[variant],
     SIZES[size],
     className
@@ -59,8 +73,23 @@ export function buttonClasses({
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", size = "md", ...props }, ref) => (
-    <button ref={ref} className={buttonClasses({ variant, size, className })} {...props} />
+  ({ className, variant = "primary", size = "md", loading = false, disabled, children, ...props }, ref) => (
+    <button
+      ref={ref}
+      className={buttonClasses({ variant, size, className })}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading && (
+        <Loader2
+          className="-ml-0.5 mr-2 h-4 w-4 animate-spin"
+          aria-hidden="true"
+          data-button-spinner
+        />
+      )}
+      {children}
+    </button>
   )
 );
 

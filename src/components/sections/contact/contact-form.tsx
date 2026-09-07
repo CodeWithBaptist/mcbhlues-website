@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Turnstile, isTurnstileEnabled } from "@/components/ui/turnstile";
-import { CheckCircle2, Loader2, Send, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Send, ShieldCheck } from "lucide-react";
 import {
   FIELD_LIMITS,
   hasErrors,
@@ -129,8 +129,8 @@ export function ContactForm() {
       <h2 className="mb-8 font-heading text-2xl font-bold text-dark">Send Us a Message</h2>
 
       {result?.ok ? (
-        <div className="flex flex-col items-center gap-4 py-16 text-center" role="status">
-          <CheckCircle2 className="h-14 w-14 text-green-700" aria-hidden="true" />
+        <div className="flex animate-fade-up flex-col items-center gap-4 py-16 text-center" role="status">
+          <CheckCircle2 className="h-14 w-14 animate-pop text-green-700" aria-hidden="true" />
           <p className="max-w-sm text-gray-700">{result.text}</p>
           <Button variant="outline" onClick={() => setResult(null)}>
             Send another message
@@ -197,7 +197,7 @@ export function ContactForm() {
                   name={field.name}
                   required={field.required}
                   aria-describedby={field["aria-describedby"]}
-                  className="h-12 w-full rounded-md border border-gray-500 bg-white px-4 py-2 text-base text-dark transition-all focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="h-12 w-full cursor-pointer rounded-md border border-gray-500 bg-white px-4 py-2 text-base text-dark shadow-2xs transition-all duration-200 ease-soft hover:border-gray-700 focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   value={values.subject}
                   onChange={(event) => setField("subject", event.target.value)}
                 >
@@ -255,18 +255,14 @@ export function ContactForm() {
           {result && !result.ok && (
             <p
               role="alert"
-              className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
+              className="animate-shake rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
             >
               {result.text}
             </p>
           )}
 
-          <Button size="lg" className="w-full gap-2 font-bold" disabled={sending}>
-            {sending ? (
-              <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-            ) : (
-              <Send className="h-5 w-5" aria-hidden="true" />
-            )}
+          <Button size="lg" className="w-full gap-2 font-bold" loading={sending}>
+            {!sending && <Send className="h-5 w-5" aria-hidden="true" />}
             {sending ? "Sending…" : "Send Message"}
           </Button>
 

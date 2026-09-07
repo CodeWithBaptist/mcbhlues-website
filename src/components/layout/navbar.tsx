@@ -61,35 +61,60 @@ export function Navbar({
   const isCurrent = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
+  const mobileLinks = NAV_LINKS;
+
   return (
     <header
       className={cn(
         // A solid, blurred background at all times: transparent headers put
         // dark text over unpredictable page backgrounds.
-        "fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md transition-shadow duration-300",
-        scrolled ? "shadow-sm" : "shadow-none"
+        "fixed inset-x-0 top-0 z-50 border-b bg-white/90 backdrop-blur-md transition-[box-shadow,border-color] duration-300",
+        scrolled ? "border-gray-200/80 shadow-sm" : "border-transparent shadow-none"
       )}
     >
       <Container>
-        <nav aria-label="Primary" className="flex items-center justify-between py-3 lg:py-4">
+        <nav
+          aria-label="Primary"
+          className={cn(
+            "flex items-center justify-between transition-[padding] duration-300 ease-soft",
+            scrolled ? "py-2.5" : "py-3 lg:py-4"
+          )}
+        >
           <Logo logoUrl={logoUrl} name={companyName} />
 
           {/* Desktop Navigation */}
           <ul className="hidden items-center gap-7 lg:flex xl:gap-8">
-            {NAV_LINKS.filter((link) => link.title !== "Favorites").map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={isCurrent(link.href) ? "page" : undefined}
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-primary",
-                    isCurrent(link.href) ? "text-primary" : "text-dark"
-                  )}
-                >
-                  {link.title}
-                </Link>
-              </li>
-            ))}
+            {NAV_LINKS.filter((link) => link.title !== "Favorites").map((link) => {
+              const current = isCurrent(link.href);
+              return (
+                <li key={link.href} className="group/link">
+                  <Link
+                    href={link.href}
+                    aria-current={current ? "page" : undefined}
+                    className={cn(
+                      "relative block text-sm font-medium transition-colors duration-200 hover:text-primary",
+                      current ? "text-primary" : "text-dark"
+                    )}
+                  >
+                    {link.title}
+                    {/* The current page owns one shared underline that slides
+                        between links; the rest grow their own on hover. */}
+                    {current ? (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-primary"
+                        transition={reduceMotion ? { duration: 0 } : { type: "spring", bounce: 0.25, duration: 0.45 }}
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full bg-primary/50 transition-transform duration-300 ease-soft group-hover/link:scale-x-100"
+                      />
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="hidden items-center gap-3 lg:flex">
@@ -98,7 +123,7 @@ export function Navbar({
               href="/favorites"
               aria-current={isCurrent("/favorites") ? "page" : undefined}
               className={cn(
-                "relative rounded-full p-2.5 transition-colors hover:bg-primary/10",
+                "relative rounded-full p-2.5 transition-[background-color,color,transform] duration-200 hover:scale-105 hover:bg-primary/10 active:scale-95",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 isCurrent("/favorites") || savedCount > 0 ? "text-primary" : "text-dark"
               )}
@@ -111,8 +136,10 @@ export function Navbar({
                 aria-hidden="true"
               />
               {savedCount > 0 && (
+                /* Re-keyed on the count so the badge pops each time it changes. */
                 <span
-                  className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold leading-none text-white"
+                  key={savedCount}
+                  className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 animate-pop items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white"
                   aria-hidden="true"
                 >
                   {savedCount > 99 ? "99+" : savedCount}
@@ -125,7 +152,7 @@ export function Navbar({
             </Link>
             <a
               href={telHref}
-              className="hidden items-center gap-2 text-sm font-semibold text-dark transition-colors hover:text-primary xl:flex"
+              className="link-underline hidden items-center gap-2 text-sm font-semibold text-dark transition-colors hover:text-primary xl:flex"
             >
               <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
               <span className="sr-only">Call us on </span>
@@ -143,7 +170,7 @@ export function Navbar({
           {/* Mobile Toggle — 44px target, per WCAG 2.5.8 */}
           <button
             type="button"
-            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-dark transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-dark transition-colors duration-200 hover:bg-gray-100 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
             onClick={() => setIsOpen((open) => !open)}
             aria-expanded={isOpen}
             aria-controls={menuId}
@@ -166,32 +193,41 @@ export function Navbar({
             initial={reduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden border-t border-gray-100 bg-white lg:hidden"
           >
             <Container className="flex max-h-[calc(100dvh-5rem)] flex-col gap-6 overflow-y-auto py-6">
               <ul className="flex flex-col">
-                {NAV_LINKS.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={isCurrent(link.href) ? "page" : undefined}
-                      className={cn(
-                        "flex items-center gap-2 py-3 text-lg font-semibold transition-colors",
-                        isCurrent(link.href) ? "text-primary" : "text-dark"
-                      )}
+                {mobileLinks.map((link, index) => {
+                  const current = isCurrent(link.href);
+                  return (
+                    <motion.li
+                      key={link.href}
+                      initial={reduceMotion ? false : { opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: reduceMotion ? 0 : 0.04 + index * 0.04, duration: 0.25 }}
+                      className="border-b border-gray-50 last:border-b-0"
                     >
-                      {link.title}
-                      {link.href === "/favorites" && savedCount > 0 && (
-                        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
-                          <span className="sr-only">, </span>
-                          {savedCount > 99 ? "99+" : savedCount}
-                          <span className="sr-only"> saved</span>
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
+                      <Link
+                        href={link.href}
+                        aria-current={current ? "page" : undefined}
+                        className={cn(
+                          "flex items-center gap-2 py-3 text-lg font-semibold transition-colors duration-200 hover:text-primary active:text-primary",
+                          current ? "text-primary" : "text-dark"
+                        )}
+                      >
+                        {link.title}
+                        {link.href === "/favorites" && savedCount > 0 && (
+                          <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+                            <span className="sr-only">, </span>
+                            {savedCount > 99 ? "99+" : savedCount}
+                            <span className="sr-only"> saved</span>
+                          </span>
+                        )}
+                      </Link>
+                    </motion.li>
+                  );
+                })}
               </ul>
 
               <div className="border-t border-gray-100 pt-6">
@@ -201,7 +237,7 @@ export function Navbar({
               <div className="flex flex-col gap-4">
                 <a
                   href={telHref}
-                  className="flex items-center gap-3 py-2 text-lg font-semibold text-dark"
+                  className="flex items-center gap-3 py-2 text-lg font-semibold text-dark transition-colors hover:text-primary"
                 >
                   <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
                   <span className="sr-only">Call us on </span>

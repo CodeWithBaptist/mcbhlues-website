@@ -98,7 +98,7 @@ export function FormField({
         <p
           id={errorId}
           role="alert"
-          className="flex items-start gap-1.5 text-sm font-medium text-red-700"
+          className="flex animate-fade-up items-start gap-1.5 text-sm font-medium text-red-700"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}

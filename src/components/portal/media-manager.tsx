@@ -14,8 +14,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
-import { Card, EmptyState } from "./ui";
+import { Card, EmptyState, Notice } from "./ui";
 import { FileUpload } from "./file-upload";
 
 export interface MediaAssetRow {
@@ -90,16 +91,12 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -110,21 +107,18 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
             onChange={(event) => setSearch(event.target.value)}
             className="sm:max-w-xs"
           />
-          <div className="flex flex-wrap rounded-lg bg-gray-100 p-1">
-            {["all", "image", "document", "logo"].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setKindFilter(value)}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors",
-                  kindFilter === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
-                )}
-              >
-                {value === "all" ? "All" : `${value}s`}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            scrollable
+            options={[
+              { label: "All", value: "all" },
+              { label: "Images", value: "image" },
+              { label: "Documents", value: "document" },
+              { label: "Logos", value: "logo" },
+            ]}
+            value={kindFilter}
+            onChange={setKindFilter}
+            label="Filter assets by kind"
+          />
         </div>
         {canAddAnything && (
           <Button onClick={() => setAdding(true)}>
@@ -137,17 +131,25 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
       <Card title="Library" description={`${list.length} assets · ${filtered.length} shown`}>
         {filtered.length === 0 ? (
           <EmptyState
+            icon={<ImageIcon className="h-6 w-6" />}
             title="The library is empty"
             description="Upload images, documents or the company logo from your device — or register a link — then reuse those URLs across listings and CMS content."
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {filtered.map((asset) => (
-              <article key={asset.id} className="group overflow-hidden rounded-xl border border-gray-200 bg-white">
-                <div className="flex h-36 items-center justify-center bg-gray-50">
+              <article
+                key={asset.id}
+                className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xs transition-[transform,box-shadow,border-color] duration-300 ease-soft hover:-translate-y-1 hover:border-primary/30 hover:shadow-lift"
+              >
+                <div className="flex h-36 items-center justify-center overflow-hidden bg-gray-50">
                   {asset.kind === "image" || asset.kind === "logo" ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={asset.url} alt={asset.alt || asset.title} className="h-full w-full object-cover" />
+                    <img
+                      src={asset.url}
+                      alt={asset.alt || asset.title}
+                      className="h-full w-full object-cover transition-transform duration-500 ease-soft group-hover:scale-105"
+                    />
                   ) : (
                     <FileText className="h-10 w-10 text-gray-300" />
                   )}
@@ -263,8 +265,8 @@ function AddAssetDialog({
   ].filter((option) => option.allowed);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <form onSubmit={submit} className="w-full max-w-md rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="flex items-center gap-2 font-heading text-base font-bold text-dark">
             <Shapes className="h-4 w-4 text-primary" /> Add asset
@@ -280,21 +282,16 @@ function AddAssetDialog({
             <Input required value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Penthouse hero shot" />
           </label>
           <div>
-            <div className="mb-2 inline-flex rounded-lg bg-gray-100 p-1">
-              {(["device", "url"] as const).map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setSource(value)}
-                  className={cn(
-                    "rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
-                    source === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
-                  )}
-                >
-                  {value === "device" ? "Upload from device" : "Paste a URL"}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              options={[
+                { label: "Upload from device", value: "device" },
+                { label: "Paste a URL", value: "url" },
+              ]}
+              value={source}
+              onChange={(value) => setSource(value as "device" | "url")}
+              label="Choose how to add the asset"
+              className="mb-2 inline-flex"
+            />
 
             {source === "device" ? (
               <FileUpload

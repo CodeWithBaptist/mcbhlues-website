@@ -17,13 +17,15 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
   return (
     <section className="py-8 bg-white border-b border-gray-100">
       <Container>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div className="site-stagger flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <div className="flex gap-2 mb-4">
+            <div className="mb-4 flex gap-2">
               <Badge variant={property.type === "sale" ? "primary" : "secondary"}>
                 For {property.type === "sale" ? "Sale" : "Rent"}
               </Badge>
-              <Badge variant="light">{property.status}</Badge>
+              <Badge variant="light" className="capitalize">
+                {property.status}
+              </Badge>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-dark font-heading mb-2">
               {property.name}
@@ -40,7 +42,7 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
           </div>
 
           <div className="flex flex-col items-start md:items-end gap-4">
-            <p className="text-3xl md:text-4xl font-black text-primary font-heading">
+            <p className="font-heading text-3xl font-black tabular-nums text-primary md:text-4xl">
               {formatCurrency(property.price, property.currency)}
               {property.type === "rent" && <span className="text-xl font-bold text-gray-500">/mo</span>}
             </p>

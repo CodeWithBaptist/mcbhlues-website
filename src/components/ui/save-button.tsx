@@ -38,15 +38,20 @@ export function SaveButton({
       aria-label={label}
       title={hydrated ? label : "Save this property"}
       className={cn(
-        "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-md transition",
-        "hover:bg-white hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-        "disabled:cursor-default disabled:opacity-70",
+        "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-md backdrop-blur-sm",
+        "transition-[transform,background-color,color,box-shadow] duration-200 ease-soft",
+        "hover:scale-110 hover:bg-white hover:text-primary hover:shadow-lg active:scale-95",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        "disabled:cursor-default disabled:opacity-70 disabled:hover:scale-100",
         saved && "text-primary",
         className
       )}
     >
+      {/* Re-keying on `saved` replays the pop so the state change is visible
+          even without colour perception. */}
       <Heart
-        className={cn("h-5 w-5 transition-transform", saved && "scale-110 fill-primary")}
+        key={String(saved)}
+        className={cn("h-5 w-5", saved && "animate-pop fill-primary")}
         aria-hidden="true"
       />
     </button>
