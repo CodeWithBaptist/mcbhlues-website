@@ -16,9 +16,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import type { BookingListItem } from "@/lib/bookings/booking-service";
-import { Card, EmptyState } from "./ui";
+import { Card, EmptyState, Notice } from "./ui";
 
 export interface StaffOption {
   id: string;
@@ -185,16 +186,12 @@ export function BookingsManager({
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -205,21 +202,20 @@ export function BookingsManager({
             onChange={(event) => setSearch(event.target.value)}
             className="sm:max-w-xs"
           />
-          <div className="flex flex-wrap rounded-lg bg-gray-100 p-1">
-            {["all", "pending", "confirmed", "completed", "cancelled", "rejected"].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setStatusFilter(value)}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors",
-                  statusFilter === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
-                )}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            scrollable
+            options={[
+              { label: "All", value: "all" },
+              { label: "Pending", value: "pending" },
+              { label: "Confirmed", value: "confirmed" },
+              { label: "Completed", value: "completed" },
+              { label: "Cancelled", value: "cancelled" },
+              { label: "Rejected", value: "rejected" },
+            ]}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            label="Filter bookings by status"
+          />
         </div>
         {canCreate && (
           <Button onClick={() => setEditor(emptyEditor())}>
@@ -235,14 +231,17 @@ export function BookingsManager({
       >
         {filtered.length === 0 ? (
           <EmptyState
+            icon={<CalendarClock className="h-6 w-6" />}
             title="No bookings found"
             description={list.length === 0 ? "Create the first viewing or consultation." : "Try adjusting your search or filters."}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1080px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto">
+            <table
+              data-busy={busyId !== null || undefined}
+              className="portal-table w-full min-w-[1080px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
                   <th className="px-3 py-2">Schedule</th>
                   <th className="px-3 py-2">Guest</th>
                   <th className="px-3 py-2">Type</th>
@@ -488,8 +487,8 @@ function BookingEditor({
     "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-      <form onSubmit={submit} className="my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
             <h2 className="font-heading text-base font-bold text-dark">
@@ -633,7 +632,7 @@ function RescheduleDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <form onSubmit={submit} className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
         <h2 className="font-heading text-base font-bold text-dark">Reschedule {booking.reference}</h2>
         <p className="mb-4 text-xs text-gray-500">

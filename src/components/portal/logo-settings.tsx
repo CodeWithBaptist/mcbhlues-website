@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ImageOff, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "./ui";
+import { Card, Notice } from "./ui";
 import { FileUpload, type UploadedFile } from "./file-upload";
 import { useSession } from "./permission-provider";
 
@@ -73,15 +73,13 @@ export function LogoSettings({ initialLogoUrl }: { initialLogoUrl: string }) {
       }
     >
       {message && (
-        <p
-          className={
-            message.tone === "ok"
-              ? "mb-4 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700"
-              : "mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-          }
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
+          className="mb-4"
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2">

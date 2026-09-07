@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Heart } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
+import { PropertyCardSkeleton } from "@/components/ui/skeletons";
 import { buttonClasses } from "@/components/ui/button";
 import { useHydrated } from "@/lib/consent";
 import { clearFavorites, useFavorites } from "@/lib/favorites";
@@ -28,14 +29,19 @@ export function FavoritesList({ properties }: { properties: Property[] }) {
     .filter((property): property is Property => Boolean(property));
 
   // localStorage is unreadable on the server, so the first paint must not claim
-  // the list is empty. Show a neutral placeholder until hydration finishes.
+  // the list is empty. Show neutral placeholders until hydration finishes.
   if (!hydrated) {
     return (
       <section className="py-24">
         <Container>
-          <p className="text-center text-gray-600" role="status">
-            Loading your saved properties…
+          <p className="sr-only" role="status">
+            Loading your saved properties
           </p>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+            <PropertyCardSkeleton />
+            <PropertyCardSkeleton className="hidden md:block" />
+            <PropertyCardSkeleton className="hidden lg:block" />
+          </div>
         </Container>
       </section>
     );

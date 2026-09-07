@@ -24,10 +24,10 @@ export default async function AuditLogsPage() {
         {logs.length === 0 ? (
           <EmptyState title="No audit entries yet" />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto">
+            <table className="portal-table w-full min-w-[900px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
                   <th className="px-3 py-2">When</th>
                   <th className="px-3 py-2">User</th>
                   <th className="px-3 py-2">Action</th>

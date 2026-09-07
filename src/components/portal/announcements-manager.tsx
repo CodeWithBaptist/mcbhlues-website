@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Card, EmptyState } from "./ui";
+import { Card, EmptyState, Notice } from "./ui";
 
 export interface AnnouncementRow {
   id: string;
@@ -104,16 +104,12 @@ export function AnnouncementsManager({
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       {canManage && (
@@ -127,7 +123,7 @@ export function AnnouncementsManager({
 
       <Card title="Announcements" description={`${list.length} total · ${list.filter((row) => row.isActive).length} active`}>
         {list.length === 0 ? (
-          <EmptyState title="No announcements" description="Create the first site-wide announcement." />
+          <EmptyState icon={<Megaphone className="h-6 w-6" />} title="No announcements" description="Create the first site-wide announcement." />
         ) : (
           <ul className="space-y-3">
             {list.map((row) => (
@@ -289,8 +285,8 @@ function AnnouncementEditor({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-      <form onSubmit={submit} className="my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">
             {isEdit ? "Edit announcement" : "New announcement"}

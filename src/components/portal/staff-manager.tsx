@@ -29,7 +29,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Can, useSession } from "./permission-provider";
 import { StatCard } from "./stat-card";
-import { Card, EmptyState, StatusPill } from "./ui";
+import { Card, EmptyState, StatusPill, Notice } from "./ui";
 
 export interface StaffRow {
   id: string;
@@ -219,21 +219,12 @@ export function StaffManager({
       </div>
 
       {message && (
-        <p
-          className={cn(
-            "portal-enter flex items-start gap-2 rounded-lg border px-3.5 py-2.5 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
-          {message.tone === "ok" ? (
-            <Check className="mt-0.5 h-4 w-4 shrink-0" />
-          ) : (
-            <X className="mt-0.5 h-4 w-4 shrink-0" />
-          )}
           {message.text}
-        </p>
+        </Notice>
       )}
 
       {inviteLink && (
@@ -350,6 +341,7 @@ export function StaffManager({
       >
         {filtered.length === 0 ? (
           <EmptyState
+            icon={<UserCheck className="h-6 w-6" />}
             title={staff.length === 0 ? "No staff accounts yet" : "No staff match your filters"}
             description={
               staff.length === 0
@@ -689,7 +681,7 @@ function ModalOverlay({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 p-4 backdrop-blur-sm"
+      className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 p-4 backdrop-blur-sm"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -698,7 +690,7 @@ function ModalOverlay({
         role="dialog"
         aria-modal="true"
         className={cn(
-          "portal-enter flex max-h-[86vh] w-full flex-col rounded-2xl bg-white shadow-2xl",
+          "portal-modal-panel flex max-h-[86vh] w-full flex-col rounded-2xl bg-white shadow-2xl",
           wide ? "max-w-3xl" : "max-w-md"
         )}
       >

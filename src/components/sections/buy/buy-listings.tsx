@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 import { Property } from "@/types";
 
 export function BuyListings({ properties }: { properties: Property[] }) {
@@ -54,7 +54,7 @@ export function BuyListings({ properties }: { properties: Property[] }) {
           </div>
         </div>
 
-        <p className="text-gray-600 font-medium mb-8">
+        <p className="text-gray-600 font-medium mb-8" aria-live="polite">
           Showing <span className="text-dark font-bold">{filtered.length}</span> properties for sale
         </p>
 
@@ -75,10 +75,32 @@ export function BuyListings({ properties }: { properties: Property[] }) {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full py-20 text-center">
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="col-span-full py-20 text-center"
+              >
+                <div
+                  className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
+                  aria-hidden="true"
+                >
+                  <SearchX className="h-8 w-8" />
+                </div>
                 <h3 className="text-2xl font-bold text-dark mb-2">No properties found</h3>
-                <p className="text-gray-600">Try adjusting your search criteria.</p>
-              </div>
+                <p className="text-gray-600 mb-6">Try adjusting your search criteria.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    setSort("default");
+                  }}
+                  className="rounded-md border-2 border-primary px-6 py-2.5 text-base font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                >
+                  Clear search
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

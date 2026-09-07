@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { PropertyCard } from "@/components/ui/property-card";
 import { Input } from "@/components/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Filter, Search, SearchX } from "lucide-react";
 import { Property } from "@/types";
 
 export function RentListings({ properties }: { properties: Property[] }) {
@@ -34,12 +34,15 @@ export function RentListings({ properties }: { properties: Property[] }) {
           </div>
           
           <div className="flex items-center gap-4 w-full md:w-auto">
-             <p className="text-sm font-medium text-gray-600 whitespace-nowrap">
+             <p className="text-sm font-medium text-gray-600 whitespace-nowrap" aria-live="polite">
                 Found <span className="text-dark font-bold">{filtered.length}</span> rentals
              </p>
              <div className="h-4 w-px bg-gray-300 hidden md:block" />
-             <button className="flex items-center gap-2 text-sm font-bold text-primary hover:text-primary-dark transition-colors">
-                <Filter className="w-4 h-4" />
+             <button
+                type="button"
+                className="flex items-center gap-2 text-sm font-bold text-primary underline-offset-4 transition-colors duration-200 hover:text-primary-dark hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+             >
+                <Filter className="w-4 h-4" aria-hidden="true" />
                 More Filters
              </button>
           </div>
@@ -62,10 +65,29 @@ export function RentListings({ properties }: { properties: Property[] }) {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full py-20 text-center">
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="col-span-full py-20 text-center"
+              >
+                <div
+                  className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"
+                  aria-hidden="true"
+                >
+                  <SearchX className="h-8 w-8" />
+                </div>
                 <h3 className="text-2xl font-bold text-dark mb-2">No rentals matching your search</h3>
-                <p className="text-gray-600">Try broadening your search or check back later.</p>
-              </div>
+                <p className="text-gray-600 mb-6">Try broadening your search or check back later.</p>
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="rounded-md border-2 border-primary px-6 py-2.5 text-base font-semibold text-primary transition-all duration-200 hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                >
+                  Clear search
+                </button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>

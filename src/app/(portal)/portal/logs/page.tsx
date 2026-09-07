@@ -63,10 +63,10 @@ export default async function SystemLogsPage() {
             description="Reply to a customer enquiry or send a test email from System Settings and it will appear here."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto">
+            <table className="portal-table w-full min-w-[900px] text-left text-sm">
               <thead>
-                <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
                   <th className="px-3 py-2">When</th>
                   <th className="px-3 py-2">Status</th>
                   <th className="px-3 py-2">To</th>

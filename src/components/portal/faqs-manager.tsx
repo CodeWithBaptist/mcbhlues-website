@@ -5,8 +5,9 @@ import { ChevronDown, Eye, EyeOff, Loader2, Pencil, Plus, Trash2, X } from "luci
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
-import { Card, EmptyState } from "./ui";
+import { Card, EmptyState, Notice } from "./ui";
 
 export interface FaqRow {
   id: string;
@@ -92,34 +93,22 @@ export function FaqsManager({ initialFaqs, canManage }: { initialFaqs: FaqRow[];
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap rounded-lg bg-gray-100 p-1">
-          {["all", ...CATEGORIES].map((value) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setCategoryFilter(value)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors",
-                categoryFilter === value ? "bg-white text-primary shadow-sm" : "text-gray-500 hover:text-dark"
-              )}
-            >
-              {value}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          scrollable
+          options={[{ label: "All", value: "all" }, ...CATEGORIES.map((value) => ({ label: value, value }))]}
+          value={categoryFilter}
+          onChange={setCategoryFilter}
+          label="Filter FAQs by category"
+        />
         {canManage && (
           <Button onClick={() => setEditor(emptyEditor())}>
             <Plus className="mr-2 h-4 w-4" />
@@ -277,8 +266,8 @@ function FaqEditor({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
-      <form onSubmit={submit} className="my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
+    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">{isEdit ? "Edit FAQ" : "Add FAQ"}</h2>
           <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">

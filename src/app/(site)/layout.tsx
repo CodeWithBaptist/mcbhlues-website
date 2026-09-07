@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnnouncementBanner } from "@/components/layout/announcement-banner";
+import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { getCompanyInfo } from "@/lib/settings/company";
@@ -63,6 +64,7 @@ export default async function SiteLayout({
           __html: JSON.stringify([organisationSchema, websiteSchema]),
         }}
       />
+      <ScrollProgress />
       <AnnouncementBanner />
       <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
       <main id="main-content" className="flex-grow pt-20">

@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Can, useSession } from "./permission-provider";
 import { StatCard } from "./stat-card";
-import { Card } from "./ui";
+import { Card, Notice } from "./ui";
 
 interface RoleRow {
   id: string;
@@ -214,21 +214,12 @@ export function RolesManager({
       </div>
 
       {message && (
-        <p
-          className={cn(
-            "portal-enter flex items-start gap-2 rounded-lg border px-3.5 py-2.5 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
-          {message.tone === "ok" ? (
-            <Check className="mt-0.5 h-4 w-4 shrink-0" />
-          ) : (
-            <X className="mt-0.5 h-4 w-4 shrink-0" />
-          )}
           {message.text}
-        </p>
+        </Notice>
       )}
 
       <div className="flex justify-end">

@@ -73,7 +73,7 @@ export function FileUpload({
           disabled={busy}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "inline-flex h-12 shrink-0 items-center gap-2 rounded-md border border-gray-200 px-4 text-sm font-medium text-gray-700 transition-colors hover:border-primary hover:text-primary disabled:opacity-50",
+            "inline-flex h-12 shrink-0 items-center gap-2 rounded-md border border-gray-200 px-4 text-sm font-medium text-gray-700 transition-all duration-200 hover:border-primary hover:text-primary active:translate-y-px disabled:opacity-50",
             className
           )}
         >
@@ -105,15 +105,22 @@ export function FileUpload({
         send(event.dataTransfer.files);
       }}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors",
-        dragging ? "border-primary bg-primary/5" : "border-gray-200 bg-gray-50/60 hover:border-primary/50",
+        "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ease-soft",
+        dragging
+          ? "scale-[1.01] border-primary bg-primary/10 shadow-inner"
+          : "border-gray-200 bg-gray-50/60 hover:border-primary/50 hover:bg-primary/[0.03]",
         className
       )}
     >
       {busy ? (
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
       ) : (
-        <Upload className="h-6 w-6 text-primary" />
+        <Upload
+          className={cn(
+            "h-6 w-6 text-primary transition-transform duration-300 ease-soft",
+            dragging && "-translate-y-0.5 scale-110"
+          )}
+        />
       )}
       <button
         type="button"

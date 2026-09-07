@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { CmsBlock } from "@/lib/cms/cms-service";
-import { Card } from "./ui";
+import { Card, Notice } from "./ui";
 import { FileUpload } from "./file-upload";
 
 export interface CmsProperty {
@@ -74,16 +74,12 @@ export function CmsManager({ blocks, properties, permissions }: CmsManagerProps)
   return (
     <div className="space-y-5">
       {message && (
-        <p
-          className={cn(
-            "rounded-md border px-3 py-2 text-sm",
-            message.tone === "ok"
-              ? "border-green-200 bg-green-50 text-green-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
+        <Notice
+          tone={message.tone === "ok" ? "ok" : "error"}
+          onDismiss={() => setMessage(null)}
         >
           {message.text}
-        </p>
+        </Notice>
       )}
 
       {sections.map((section) => (

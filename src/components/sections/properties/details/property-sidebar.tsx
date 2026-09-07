@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Turnstile, isTurnstileEnabled } from "@/components/ui/turnstile";
-import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import {
   FIELD_LIMITS,
   hasErrors,
@@ -133,14 +133,17 @@ export function PropertySidebar({
 
   return (
     <div className="flex flex-col gap-8 lg:sticky lg:top-28">
-      <div id="inquiry" className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xl sm:p-8">
+      <div
+        id="inquiry"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xl transition-shadow duration-300 hover:shadow-2xl sm:p-8"
+      >
         <h2 className="mb-6 font-heading text-xl font-bold text-dark">
           Inquire About This Property
         </h2>
 
         {result?.ok ? (
-          <div className="flex flex-col items-center gap-3 py-10 text-center" role="status">
-            <CheckCircle2 className="h-12 w-12 text-green-700" aria-hidden="true" />
+          <div className="flex animate-fade-up flex-col items-center gap-3 py-10 text-center" role="status">
+            <CheckCircle2 className="h-12 w-12 animate-pop text-green-700" aria-hidden="true" />
             <p className="text-sm text-gray-700">{result.text}</p>
             <Button variant="outline" size="sm" onClick={() => setResult(null)}>
               Send another inquiry
@@ -249,18 +252,14 @@ export function PropertySidebar({
             {result && !result.ok && (
               <p
                 role="alert"
-                className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
+                className="animate-shake rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
               >
                 {result.text}
               </p>
             )}
 
-            <Button size="lg" className="w-full font-bold" disabled={sending}>
-              {sending ? (
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-              ) : (
-                "Send Inquiry"
-              )}
+            <Button size="lg" className="w-full font-bold" loading={sending}>
+              {sending ? "Sending…" : "Send Inquiry"}
             </Button>
 
             <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-600">
