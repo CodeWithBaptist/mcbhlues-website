@@ -32,12 +32,9 @@ manually below.
 2. Choose `CodeWithBaptist/mcbhlues-website`
 3. Framework preset: **Next.js** (auto-detected). Root directory: `./`
    Build command and output are the defaults — nothing to change.
-4. **Production branch:** by default Vercel deploys `main`. This work currently
-   lives on `arena/01a057f7-mcbhlues-website`, so either
-   * merge that branch into `main` first, or
-   * push the branch and use the **Preview deployment** URL Vercel creates for
-     it, or
-   * set Settings → Git → Production Branch to `arena/01a057f7-mcbhlues-website`.
+4. **Production branch:** by default Vercel deploys `main`. Merge the approved
+   fix pull request into `main` to deploy it. A pushed working branch gets its
+   own **Preview deployment**; that does not replace the production release.
 
 ---
 
@@ -63,13 +60,23 @@ In production the seeder creates **only** the Super Admin — the demo accounts
 
 Click **Deploy**. On the first request the app automatically:
 
-1. creates all RBAC tables (idempotent `CREATE TABLE IF NOT EXISTS`),
-2. seeds the permission catalogue, the six roles, and the navigation,
-3. creates the Super Admin account.
+1. creates any missing tables,
+2. upgrades older property tables for the separate `name` / `title` fields,
+   copying the previous title into the name only where a name is missing,
+3. seeds the permission catalogue, the six roles, and the navigation,
+4. creates the Super Admin account if it does not already exist,
+5. adds the initial sample listings **only if the properties table is new**.
 
-No migration step to run. Subsequent deploys only *add* newly shipped
-permissions and navigation entries — any role, permission or staff change you
-made through the portal is preserved.
+Bootstrap runs in one transaction, with a database lock to serialise concurrent
+server starts. A failure rolls back the whole attempt so the next request can
+retry without leaving a partially upgraded schema or sample catalogue.
+
+No manual migration step is needed for the name/title upgrade. Existing
+property IDs, slugs, titles, images and related records are preserved; legacy
+location columns are not dropped. Deleted or renamed sample listings are never
+recreated, even when the catalogue is empty. Subsequent deploys only *add* newly
+shipped permissions and navigation entries — any role, permission or staff
+change you made through the portal is preserved.
 
 ---
 
@@ -109,9 +116,33 @@ made through the portal is preserved.
 applied to the environment you deployed. Add it, then redeploy (env changes need
 a new deployment).
 
-**Build fails on `next/font` / Google Fonts** — that only happens in a network
--restricted sandbox. Vercel's build environment can reach Google Fonts.
+**Site fails after the name/title update (`column "name" ... does not exist`)**
+— older releases changed `CREATE TABLE IF NOT EXISTS` but did not migrate the
+existing properties table. Deploy the release containing the bootstrap fix; the
+first database-backed request safely adds and backfills `properties.name`.
+Do **not** drop/reset the database or reimport the sample catalogue. Confirm
+`/api/health` returns `{"ok":true}`, then check the homepage and Staff Portal.
+The database connection needs schema-alter permissions, as it already does
+for the application's automatic table creation. If the health check still
+fails, inspect Vercel's runtime logs for the underlying database error.
+
+**A deleted sample listing returns after a restart** — older releases treated
+any missing seed slug as a request to recreate it. The bootstrap fix only
+seeds listings when the properties table is first created. It does not remove
+previously recreated rows automatically: review those in the portal and delete
+only the listings you no longer want.
+
+**Font loading** — fonts are self-hosted under `src/fonts`; builds do not need
+to reach Google Fonts.
 
 **Login works but every request is slow on first hit** — that's the one-time
 schema bootstrap on a cold start. Consider a small always-on database
 (Neon's free tier suspends after inactivity) or Fluid/warm compute.
+
+## Regression checks
+
+Run `npm test`, `npm run typecheck`, `npm run lint` and `npm run build` before
+deploying. The database tests use isolated, in-memory PGlite databases (never
+`DATABASE_URL` or your live property data). They cover the previous schema,
+partial upgrades, repeated/concurrent bootstrap calls, failed-startup rollback,
+and deleting/renaming listings without losing enquiry or booking history.
