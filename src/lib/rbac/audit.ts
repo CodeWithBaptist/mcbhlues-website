@@ -141,6 +141,8 @@ export const AUDIT_ACTIONS = {
   CMS_ANNOUNCEMENT_CREATED: "cms.announcement_created",
   CMS_ANNOUNCEMENT_UPDATED: "cms.announcement_updated",
   CMS_ANNOUNCEMENT_DELETED: "cms.announcement_deleted",
+  CMS_LEGAL_UPDATED: "cms.legal_updated",
+  CMS_LEGAL_RESET: "cms.legal_reset",
   MEDIA_ADDED: "media.added",
   MEDIA_UPDATED: "media.updated",
   MEDIA_DELETED: "media.deleted",

@@ -6,17 +6,17 @@ import { pageMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Privacy Policy",
+  title: "Cookie Policy",
   description:
-    "How MCBHLUES Enterprises collects, uses, stores and protects your personal data, your rights under the Nigeria Data Protection Act 2023, and the cookies this website uses.",
-  path: "/privacy",
+    "What the MCBHLUES Enterprises website stores on your device, why, and how to change your mind. Essential storage only, unless you opt in to anonymous analytics.",
+  path: "/cookies",
   type: "article",
   socialDescription:
-    "How we collect, use and protect your personal data, and the cookies this website uses.",
+    "What this website stores on your device, why, and how to change your mind.",
 });
 
 /** Text is staff-editable in Portal → Legal Documents; this page just renders it. */
-export default async function PrivacyPolicyPage() {
-  const doc = await getLegalDoc("privacy");
+export default async function CookiePolicyPage() {
+  const doc = await getLegalDoc("cookies");
   return <LegalDocument doc={doc} />;
 }
