@@ -3,7 +3,7 @@ import { LegalDocument } from "@/components/sections/legal/legal-document";
 import { getLegalDoc } from "@/lib/legal/legal-docs";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // seconds — keep in sync with docs (see src/lib/cache.ts)
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy Policy",

@@ -6,6 +6,8 @@ import { ContactInfo } from "@/components/sections/contact/contact-info";
 import { getCompanyInfo } from "@/lib/settings/company";
 import { pageMetadata } from "@/lib/seo";
 
+export const revalidate = 60; // seconds — keep in sync with docs (see src/lib/cache.ts)
+
 export const metadata: Metadata = pageMetadata({
   title: "Contact Us — Book a Free Consultation",
   description:

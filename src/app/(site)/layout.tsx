@@ -6,7 +6,11 @@ import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { getCompanyInfo } from "@/lib/settings/company";
 import { SITE_CONFIG, SITE_URL } from "@/constants";
 
-export const dynamic = "force-dynamic";
+// Cached at the edge (stale-while-revalidate) instead of re-rendered on every
+// click — the company info and banner reads ride along in the cached HTML.
+// Portal edits publish immediately via invalidatePublicSite(). Must stay a
+// literal: segment config exports cannot reference imported values.
+export const revalidate = 60;
 
 export default async function SiteLayout({
   children,

@@ -9,7 +9,7 @@ import { toPublicProperty } from "@/lib/properties/public-property";
 import { getCmsValues } from "@/lib/cms/cms-service";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // seconds — keep in sync with docs (see src/lib/cache.ts)
 
 export const metadata: Metadata = pageMetadata({
   title: "Property to Rent in Lagos",

@@ -13,6 +13,12 @@ Any managed Postgres works. Easiest from inside Vercel:
 
 **Vercel dashboard → Storage → Create Database → Neon (Postgres)**
 
+Pick a database **region close to your Vercel project's region** (check the
+project's Settings → General → Region). The public website is served from
+Vercel's edge cache, but every background regeneration and every Staff Portal
+request still talks to Postgres — a database on the other side of the world
+adds a visible delay to exactly those paths.
+
 Alternatives: [Neon](https://neon.tech), [Supabase](https://supabase.com),
 Railway, RDS. Copy the connection string, which looks like:
 
@@ -103,6 +109,10 @@ recreated, even when the catalogue is empty. Subsequent deploys only *add* newly
 shipped permissions and navigation entries — any role, permission or staff
 change you made through the portal is preserved.
 
+The idempotent seed only runs when a database's `schema_meta.seed_revision`
+lags behind the release — steady-state cold starts skip it entirely, which
+keeps the first request after a quiet period fast.
+
 ---
 
 ## 5. First sign-in
@@ -119,7 +129,8 @@ change you made through the portal is preserved.
 ## 6. Production hardening checklist
 
 - [ ] `SEED_DEMO_STAFF` is **not** set (or is `false`).
-- [ ] `ALLOW_FRAMING` and `DISABLE_HTTPS_REDIRECT` are **not** set in Production.
+- [ ] `ALLOW_FRAMING`, `DISABLE_HTTPS_REDIRECT` and `ALLOW_PGLITE_FALLBACK`
+      are **not** set in Production.
 - [ ] `NEXT_PUBLIC_SITE_URL` matches the canonical domain exactly, with no
       trailing slash and no `www.` mismatch.
 - [ ] Both Turnstile keys are set, and the widget's hostname list includes the

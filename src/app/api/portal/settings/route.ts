@@ -5,6 +5,7 @@ import { settings } from "@/db/schema";
 import { withPermission } from "@/lib/rbac/api-guard";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 import { MASKED_VALUE, isSensitiveKey } from "@/lib/settings/secrets";
+import { invalidatePublicSite } from "@/lib/cache";
 
 const SCOPE_PERMISSION: Record<string, string> = {
   company: "settings:company",
@@ -84,6 +85,10 @@ export const PUT = withPermission(
       // Never write secrets into the audit trail.
       metadata: { scope, value: isSensitiveKey(key) ? "••••" : (body?.value ?? null) },
     });
+
+    // Company details (name, logo, phone…) are baked into the cached public
+    // layout — purge it so the change publishes immediately.
+    if (scope === "company") invalidatePublicSite();
 
     return NextResponse.json({ ok: true });
   }

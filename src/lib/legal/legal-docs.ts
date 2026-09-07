@@ -2,6 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db";
 import { cmsContent } from "@/db/schema";
 import { DEFAULT_LEGAL_DOCS } from "./legal-defaults";
+import { invalidatePublicSite } from "@/lib/cache";
 
 export interface LegalDoc {
   slug: string;
@@ -96,6 +97,7 @@ export async function saveLegalDoc(
     }
   }
 
+  invalidatePublicSite();
   return getLegalDoc(slug);
 }
 
@@ -111,5 +113,6 @@ export async function resetLegalDoc(slug: string): Promise<LegalDoc> {
         FIELDS.map((field) => keyFor(slug, field))
       )
     );
+  invalidatePublicSite();
   return getLegalDoc(slug);
 }

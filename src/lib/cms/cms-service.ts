@@ -1,6 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { announcements, cmsContent, faqs, testimonials } from "@/db/schema";
+import { invalidatePublicSite } from "@/lib/cache";
 
 /* -------------------------------------------------------------------------- */
 /*  Content blocks (homepage / about / contact copy)                           */
@@ -134,6 +135,7 @@ export async function setCmsBlock(key: string, value: string, actorId: string): 
       updatedBy: actorId,
     });
   }
+  invalidatePublicSite();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -179,6 +181,7 @@ export async function createTestimonial(input: TestimonialInput & { name: string
       createdBy: actorId,
     })
     .returning();
+  invalidatePublicSite();
   return created;
 }
 
@@ -197,12 +200,14 @@ export async function updateTestimonial(id: string, input: TestimonialInput) {
   if (input.sortOrder !== undefined) patch.sortOrder = input.sortOrder;
 
   const [updated] = await db.update(testimonials).set(patch).where(eq(testimonials.id, id)).returning();
+  invalidatePublicSite();
   return updated ?? null;
 }
 
 export async function deleteTestimonial(id: string): Promise<boolean> {
   const db = await getDb();
   const [deleted] = await db.delete(testimonials).where(eq(testimonials.id, id)).returning({ id: testimonials.id });
+  if (deleted) invalidatePublicSite();
   return Boolean(deleted);
 }
 
@@ -246,6 +251,7 @@ export async function createFaq(input: FaqInput & { question: string; answer: st
       createdBy: actorId,
     })
     .returning();
+  invalidatePublicSite();
   return created;
 }
 
@@ -262,12 +268,14 @@ export async function updateFaq(id: string, input: FaqInput) {
   if (input.sortOrder !== undefined) patch.sortOrder = input.sortOrder;
 
   const [updated] = await db.update(faqs).set(patch).where(eq(faqs.id, id)).returning();
+  invalidatePublicSite();
   return updated ?? null;
 }
 
 export async function deleteFaq(id: string): Promise<boolean> {
   const db = await getDb();
   const [deleted] = await db.delete(faqs).where(eq(faqs.id, id)).returning({ id: faqs.id });
+  if (deleted) invalidatePublicSite();
   return Boolean(deleted);
 }
 
@@ -315,6 +323,7 @@ export async function createAnnouncement(input: AnnouncementInput & { title: str
       createdBy: actorId,
     })
     .returning();
+  invalidatePublicSite();
   return created;
 }
 
@@ -332,6 +341,7 @@ export async function updateAnnouncement(id: string, input: AnnouncementInput) {
   if (input.endsAt !== undefined) patch.endsAt = input.endsAt ? new Date(input.endsAt) : null;
 
   const [updated] = await db.update(announcements).set(patch).where(eq(announcements.id, id)).returning();
+  invalidatePublicSite();
   return updated ?? null;
 }
 
@@ -341,6 +351,7 @@ export async function deleteAnnouncement(id: string): Promise<boolean> {
     .delete(announcements)
     .where(eq(announcements.id, id))
     .returning({ id: announcements.id });
+  if (deleted) invalidatePublicSite();
   return Boolean(deleted);
 }
 
