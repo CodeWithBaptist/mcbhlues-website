@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, TrendingUp, Award } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 import Link from "next/link";
+import { PRIMARY_CTA } from "@/constants";
 
 const highlights = [
   { icon: ShieldCheck, label: "Title and location checked" },
@@ -45,7 +46,7 @@ export function BuyHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-gray-400 leading-relaxed mb-10 max-w-2xl"
+            className="text-xl text-gray-300 leading-relaxed mb-10 max-w-2xl"
           >
             Search listings below and filter by price. Each one has been checked
             before it goes live, and our consultants can arrange a private viewing
@@ -56,18 +57,28 @@ export function BuyHero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-wrap gap-4 mb-12"
+            className="mb-12 flex flex-col items-start gap-5 sm:flex-row sm:items-center"
           >
-            <Link href="#buy-listings">
-              <Button size="lg" className="gap-2 group">
-                Browse Properties
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
+            {/* One primary action. The in-page jump is demoted to a text link
+                so there is never a second thing competing for the click. */}
+            <Link
+              href={PRIMARY_CTA.href}
+              className={buttonClasses({
+                size: "lg",
+                className: "group w-full gap-2 font-bold sm:w-auto",
+              })}
+            >
+              {PRIMARY_CTA.label}
+              <ArrowRight
+                className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                aria-hidden="true"
+              />
             </Link>
-            <Link href="/contact">
-              <Button size="lg" variant="outline" className="border-white/20 text-white hover:bg-white hover:text-dark">
-                Talk to a Consultant
-              </Button>
+            <Link
+              href="#buy-listings"
+              className="text-base font-semibold text-white underline-offset-4 hover:underline"
+            >
+              or jump to the listings
             </Link>
           </motion.div>
 

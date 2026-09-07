@@ -17,17 +17,17 @@ export function PropertyContent({ property, amenities = [], features = [] }: Pro
         <div className="flex flex-col items-center gap-1">
           <Bed className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold text-dark">{property.beds}</span>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Bedrooms</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Bedrooms</span>
         </div>
         <div className="flex flex-col items-center gap-1 border-x border-gray-100 px-6">
           <Bath className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold text-dark">{property.baths}</span>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Bathrooms</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Bathrooms</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <Maximize2 className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold text-dark">{property.sqft}</span>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Sq Ft</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Sq Ft</span>
         </div>
       </div>
 

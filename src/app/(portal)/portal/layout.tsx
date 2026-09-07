@@ -39,7 +39,9 @@ export default async function PortalLayout({ children }: { children: React.React
         <PortalSidebar navigation={navigation} />
         <div className="flex min-w-0 flex-1 flex-col">
           <PortalTopbar />
-          <main className="portal-enter flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+          <main id="main-content" className="portal-enter flex-1 px-4 py-6 lg:px-8 lg:py-8">
+            {children}
+          </main>
         </div>
       </div>
     </PermissionProvider>

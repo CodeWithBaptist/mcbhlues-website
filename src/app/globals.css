@@ -563,3 +563,92 @@
 .portal-dark .staff-auth hr {
   border-color: var(--portal-border-soft);
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Accessibility & contrast                                                   */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * A single, always-visible keyboard focus ring. `:focus-visible` (rather than
+ * `:focus`) means mouse users never see it, so there is no reason to remove it
+ * — which is what breaks keyboard navigation on most sites. WCAG 2.4.7 / 2.4.11.
+ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* On the dark footer / dark hero sections the blue ring is hard to see. */
+.bg-dark :where(a, button, [tabindex]):focus-visible,
+.public-dark .public-site :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: #93c5fd;
+}
+
+/* Give every in-page anchor room below the fixed navbar. */
+:target {
+  scroll-margin-top: 7rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/*
+ * Respect the OS "reduce motion" setting everywhere, including the Framer
+ * Motion entrance animations used across the public site.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Stop long unbroken strings (URLs, emails) blowing out narrow phone layouts. */
+.public-site :where(h1, h2, h3, h4, p, li, blockquote) {
+  overflow-wrap: break-word;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Public dark-mode mappings for the classes added by the a11y pass           */
+/* -------------------------------------------------------------------------- */
+
+.public-dark .public-site [class~="border-gray-500"] {
+  border-color: #4a5f7e !important;
+}
+
+.public-dark .public-site [class~="text-gray-800"],
+.public-dark .public-site [class~="text-gray-900"] {
+  color: #e6edf7 !important;
+}
+
+.public-dark .public-site [class~="bg-red-50"] {
+  background-color: #3a1620 !important;
+}
+.public-dark .public-site [class~="text-red-700"],
+.public-dark .public-site [class~="text-red-800"] {
+  color: #ffb4b4 !important;
+}
+.public-dark .public-site [class~="border-red-300"],
+.public-dark .public-site [class~="border-red-700"] {
+  border-color: #7f3346 !important;
+}
+
+.public-dark .public-site [class~="bg-amber-100"] {
+  background-color: #4a3708 !important;
+}
+.public-dark .public-site [class~="text-amber-950"] {
+  color: #ffe2a8 !important;
+}
+
+.public-dark .public-site [class~="text-green-700"] {
+  color: #6ee7a8 !important;
+}

@@ -21,7 +21,7 @@ export function ContactHero() {
           <h1 className="text-4xl md:text-6xl font-extrabold font-heading mb-6">
             Tell us what you are planning
           </h1>
-          <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed">
+          <p className="max-w-2xl mx-auto text-gray-300 text-lg leading-relaxed">
             Buying, selling, developing or managing a property. Send us a message
             and a consultant will reply with the next steps, what it involves and
             what it costs.

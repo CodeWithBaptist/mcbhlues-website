@@ -52,7 +52,7 @@ export function RentPerks() {
                 <perk.icon className="w-7 h-7" />
               </div>
               <h4 className="text-xl font-bold font-heading mb-3 text-dark">{perk.title}</h4>
-              <p className="text-gray-500 text-sm leading-relaxed">{perk.description}</p>
+              <p className="text-gray-600 text-sm leading-relaxed">{perk.description}</p>
             </motion.div>
           ))}
         </div>

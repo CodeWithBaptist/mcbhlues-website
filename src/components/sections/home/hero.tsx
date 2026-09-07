@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
+import { SmartImage } from "@/components/ui/smart-image";
+import { PRIMARY_CTA } from "@/constants";
 
 export interface HeroContent {
   badge: string;
@@ -24,7 +26,7 @@ export function Hero({ content }: { content?: HeroContent }) {
     "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.";
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background-soft">
+    <section className="relative flex items-center overflow-hidden bg-background-soft py-16 sm:py-20 lg:min-h-[88vh] lg:py-0">
       <Container className="relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -32,30 +34,40 @@ export function Hero({ content }: { content?: HeroContent }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-4 py-2 border border-primary/20 text-primary text-sm font-semibold tracking-wide uppercase mb-6">
+            <span className="mb-6 inline-block border border-primary/30 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-dark sm:text-sm">
               {badge}
             </span>
-            <h1 className="text-5xl md:text-6xl font-extrabold text-dark leading-[1.08] mb-6 font-heading">
+            <h1 className="mb-6 font-heading text-4xl font-extrabold leading-[1.1] text-dark sm:text-5xl md:text-6xl">
               {title}
             </h1>
-            <p className="text-lg text-gray-600 leading-relaxed mb-10 max-w-xl font-body">
+            <p className="mb-10 max-w-xl font-body text-base leading-relaxed text-gray-700 sm:text-lg">
               {subtitle}
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/properties">
-                <Button size="lg" className="gap-2 group">
-                  Explore Properties
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Button>
+            {/* One primary action. Everything else on the page is a text link
+                so there is never a second thing competing for the click. */}
+            <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center">
+              <Link
+                href={PRIMARY_CTA.href}
+                className={buttonClasses({
+                  size: "lg",
+                  className: "group w-full gap-2 font-bold sm:w-auto",
+                })}
+              >
+                {PRIMARY_CTA.label}
+                <ArrowRight
+                  className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
-              <Link href="/about">
-                <Button size="lg" variant="outline">
-                  How we work
-                </Button>
+              <Link
+                href="/properties"
+                className="text-base font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                or browse the listings
               </Link>
             </div>
 
-            <p className="mt-12 text-sm text-gray-500 leading-relaxed max-w-md">
+            <p className="mt-10 max-w-md text-sm leading-relaxed text-gray-600">
               Give us a call or send a message. A consultant who knows your case
               stays on it for the whole transaction. No call centres and no hand
               offs between departments.
@@ -68,11 +80,13 @@ export function Hero({ content }: { content?: HeroContent }) {
             transition={{ duration: 0.8, delay: 0.15 }}
             className="relative hidden lg:block"
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              {/* eslint-disable-next-line @next/next/no-img-element -- editorial imagery placeholder */}
-              <img
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+              <SmartImage
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"
-                alt="Modern residential building managed by MCBHLUES Enterprises"
+                alt="Contemporary apartment block in Lagos developed and managed by MCBHLUES Enterprises, seen from the street at dusk"
+                width={1120}
+                height={1400}
+                sizes="(min-width: 1024px) 45vw, 1px"
                 className="aspect-[4/5] w-full object-cover"
               />
             </div>

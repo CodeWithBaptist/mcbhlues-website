@@ -62,7 +62,7 @@ export function BuyProcess() {
                 STEP {step.step}
               </span>
               <h3 className="text-xl font-bold text-dark font-heading mb-3">{step.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed max-w-[240px]">{step.description}</p>
+              <p className="text-gray-600 text-sm leading-relaxed max-w-[240px]">{step.description}</p>
             </motion.div>
           ))}
         </div>

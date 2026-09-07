@@ -91,7 +91,7 @@ export function WhyChooseUs() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-8 border-t border-gray-200 pt-6 text-sm text-gray-500 leading-relaxed">
+              <p className="mt-8 border-t border-gray-200 pt-6 text-sm text-gray-600 leading-relaxed">
                 Every scope is put in writing before we begin, so you know what is
                 included, what it costs and when it will be done.
               </p>

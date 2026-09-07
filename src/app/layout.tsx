@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Font from "next/font/local";
 import "./globals.css";
-import { SITE_CONFIG } from "@/constants";
+import { SITE_CONFIG, SITE_URL } from "@/constants";
 import { StaffThemeProvider } from "@/components/theme/staff-theme-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
@@ -20,6 +20,8 @@ const inter = Font({
   ],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
 const poppins = Font({
@@ -33,14 +35,85 @@ const poppins = Font({
   ],
   variable: "--font-poppins",
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
+const TITLE_DEFAULT = `${SITE_CONFIG.name} — ${SITE_CONFIG.tagline}`;
+
 export const metadata: Metadata = {
+  // Makes every relative URL below (and in child pages) resolve to an absolute
+  // one, which Open Graph and Twitter both require.
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: SITE_CONFIG.name,
+    default: TITLE_DEFAULT,
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,
+  applicationName: SITE_CONFIG.name,
+  keywords: [
+    "real estate Lagos",
+    "property for sale Lagos",
+    "property for rent Lagos",
+    "real estate consulting Nigeria",
+    "property development Lagos",
+    "facility management Lagos",
+    "Victoria Island property",
+    "MCBHLUES Enterprises",
+  ],
+  authors: [{ name: SITE_CONFIG.name, url: SITE_URL }],
+  creator: SITE_CONFIG.name,
+  publisher: SITE_CONFIG.name,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_CONFIG.name,
+    locale: "en_NG",
+    url: SITE_URL,
+    title: TITLE_DEFAULT,
+    description: SITE_CONFIG.description,
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${SITE_CONFIG.name} — real estate consulting, development and facility management in Lagos, Nigeria`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE_DEFAULT,
+    description: SITE_CONFIG.description,
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  category: "real estate",
+  formatDetection: { telephone: true, address: true, email: true },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Never block pinch-zoom — capping it is a WCAG 1.4.4 failure.
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a1220" },
+  ],
 };
 
 export default function RootLayout({
@@ -49,8 +122,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="en-NG" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
       <head>
+        {/* Warm up the connections the page will need for imagery. */}
+        <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         {/* Apply the saved public theme before the first paint to avoid a flash. */}
         <script
           dangerouslySetInnerHTML={{
@@ -59,6 +135,13 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* First tab stop on every page — WCAG 2.4.1 (Bypass Blocks). */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
         <ThemeProvider>
           <StaffThemeProvider>{children}</StaffThemeProvider>
         </ThemeProvider>

@@ -16,12 +16,25 @@ interface LogoProps {
 
 export function Logo({ className, light = false, logoUrl, name = SITE_CONFIG.name }: LogoProps) {
   return (
-    <Link href="/" className={cn("flex items-center gap-2", className)}>
+    <Link
+      href="/"
+      aria-label={`${name} — go to the homepage`}
+      className={cn(
+        "flex items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary",
+        className
+      )}
+    >
       {logoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element -- staff-uploaded brand asset served from /api/uploads, sized by CSS
+        /* Staff-uploaded brand asset of unknown intrinsic size. The box is fixed
+           by CSS so there is no layout shift, and the file is already compressed
+           at upload time. */
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={logoUrl}
-          alt={name}
+          alt={`${name} logo`}
+          width={180}
+          height={40}
+          decoding="async"
           className="h-10 w-auto max-w-[180px] object-contain"
         />
       ) : (

@@ -30,7 +30,7 @@ export function PropertiesList({ properties }: { properties: Property[] }) {
         />
 
         <div className="flex justify-between items-center mb-8">
-          <p className="text-gray-500 font-medium">
+          <p className="text-gray-600 font-medium">
             Showing <span className="text-dark font-bold">{filteredProperties.length}</span> properties
           </p>
         </div>
@@ -38,7 +38,7 @@ export function PropertiesList({ properties }: { properties: Property[] }) {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filteredProperties.length > 0 ? (
-              filteredProperties.map((property) => (
+              filteredProperties.map((property, index) => (
                 <motion.div
                   key={property.id}
                   layout
@@ -47,13 +47,14 @@ export function PropertiesList({ properties }: { properties: Property[] }) {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <PropertyCard property={property} />
+                  {/* The first row is above the fold — fetch it eagerly. */}
+                  <PropertyCard property={property} priority={index < 3} />
                 </motion.div>
               ))
             ) : (
               <div className="col-span-full py-20 text-center">
                 <h3 className="text-2xl font-bold text-dark mb-2">No properties found</h3>
-                <p className="text-gray-500">Try adjusting your filters or search keywords.</p>
+                <p className="text-gray-600">Try adjusting your filters or search keywords.</p>
               </div>
             )}
           </AnimatePresence>

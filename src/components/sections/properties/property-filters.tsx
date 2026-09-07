@@ -21,7 +21,7 @@ export function PropertyFilters({ search, setSearch, type, setType }: PropertyFi
   return (
     <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-10 p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
       <div className="relative w-full md:w-96">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
         <Input
           placeholder="Search location or title..."
           className="pl-10"
@@ -39,7 +39,7 @@ export function PropertyFilters({ search, setSearch, type, setType }: PropertyFi
               className={`px-4 py-2 text-sm font-semibold rounded-md transition-all ${
                 type === t.value
                   ? "bg-white text-primary shadow-sm"
-                  : "text-gray-500 hover:text-dark"
+                  : "text-gray-600 hover:text-dark"
               }`}
             >
               {t.label}

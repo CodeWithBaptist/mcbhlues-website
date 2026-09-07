@@ -60,7 +60,7 @@ export function OurStory() {
             </div>
             <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hidden md:block z-30 max-w-[240px]">
               <p className="text-primary font-black text-4xl mb-1">One team</p>
-              <p className="text-gray-500 text-xs font-bold uppercase tracking-tight">
+              <p className="text-gray-600 text-xs font-bold uppercase tracking-tight">
                 From first viewing through handover and beyond
               </p>
             </div>

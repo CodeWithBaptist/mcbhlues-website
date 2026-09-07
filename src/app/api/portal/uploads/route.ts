@@ -5,6 +5,7 @@ import {
   storeUpload,
   validateUpload,
 } from "@/lib/media/upload-service";
+import { compressUploadImage } from "@/lib/media/image-compression";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 
 export const runtime = "nodejs";
@@ -35,8 +36,17 @@ export const POST = withPermission(
       return NextResponse.json({ error: "That file is too large." }, { status: 413 });
     }
 
+    // Downscale + re-encode photos before they reach the database. Falls back
+    // to the original bytes if sharp is unavailable, so uploads never fail
+    // because of compression.
+    const optimised = await compressUploadImage({
+      name: file.name,
+      type: file.type,
+      buffer,
+    });
+
     const stored = await storeUpload(
-      { name: file.name, type: file.type, buffer },
+      { name: optimised.fileName, type: optimised.contentType, buffer: optimised.buffer },
       user.id
     );
 
@@ -45,7 +55,13 @@ export const POST = withPermission(
       action: AUDIT_ACTIONS.MEDIA_ADDED,
       resource: "upload",
       resourceId: stored.id,
-      metadata: { fileName: stored.fileName, bytes: stored.byteSize, source: "device" },
+      metadata: {
+        fileName: stored.fileName,
+        bytes: stored.byteSize,
+        originalBytes: optimised.originalBytes,
+        compressed: optimised.compressed,
+        source: "device",
+      },
     });
 
     return NextResponse.json({ upload: stored }, { status: 201 });

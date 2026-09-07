@@ -51,7 +51,7 @@ export function ContactInfo({ contact }: ContactInfoProps) {
           </div>
           <h4 className="text-xl font-bold text-dark font-heading mb-2">{item.title}</h4>
           <p className="text-primary font-bold mb-2">{item.value}</p>
-          <p className="text-gray-500 text-sm">{item.description}</p>
+          <p className="text-gray-600 text-sm">{item.description}</p>
         </div>
       ))}
     </div>

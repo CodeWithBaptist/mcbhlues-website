@@ -6,7 +6,8 @@ import { Container } from "@/components/ui/container";
 import { formatCurrency } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Property } from "@/types";
-import { Button } from "@/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
+import { SaveButton } from "@/components/ui/save-button";
 
 interface PropertyHeaderProps {
   property: Property;
@@ -32,8 +33,8 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
                 {property.title}
               </p>
             )}
-            <div className="flex items-center gap-2 text-gray-500">
-              <MapPin className="w-5 h-5 text-primary" />
+            <div className="flex items-center gap-2 text-gray-600">
+              <MapPin className="w-5 h-5 text-primary" aria-hidden="true" />
               <span className="text-lg">{property.location}</span>
             </div>
           </div>
@@ -41,11 +42,22 @@ export function PropertyHeader({ property }: PropertyHeaderProps) {
           <div className="flex flex-col items-start md:items-end gap-4">
             <p className="text-3xl md:text-4xl font-black text-primary font-heading">
               {formatCurrency(property.price, property.currency)}
-              {property.type === "rent" && <span className="text-xl font-bold text-gray-400">/mo</span>}
+              {property.type === "rent" && <span className="text-xl font-bold text-gray-500">/mo</span>}
             </p>
-            <Link href="#inquiry">
-              <Button size="lg">Arrange a viewing</Button>
-            </Link>
+            <div className="flex items-center gap-3">
+              {/* Utility control, deliberately quieter than the single primary CTA. */}
+              <SaveButton
+                propertyId={property.id}
+                propertyName={property.name}
+                className="border border-gray-200 shadow-none"
+              />
+              <Link
+                href="#inquiry"
+                className={buttonClasses({ size: "lg" })}
+              >
+                Arrange a viewing
+              </Link>
+            </div>
           </div>
         </div>
       </Container>
