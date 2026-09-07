@@ -48,7 +48,7 @@ export interface PropertyWithDetails {
   currency: string;
   beds: number;
   baths: number;
-  sqft: number;
+  sqm: number;
   yearBuilt: number | null;
   address: string;
   city: string;
@@ -77,7 +77,7 @@ export interface PropertyInput {
   currency?: string;
   beds?: number;
   baths?: number;
-  sqft?: number;
+  sqm?: number;
   yearBuilt?: number | null;
   address?: string;
   city?: string;
@@ -178,7 +178,7 @@ async function assemble(
     currency: row.currency,
     beds: row.beds,
     baths: row.baths,
-    sqft: row.sqft,
+    sqm: row.sqm,
     yearBuilt: row.yearBuilt,
     address: row.address,
     city: row.city,
@@ -323,7 +323,7 @@ export async function createProperty(
       currency: input.currency ?? DEFAULT_CURRENCY,
       beds: input.beds ?? 0,
       baths: input.baths ?? 0,
-      sqft: input.sqft ?? 0,
+      sqm: input.sqm ?? 0,
       yearBuilt: input.yearBuilt ?? null,
       address: input.address ?? "",
       city: input.city ?? "",
@@ -361,7 +361,7 @@ export async function updateProperty(
   if (input.currency !== undefined) patch.currency = input.currency;
   if (input.beds !== undefined) patch.beds = input.beds;
   if (input.baths !== undefined) patch.baths = input.baths;
-  if (input.sqft !== undefined) patch.sqft = input.sqft;
+  if (input.sqm !== undefined) patch.sqm = input.sqm;
   if (input.yearBuilt !== undefined) patch.yearBuilt = input.yearBuilt;
   if (input.address !== undefined) patch.address = input.address;
   if (input.city !== undefined) patch.city = input.city;

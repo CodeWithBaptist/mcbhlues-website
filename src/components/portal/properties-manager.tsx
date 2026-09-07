@@ -63,7 +63,7 @@ interface EditorState {
   currency: string;
   beds: string;
   baths: string;
-  sqft: string;
+  sqm: string;
   yearBuilt: string;
   address: string;
   city: string;
@@ -91,7 +91,7 @@ function emptyEditor(): EditorState {
     currency: DEFAULT_CURRENCY,
     beds: "",
     baths: "",
-    sqft: "",
+    sqm: "",
     yearBuilt: "",
     address: "",
     city: "",
@@ -120,7 +120,7 @@ function fromProperty(property: PropertyWithDetails): EditorState {
     currency: property.currency,
     beds: String(property.beds),
     baths: String(property.baths),
-    sqft: String(property.sqft),
+    sqm: String(property.sqm),
     yearBuilt: property.yearBuilt ? String(property.yearBuilt) : "",
     address: property.address,
     city: property.city,
@@ -346,7 +346,7 @@ export function PropertiesManager({
                             {[property.city, property.state].filter(Boolean).join(", ") || "No location"}
                           </p>
                           <p className="text-xs text-gray-400">
-                            {property.beds} bd · {property.baths} ba · {property.sqft.toLocaleString()} sqft
+                            {property.beds} bd · {property.baths} ba · {property.sqm.toLocaleString()} sqm
                           </p>
                         </div>
                       </div>
@@ -569,7 +569,7 @@ function PropertyEditor({
       currency: form.currency || DEFAULT_CURRENCY,
       beds: Number(form.beds) || 0,
       baths: Number(form.baths) || 0,
-      sqft: Number(form.sqft) || 0,
+      sqm: Number(form.sqm) || 0,
       yearBuilt: form.yearBuilt ? Number(form.yearBuilt) : null,
       address: form.address,
       city: form.city,
@@ -740,8 +740,8 @@ function PropertyEditor({
             <Field label="Bathrooms">
               <Input type="number" min={0} value={form.baths} onChange={(event) => set("baths", event.target.value)} />
             </Field>
-            <Field label="Square feet">
-              <Input type="number" min={0} value={form.sqft} onChange={(event) => set("sqft", event.target.value)} />
+            <Field label="Floor area (sqm)">
+              <Input type="number" min={0} value={form.sqm} onChange={(event) => set("sqm", event.target.value)} />
             </Field>
             <Field label="Year built">
               <Input type="number" min={0} value={form.yearBuilt} onChange={(event) => set("yearBuilt", event.target.value)} />

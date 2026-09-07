@@ -61,7 +61,7 @@ export function CookieConsent() {
               permission we also collect anonymous, aggregated usage statistics
               so we can improve it. Read our{" "}
               <Link
-                href="/privacy#cookies"
+                href="/cookies"
                 className="font-semibold text-primary underline underline-offset-2 hover:text-primary-dark"
               >
                 Cookie&nbsp;Policy

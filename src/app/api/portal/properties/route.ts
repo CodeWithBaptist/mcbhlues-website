@@ -39,7 +39,8 @@ export const POST = withPermission("property:create", async (request, { user }) 
       currency: typeof body?.currency === "string" ? body.currency : DEFAULT_CURRENCY,
       beds: Number.isFinite(body?.beds) ? Number(body.beds) : 0,
       baths: Number.isFinite(body?.baths) ? Number(body.baths) : 0,
-      sqft: Number.isFinite(body?.sqft) ? Number(body.sqft) : 0,
+      // Accept the pre-migration `sqft` key so in-flight editors keep working across deploys.
+      sqm: Number.isFinite(body?.sqm ?? body?.sqft) ? Number(body.sqm ?? body.sqft) : 0,
       yearBuilt: Number.isFinite(body?.yearBuilt) ? Number(body.yearBuilt) : null,
       address: typeof body?.address === "string" ? body.address : "",
       city: typeof body?.city === "string" ? body.city : "",

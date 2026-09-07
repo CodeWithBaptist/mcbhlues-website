@@ -258,7 +258,8 @@ export const properties = pgTable(
     currency: text("currency").notNull().default("NGN"),
     beds: integer("beds").notNull().default(0),
     baths: integer("baths").notNull().default(0),
-    sqft: integer("sqft").notNull().default(0),
+    /** Floor area in square metres. */
+    sqm: integer("sqm").notNull().default(0),
     yearBuilt: integer("year_built"),
     address: text("address").notNull().default(""),
     city: text("city").notNull().default(""),

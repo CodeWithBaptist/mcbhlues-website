@@ -20,7 +20,7 @@ export function ServicesSection() {
         <SectionHeading
           eyebrow="What We Do"
           title="Our Premium Services"
-          description="Excellence in every square foot. We provide comprehensive solutions across the entire real estate lifecycle."
+          description="Excellence in every square metre. We provide comprehensive solutions across the entire real estate lifecycle."
         />
 
         <div className="grid md:grid-cols-3 gap-8">

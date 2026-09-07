@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const action = property.type === "sale" ? "for sale" : "to rent";
   const description = clamp(
     property.description ||
-      `${property.title} in ${property.location}. ${property.beds} bedrooms, ${property.baths} bathrooms, ${property.sqft} sqft.`
+      `${property.title} in ${property.location}. ${property.beds} bedrooms, ${property.baths} bathrooms, ${property.sqm} sqm.`
   );
 
   return pageMetadata({
@@ -83,8 +83,8 @@ export default async function PropertyDetailsPage({ params }: Props) {
     image: property.images.length > 0 ? property.images : undefined,
     numberOfBedrooms: property.beds || undefined,
     numberOfBathroomsTotal: property.baths || undefined,
-    floorSize: property.sqft
-      ? { "@type": "QuantitativeValue", value: property.sqft, unitCode: "FTK" }
+    floorSize: property.sqm
+      ? { "@type": "QuantitativeValue", value: property.sqm, unitCode: "MTK" }
       : undefined,
     address: {
       "@type": "PostalAddress",

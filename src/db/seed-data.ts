@@ -100,6 +100,7 @@ export const PERMISSION_SEED: PermissionSeed[] = [
   p("cms:announcements", "Website CMS", "Manage announcements"),
   p("cms:featured_properties", "Website CMS", "Manage featured properties"),
   p("cms:hero", "Website CMS", "Manage hero sections and banners"),
+  p("cms:legal", "Website CMS", "Manage legal documents (privacy, terms, cookies)"),
 
   // ---- Media --------------------------------------------------------------
   p("media:read", "Media Library", "View media library"),
@@ -204,6 +205,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "cms:contact",
       "cms:featured_properties",
       "cms:hero",
+      "cms:legal",
       "media:read",
       "media:upload",
       "media:delete",
@@ -299,6 +301,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "cms:announcements",
       "cms:featured_properties",
       "cms:hero",
+      "cms:legal",
       "media:read",
       "media:upload",
     ],
@@ -337,6 +340,7 @@ export const NAV_SEED: NavSeed[] = [
   { key: "testimonials", label: "Testimonials", href: "/portal/cms/testimonials", icon: "Quote", group: "Content", permissionKey: "cms:testimonials", sortOrder: 62 },
   { key: "faqs", label: "FAQs", href: "/portal/cms/faqs", icon: "HelpCircle", group: "Content", permissionKey: "cms:faqs", sortOrder: 63 },
   { key: "announcements", label: "Announcements", href: "/portal/cms/announcements", icon: "Megaphone", group: "Content", permissionKey: "cms:announcements", sortOrder: 64 },
+  { key: "legal", label: "Legal Documents", href: "/portal/cms/legal", icon: "Scale", group: "Content", permissionKey: "cms:legal", sortOrder: 65 },
 
   { key: "staff", label: "Staff Management", href: "/portal/staff", icon: "UserCog", group: "Administration", permissionKey: "staff:read", sortOrder: 70 },
   { key: "roles", label: "Roles", href: "/portal/roles", icon: "ShieldCheck", group: "Administration", permissionKey: "role:read", sortOrder: 71 },

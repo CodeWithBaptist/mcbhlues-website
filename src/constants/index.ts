@@ -56,7 +56,7 @@ export const NAV_LINKS = [
 export const LEGAL_LINKS = [
   { title: "Privacy Policy", href: "/privacy" },
   { title: "Terms & Conditions", href: "/terms" },
-  { title: "Cookie Policy", href: "/privacy#cookies" },
+  { title: "Cookie Policy", href: "/cookies" },
 ];
 
 /**

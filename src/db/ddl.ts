@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS properties (
   currency text NOT NULL DEFAULT 'NGN',
   beds integer NOT NULL DEFAULT 0,
   baths integer NOT NULL DEFAULT 0,
-  sqft integer NOT NULL DEFAULT 0,
+  sqm integer NOT NULL DEFAULT 0,
   year_built integer,
   address text NOT NULL DEFAULT '',
   city text NOT NULL DEFAULT '',

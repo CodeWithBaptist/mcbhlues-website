@@ -12,11 +12,18 @@ export interface HeroContent {
   badge: string;
   title: string;
   subtitle: string;
+  image?: string;
+  imageAlt?: string;
 }
 
+const DEFAULT_HERO_IMAGE =
+  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80";
+const DEFAULT_HERO_IMAGE_ALT =
+  "Contemporary apartment block in Lagos developed and managed by MCBHLUES Enterprises, seen from the street at dusk";
+
 /**
- * Homepage hero. Copy comes from the CMS (Content → Website CMS) via props;
- * the defaults are applied by the page when no override has been saved.
+ * Homepage hero. Copy and photo come from the CMS (Content → Website CMS) via
+ * props; the defaults below apply when no override has been saved.
  */
 export function Hero({ content }: { content?: HeroContent }) {
   const badge = content?.badge || "Property consulting, development and management";
@@ -24,6 +31,8 @@ export function Hero({ content }: { content?: HeroContent }) {
   const subtitle =
     content?.subtitle ||
     "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.";
+  const image = content?.image || DEFAULT_HERO_IMAGE;
+  const imageAlt = content?.imageAlt || DEFAULT_HERO_IMAGE_ALT;
 
   return (
     <section className="relative flex items-center overflow-hidden bg-background-soft py-16 sm:py-20 lg:min-h-[88vh] lg:py-0">
@@ -82,8 +91,8 @@ export function Hero({ content }: { content?: HeroContent }) {
           >
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <SmartImage
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80"
-                alt="Contemporary apartment block in Lagos developed and managed by MCBHLUES Enterprises, seen from the street at dusk"
+                src={image}
+                alt={imageAlt}
                 width={1120}
                 height={1400}
                 sizes="(min-width: 1024px) 45vw, 1px"

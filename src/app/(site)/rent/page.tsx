@@ -6,6 +6,7 @@ import { RentProcess } from "@/components/sections/rent/rent-process";
 import { CTASection } from "@/components/sections/home/cta-section";
 import { listPublishedProperties } from "@/lib/properties/property-service";
 import { toPublicProperty } from "@/lib/properties/public-property";
+import { getCmsValues } from "@/lib/cms/cms-service";
 import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -20,11 +21,20 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function RentPage() {
-  const properties = (await listPublishedProperties()).map(toPublicProperty);
+  const [published, cms] = await Promise.all([
+    listPublishedProperties(),
+    getCmsValues().catch(() => ({} as Record<string, string>)),
+  ]);
+  const properties = published.map(toPublicProperty);
 
   return (
     <div className="flex flex-col">
-      <RentHero />
+      <RentHero
+        content={{
+          image: cms["rent.hero_image"] ?? "",
+          imageAlt: cms["rent.hero_image_alt"] ?? "",
+        }}
+      />
       <RentPerks />
       <RentListings properties={properties} />
       <RentProcess />

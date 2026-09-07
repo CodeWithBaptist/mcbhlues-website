@@ -29,7 +29,7 @@ export interface Property {
   status: string;
   beds: number;
   baths: number;
-  sqft: number;
+  sqm: number;
   yearBuilt?: number | null;
   location: string;
   address: string;

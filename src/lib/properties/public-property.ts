@@ -55,7 +55,7 @@ export function toPublicProperty(details: PropertyWithDetails): Property {
     status: details.status,
     beds: details.beds,
     baths: details.baths,
-    sqft: details.sqft,
+    sqm: details.sqm,
     yearBuilt: details.yearBuilt,
     location: locationLabel(details),
     address: details.address,

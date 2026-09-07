@@ -8,7 +8,24 @@ import { buttonClasses } from "@/components/ui/button";
 import Link from "next/link";
 import { PRIMARY_CTA } from "@/constants";
 
-export function RentHero() {
+export interface RentHeroContent {
+  image?: string;
+  imageAlt?: string;
+}
+
+const DEFAULT_HERO_IMAGE =
+  "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80";
+const DEFAULT_HERO_IMAGE_ALT =
+  "Bright, furnished living room in a serviced apartment available to rent through MCBHLUES Enterprises";
+
+/**
+ * Rent page hero. The photo comes from the CMS (Content → Website CMS) via
+ * props; the default applies when no override has been saved.
+ */
+export function RentHero({ content }: { content?: RentHeroContent }) {
+  const image = content?.image || DEFAULT_HERO_IMAGE;
+  const imageAlt = content?.imageAlt || DEFAULT_HERO_IMAGE_ALT;
+
   return (
     <section className="relative overflow-hidden bg-primary-soft py-16 sm:py-20 md:py-32">
       {/* Decorative background */}
@@ -77,8 +94,8 @@ export function RentHero() {
             <div className="aspect-[4/3] overflow-hidden rounded-[2rem] border-8 border-white bg-white shadow-2xl">
               <div className="relative h-full w-full">
                 <SmartImage
-                  src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80"
-                  alt="Bright, furnished living room in a serviced apartment available to rent through MCBHLUES Enterprises"
+                  src={image}
+                  alt={imageAlt}
                   fill
                   sizes="(min-width: 1024px) 45vw, 1px"
                   className="object-cover"

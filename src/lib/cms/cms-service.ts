@@ -13,6 +13,8 @@ export interface CmsBlock {
   value: string;
   /** rendered as a multi-line editor when true */
   multiline?: boolean;
+  /** image blocks render a photo picker (upload or link) with a preview */
+  kind?: "text" | "image";
   placeholder?: string;
 }
 
@@ -40,6 +42,36 @@ export const CMS_BLOCKS: CmsBlock[] = [
     value:
       "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.",
     multiline: true,
+  },
+  {
+    key: "home.hero_image",
+    label: "Homepage hero image",
+    section: "homepage",
+    kind: "image",
+    value: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80",
+    placeholder: "https://… or upload a photo below",
+  },
+  {
+    key: "home.hero_image_alt",
+    label: "Homepage hero image description",
+    section: "homepage",
+    value: "Contemporary apartment block in Lagos developed and managed by MCBHLUES Enterprises, seen from the street at dusk",
+    placeholder: "Describe the photo for screen readers.",
+  },
+  {
+    key: "rent.hero_image",
+    label: "Rent page hero image",
+    section: "rent",
+    kind: "image",
+    value: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80",
+    placeholder: "https://… or upload a photo below",
+  },
+  {
+    key: "rent.hero_image_alt",
+    label: "Rent page hero image description",
+    section: "rent",
+    value: "Bright, furnished living room in a serviced apartment available to rent through MCBHLUES Enterprises",
+    placeholder: "Describe the photo for screen readers.",
   },
   {
     key: "about.story_title",

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { CmsBlock } from "@/lib/cms/cms-service";
 import { Card } from "./ui";
+import { FileUpload } from "./file-upload";
 
 export interface CmsProperty {
   id: string;
@@ -30,6 +31,7 @@ const SECTION_PERMISSION: Record<string, string> = {
   about: "cms:about",
   services: "cms:services",
   contact: "cms:contact",
+  rent: "cms:update",
   general: "cms:update",
 };
 
@@ -115,7 +117,15 @@ export function CmsManager({ blocks, properties, permissions }: CmsManagerProps)
                         </Button>
                       )}
                     </div>
-                    {block.multiline ? (
+                    {block.kind === "image" ? (
+                      <ImageBlockField
+                        value={values[block.key] ?? ""}
+                        placeholder={block.placeholder}
+                        disabled={!canEditThis}
+                        onChange={(next) => setValues({ ...values, [block.key]: next })}
+                        onError={(text) => notify(text, "error")}
+                      />
+                    ) : block.multiline ? (
                       <Textarea
                         value={values[block.key] ?? ""}
                         placeholder={block.placeholder}
@@ -146,6 +156,57 @@ export function CmsManager({ blocks, properties, permissions }: CmsManagerProps)
           <FeaturedPicker properties={properties} notify={notify} />
         </Card>
       )}
+    </div>
+  );
+}
+
+function ImageBlockField({
+  value,
+  placeholder,
+  disabled,
+  onChange,
+  onError,
+}: {
+  value: string;
+  placeholder?: string;
+  disabled: boolean;
+  onChange: (next: string) => void;
+  onError: (text: string) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+        {value ? (
+          // eslint-disable-next-line @next/next/no-img-element -- staff-managed CMS asset, any host
+          <img src={value} alt="" className="h-48 w-full object-cover" />
+        ) : (
+          <p className="px-4 py-10 text-center text-sm text-gray-400">
+            No image set — the default website photo is used.
+          </p>
+        )}
+      </div>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex-1">
+          <Input
+            value={value}
+            placeholder={placeholder ?? "https://…"}
+            disabled={disabled}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+        {!disabled && (
+          <FileUpload
+            compact
+            accept="image/*"
+            label="Upload photo"
+            onUploaded={(file) => onChange(file.url)}
+            onError={onError}
+          />
+        )}
+      </div>
+      <p className="text-xs text-gray-500">
+        Upload a photo from this device or paste an image link, then press Save above.
+      </p>
     </div>
   );
 }
