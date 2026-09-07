@@ -10,6 +10,7 @@ import {
 } from "@/db/schema";
 import type { AuthenticatedUser } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/rbac/can";
+import { invalidatePublicSite } from "@/lib/cache";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                      */
@@ -338,6 +339,7 @@ export async function createProperty(
     })
     .returning();
 
+  invalidatePublicSite();
   return (await assemble([created]))[0];
 }
 
@@ -385,12 +387,14 @@ export async function updateProperty(
   const [updated] = await db.update(properties).set(patch).where(eq(properties.id, id)).returning();
   if (!updated) return null;
 
+  invalidatePublicSite();
   return (await assemble([updated]))[0];
 }
 
 export async function deleteProperty(id: string): Promise<boolean> {
   const db = await getDb();
   const [deleted] = await db.delete(properties).where(eq(properties.id, id)).returning({ id: properties.id });
+  if (deleted) invalidatePublicSite();
   return Boolean(deleted);
 }
 
@@ -416,6 +420,7 @@ export async function setPropertyImages(
       })
     );
   }
+  invalidatePublicSite();
   const rows = await db
     .select()
     .from(propertyImages)
@@ -433,6 +438,7 @@ export async function setPropertyAmenities(id: string, amenities: { name: string
       .insert(propertyAmenities)
       .values(cleaned.map((item) => ({ propertyId: id, ...item })));
   }
+  invalidatePublicSite();
   const rows = await db
     .select()
     .from(propertyAmenities)
@@ -448,6 +454,7 @@ export async function setPropertyFeatures(id: string, features: string[]): Promi
   if (cleaned.length > 0) {
     await db.insert(propertyFeatures).values(cleaned.map((label) => ({ propertyId: id, label })));
   }
+  invalidatePublicSite();
   const rows = await db
     .select()
     .from(propertyFeatures)

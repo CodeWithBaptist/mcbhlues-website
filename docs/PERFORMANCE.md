@@ -47,6 +47,58 @@ document references — i.e. the first-load cost for a cold visitor.
 
 ## 2. What was optimised
 
+### Edge caching (ISR) — the click-latency fix
+
+The original build rendered **every** public page dynamically
+(`force-dynamic`), so each click ran a full server render: a Vercel function
+cold start plus several remote PostgreSQL round trips before the first byte.
+Over a Lagos ↔ Vercel connection that reads as a slow site even though the
+render itself takes ~30 ms.
+
+All public pages are now statically cached at the edge with a 60-second
+stale-while-revalidate window (`export const revalidate = 60`):
+
+| Route | Behaviour |
+| --- | --- |
+| `/`, `/about`, `/contact`, `/buy`, `/rent`, `/favorites`, `/privacy`, `/terms`, `/cookies` | Prerendered at build, served from the edge cache (`x-nextjs-cache: HIT`), regenerated in the background every 60 s |
+| `/properties` and `/properties/[slug]` | Same, and every published listing is prerendered via `generateStaticParams`; slugs created after a deploy still render on demand |
+| `/portal/*`, `/api/*` | Unchanged — still rendered per request (staff tooling, always fresh) |
+
+Measured locally against the production build (`next start`, loopback):
+
+| Request | Before | After |
+| --- | --- | --- |
+| Any cached public page | full render + DB round trips per click | **5–15 ms, served from cache** |
+| First render of a new listing slug | — | one render, then cached |
+
+Cached HTML never waits more than 60 s to reflect portal edits on its own,
+and edits normally publish **instantly**: every write path that touches
+public content (properties incl. images/amenities/features, CMS blocks,
+announcements, testimonials, FAQs, legal pages, company settings) calls
+`invalidatePublicSite()` (`src/lib/cache.ts`), which purges the cached tree
+via `revalidatePath`. Verified end-to-end: a CMS edit through
+`/api/portal/cms/content` flips the homepage from `x-nextjs-cache: HIT` to a
+fresh render containing the new copy.
+
+Two supporting changes keep the remaining dynamic renders (portal, first
+render of a new slug) fast:
+
+- **Bootstrap revision stamp** (`src/db/bootstrap.ts`) — the idempotent seed
+  used to run dozens of queries on *every* serverless cold start. A
+  `schema_meta.seed_revision` stamp now skips it entirely on up-to-date
+  databases; the DDL script itself is sent as a single multi-statement query
+  over PostgreSQL's simple protocol (the embedded PGlite keeps the
+  statement-by-statement path). Bump `BOOTSTRAP_REVISION` when changing the
+  seed catalogue or upgrade steps.
+- **Serverless connection pool tuning** (`src/db/index.ts`) — `max: 10`,
+  TCP keep-alive and a 10 s connection timeout so warm instances reuse
+  connections and unreachable databases fail fast instead of hanging renders.
+
+Build-time prerendering needs no database credentials to succeed: during
+`next build` (and only then) the app falls back to a throwaway embedded
+database, so CI builds work without `DATABASE_URL`; the edge revalidates
+against the real database after deploy.
+
 ### Images — the biggest lever
 
 | Change | Effect |

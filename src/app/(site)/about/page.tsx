@@ -5,6 +5,10 @@ import { OurValues } from "@/components/sections/about/our-values";
 import { CTASection } from "@/components/sections/home/cta-section";
 import { pageMetadata } from "@/lib/seo";
 
+// Statically cached and refreshed on a timer so the company details baked in
+// from the layout never go stale for long; portal saves purge the cache too.
+export const revalidate = 60; // seconds — keep in sync with docs (see src/lib/cache.ts)
+
 export const metadata: Metadata = pageMetadata({
   title: "About Us",
   description:

@@ -12,10 +12,30 @@ import { toPublicProperty, hasMapLocation } from "@/lib/properties/public-proper
 import { SITE_URL } from "@/constants";
 import { pageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+// ISR: listing pages are prerendered for every published slug, then served
+// from the edge cache — regenerated in the background every 60 s and purged
+// immediately when staff edit the property in the portal. Must stay a
+// literal: segment config exports cannot reference imported values.
+export const revalidate = 60;
 
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+/**
+ * Prerender every published listing so clicks land on cached HTML. Slugs
+ * created after a deploy still render on demand (`dynamicParams` defaults to
+ * true), and never fall through to a stale page thanks to the 60 s window.
+ * A build-time database hiccup degrades to on-demand rendering instead of
+ * failing the deploy.
+ */
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  try {
+    const published = await listPublishedProperties();
+    return published.map((property) => ({ id: property.slug }));
+  } catch {
+    return [];
+  }
 }
 
 /** Trim to a clean sentence boundary so meta descriptions never end mid-word. */

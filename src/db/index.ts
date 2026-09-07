@@ -19,17 +19,39 @@ async function createDatabase(): Promise<Database> {
   const url = process.env.DATABASE_URL;
   let db: Database;
   let close: () => Promise<void>;
+  let multiStatement = false;
 
   if (usingRealPostgres(url)) {
     const { Pool } = await import("pg");
     const { drizzle } = await import("drizzle-orm/node-postgres");
-    const pool = new Pool({ connectionString: url });
+    // Serverless-tuned pool: a modest cap keeps headroom on shared Postgres,
+    // TCP keep-alive lets idle instances reuse a warm connection instead of
+    // re-handshaking, and the timeout fails fast rather than hanging a render
+    // when the database is unreachable.
+    const pool = new Pool({
+      connectionString: url,
+      max: 10,
+      keepAlive: true,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 10_000,
+    });
     db = drizzle(pool, { schema });
     close = () => pool.end();
+    // Parameterless queries travel over PostgreSQL's simple query protocol,
+    // which executes a whole script in one round trip.
+    multiStatement = true;
   } else {
     // Serverless filesystems are read-only and ephemeral, so the embedded
     // database would silently lose every staff account between requests.
-    if (process.env.NODE_ENV === "production") {
+    // Runtime requests keep this hard requirement (the prerender pass of
+    // `next build` and the ALLOW_PGLITE_FALLBACK escape hatch are the only
+    // exceptions): build-time pages generate shell HTML that the edge
+    // revalidates against the real database shortly after deploy.
+    if (
+      process.env.NODE_ENV === "production" &&
+      process.env.NEXT_PHASE !== "phase-production-build" &&
+      process.env.ALLOW_PGLITE_FALLBACK !== "true"
+    ) {
       throw new Error(
         "DATABASE_URL is required in production. The Staff Portal stores staff " +
           "accounts, roles, permissions and audit logs in PostgreSQL — point " +
@@ -48,7 +70,7 @@ async function createDatabase(): Promise<Database> {
   }
 
   try {
-    await bootstrapDatabase(db);
+    await bootstrapDatabase(db, { multiStatement });
     return db;
   } catch (error) {
     // getDb retries a failed bootstrap. Release this attempt's client/pool so
