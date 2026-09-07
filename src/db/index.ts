@@ -1,7 +1,6 @@
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
-import { SCHEMA_DDL } from "./ddl";
-import { seedDatabase } from "./seed";
+import { bootstrapDatabase } from "./bootstrap";
 
 export type Database = NodePgDatabase<typeof schema>;
 
@@ -19,14 +18,14 @@ function usingRealPostgres(url: string | undefined): url is string {
 async function createDatabase(): Promise<Database> {
   const url = process.env.DATABASE_URL;
   let db: Database;
-  let exec: (sql: string) => Promise<unknown>;
+  let close: () => Promise<void>;
 
   if (usingRealPostgres(url)) {
     const { Pool } = await import("pg");
     const { drizzle } = await import("drizzle-orm/node-postgres");
     const pool = new Pool({ connectionString: url });
     db = drizzle(pool, { schema });
-    exec = (statement: string) => pool.query(statement);
+    close = () => pool.end();
   } else {
     // Serverless filesystems are read-only and ephemeral, so the embedded
     // database would silently lose every staff account between requests.
@@ -45,17 +44,18 @@ async function createDatabase(): Promise<Database> {
     mkdirSync(dirname(dataDir), { recursive: true });
     const client = new PGlite(dataDir);
     db = drizzle(client, { schema }) as unknown as Database;
-    exec = (statement: string) => client.exec(statement);
+    close = () => client.close();
   }
 
-  // Idempotent DDL — safe on every boot.
-  for (const statement of SCHEMA_DDL.split(";\n")) {
-    const trimmed = statement.trim();
-    if (trimmed) await exec(`${trimmed};`);
+  try {
+    await bootstrapDatabase(db);
+    return db;
+  } catch (error) {
+    // getDb retries a failed bootstrap. Release this attempt's client/pool so
+    // repeated failures cannot leak connections or keep the embedded DB open.
+    await close().catch(() => undefined);
+    throw error;
   }
-
-  await seedDatabase(db);
-  return db;
 }
 
 /**

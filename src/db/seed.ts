@@ -51,7 +51,7 @@ function shouldSeedDemoStaff() {
  * role/permission mappings, new staff) while newly shipped permissions and
  * navigation entries are still added.
  */
-export async function seedDatabase(db: Database) {
+export async function seedDatabase(db: Database, { seedProperties }: { seedProperties: boolean }) {
   /* ---- permissions ------------------------------------------------------ */
   const existingPermissions = await db.select().from(permissions);
   const existingPermissionKeys = new Set(existingPermissions.map((row) => row.key));
@@ -184,72 +184,70 @@ export async function seedDatabase(db: Database) {
   const existingEmails = new Set(existingUsers.map((row) => row.email));
 
   /* ---- properties ------------------------------------------------------- */
-  // The property catalogue is seeded once by slug. Afterwards every property,
-  // image, amenity, feature and assignment is ordinary data managed entirely
-  // from the Staff Portal — nothing here overrides runtime changes.
-  const existingProperties = await db.select({ slug: properties.slug }).from(properties);
-  const existingSlugs = new Set(existingProperties.map((row) => row.slug));
-  const missing = PROPERTY_SEED.filter((row) => !existingSlugs.has(row.slug));
+  // Only the transaction that first creates the properties table may populate
+  // the sample catalogue. Never interpret a deleted/renamed slug as missing
+  // seed data, or restore listings when the owner empties the catalogue.
+  if (seedProperties) {
+    for (const seed of PROPERTY_SEED) {
+      const [created] = await db
+        .insert(properties)
+        .values({
+          title: seed.title,
+          name: seed.name,
+          slug: seed.slug,
+          description: seed.description,
+          type: seed.type,
+          status: seed.status,
+          price: seed.price,
+          beds: seed.beds,
+          baths: seed.baths,
+          sqft: seed.sqft,
+          yearBuilt: seed.yearBuilt,
+          address: seed.address,
+          city: seed.city,
+          state: seed.state,
+          country: seed.country,
+          latitude: seed.latitude,
+          longitude: seed.longitude,
+          isFeatured: seed.isFeatured,
+          isPublished: true,
+          publishedAt: new Date(),
+        })
+        .returning({ id: properties.id });
 
-  for (const seed of missing) {
-    const [created] = await db
-      .insert(properties)
-      .values({
-        title: seed.title,
-        name: seed.name,
-        slug: seed.slug,
-        description: seed.description,
-        type: seed.type,
-        status: seed.status,
-        price: seed.price,
-        beds: seed.beds,
-        baths: seed.baths,
-        sqft: seed.sqft,
-        yearBuilt: seed.yearBuilt,
-        address: seed.address,
-        city: seed.city,
-        state: seed.state,
-        country: seed.country,
-        latitude: seed.latitude,
-        longitude: seed.longitude,
-        isFeatured: seed.isFeatured,
-        isPublished: true,
-        publishedAt: new Date(),
-      })
-      .returning({ id: properties.id });
-
-    if (!created) continue;
-    await db
-      .insert(propertyImages)
-      .values(
-        seed.images.map((url, index) => ({
-          propertyId: created.id,
-          url,
-          alt: seed.name,
-          sortOrder: index,
-          isPrimary: index === 0,
-        }))
-      )
-      .onConflictDoNothing();
-    await db
-      .insert(propertyAmenities)
-      .values(
-        seed.amenities.map((amenity) => ({
-          propertyId: created.id,
-          name: amenity.name,
-          icon: amenity.icon,
-        }))
-      )
-      .onConflictDoNothing();
-    await db
-      .insert(propertyFeatures)
-      .values(
-        seed.features.map((label) => ({
-          propertyId: created.id,
-          label,
-        }))
-      )
-      .onConflictDoNothing();
+      if (!created) continue;
+      await db
+        .insert(propertyImages)
+        .values(
+          seed.images.map((url, index) => ({
+            propertyId: created.id,
+            url,
+            alt: seed.name,
+            sortOrder: index,
+            isPrimary: index === 0,
+          }))
+        )
+        .onConflictDoNothing();
+      await db
+        .insert(propertyAmenities)
+        .values(
+          seed.amenities.map((amenity) => ({
+            propertyId: created.id,
+            name: amenity.name,
+            icon: amenity.icon,
+          }))
+        )
+        .onConflictDoNothing();
+      await db
+        .insert(propertyFeatures)
+        .values(
+          seed.features.map((label) => ({
+            propertyId: created.id,
+            label,
+          }))
+        )
+        .onConflictDoNothing();
+    }
   }
 
   /* ---- staff accounts --------------------------------------------------- */

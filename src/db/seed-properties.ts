@@ -1,7 +1,8 @@
 /**
  * Initial property catalogue so the public website has real, published
- * listings on first boot. Seeded exactly once (by slug); afterwards every row
+ * listings when the properties table is first created. Afterwards every row
  * is ordinary data managed entirely from the Staff Portal Properties module.
+ * Existing catalogues, including empty ones, are never repopulated on boot.
  *
  * All seed listings are based in Nigeria (prices in Nigerian Naira). The map
  * coordinates are optional: leave latitude/longitude empty and the public page
