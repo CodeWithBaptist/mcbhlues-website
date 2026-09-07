@@ -1,14 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Loader2, Phone, Mail, User } from "lucide-react";
+import { FormField } from "@/components/ui/form-field";
+import { Turnstile, isTurnstileEnabled } from "@/components/ui/turnstile";
+import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import {
+  FIELD_LIMITS,
+  hasErrors,
+  validateEnquiry,
+  type EnquiryErrors,
+  type EnquiryField,
+} from "@/lib/validation/enquiry";
+
+const EMPTY = { name: "", email: "", phone: "", message: "" };
 
 /**
  * "Inquire about this property" form. Submissions become enquiries linked to
  * the exact listing in the Staff Portal (Operations → Enquiries).
+ *
+ * The message is optional here — leaving it blank sends the default viewing
+ * request — so validation runs with `requireMessage: false`, matching the
+ * server's rule for `type: "viewing" | "property"`.
  */
 export function PropertySidebar({
   propertyId,
@@ -17,110 +32,250 @@ export function PropertySidebar({
   propertyId?: string;
   propertyTitle?: string;
 }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
+  const [values, setValues] = useState(EMPTY);
+  const [errors, setErrors] = useState<EnquiryErrors>({});
+  const [touched, setTouched] = useState<Partial<Record<EnquiryField, boolean>>>({});
   const [wantsViewing, setWantsViewing] = useState(true);
   const [company, setCompany] = useState(""); // honeypot
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const captchaRequired = isTurnstileEnabled();
+  const validationOptions = { requireMessage: false } as const;
+
+  function setField(field: keyof typeof EMPTY, value: string) {
+    const next = { ...values, [field]: value };
+    setValues(next);
+    if (errors[field as EnquiryField]) {
+      const fresh = validateEnquiry(next, validationOptions);
+      setErrors((current) => ({ ...current, [field]: fresh[field as EnquiryField] }));
+    }
+  }
+
+  function handleBlur(field: EnquiryField) {
+    setTouched((current) => ({ ...current, [field]: true }));
+    const fresh = validateEnquiry(values, validationOptions);
+    setErrors((current) => ({ ...current, [field]: fresh[field] }));
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    setSending(true);
     setResult(null);
+
+    const validation = validateEnquiry(values, validationOptions);
+    if (hasErrors(validation)) {
+      setErrors(validation);
+      setTouched({ name: true, email: true, phone: true, message: true });
+      const firstInvalid = (["name", "email", "phone", "message"] as const).find(
+        (field) => validation[field]
+      );
+      if (firstInvalid) {
+        formRef.current?.querySelector<HTMLElement>(`#inquiry-${firstInvalid}`)?.focus();
+      }
+      return;
+    }
+
+    if (captchaRequired && !captchaToken) {
+      setResult({ ok: false, text: "Please complete the security check below." });
+      return;
+    }
+
+    setSending(true);
     try {
       const response = await fetch("/api/public/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          email,
-          phone,
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
           subject: propertyTitle ? `Inquiry: ${propertyTitle}` : "Property inquiry",
           message:
-            message || (wantsViewing ? "I'm interested in this property and would like to schedule a viewing." : ""),
+            values.message ||
+            (wantsViewing
+              ? "I'm interested in this property and would like to schedule a viewing."
+              : "I'm interested in this property and would like more information."),
           type: wantsViewing ? "viewing" : "property",
           propertyId: propertyId ?? null,
           company,
+          turnstileToken: captchaToken,
         }),
       });
       const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
+        if (data.fields) setErrors(data.fields as EnquiryErrors);
         setResult({ ok: false, text: data.error ?? "Something went wrong. Please try again." });
+        setCaptchaReset((count) => count + 1);
         return;
       }
+
       setResult({
         ok: true,
         text: `Inquiry sent (${data.reference ?? "received"}). Our team will contact you shortly.`,
       });
-      setName("");
-      setEmail("");
-      setPhone("");
-      setMessage("");
+      setValues(EMPTY);
+      setErrors({});
+      setTouched({});
+      setCaptchaReset((count) => count + 1);
     } catch {
-      setResult({ ok: false, text: "Network error. Please try again." });
+      setResult({ ok: false, text: "Network error. Please check your connection and try again." });
+      setCaptchaReset((count) => count + 1);
     } finally {
       setSending(false);
     }
   }
 
+  const shown = (field: EnquiryField) => (touched[field] ? errors[field] : undefined);
+
   return (
-    <div className="flex flex-col gap-8 sticky top-32">
-      {/* Contact Form */}
-      <div id="inquiry" className="bg-white p-8 rounded-2xl border border-gray-100 shadow-xl">
-        <h4 className="text-xl font-bold text-dark font-heading mb-6">Inquire About This Property</h4>
+    <div className="flex flex-col gap-8 lg:sticky lg:top-28">
+      <div id="inquiry" className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xl sm:p-8">
+        <h2 className="mb-6 font-heading text-xl font-bold text-dark">
+          Inquire About This Property
+        </h2>
+
         {result?.ok ? (
-          <div className="flex flex-col items-center gap-3 py-10 text-center">
-            <CheckCircle2 className="h-12 w-12 text-green-500" />
-            <p className="text-sm text-gray-600">{result.text}</p>
+          <div className="flex flex-col items-center gap-3 py-10 text-center" role="status">
+            <CheckCircle2 className="h-12 w-12 text-green-700" aria-hidden="true" />
+            <p className="text-sm text-gray-700">{result.text}</p>
             <Button variant="outline" size="sm" onClick={() => setResult(null)}>
               Send another inquiry
             </Button>
           </div>
         ) : (
-          <form className="space-y-4" onSubmit={submit}>
-            <div className="relative">
-               <User className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-               <Input required placeholder="Your Full Name" className="pl-10" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="relative">
-               <Mail className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-               <Input required placeholder="Email Address" type="email" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div className="relative">
-               <Phone className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
-               <Input placeholder="Phone Number" type="tel" className="pl-10" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-            <Textarea
-              placeholder="I'm interested in this property and would like to schedule a viewing..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600">
-              <input type="checkbox" checked={wantsViewing} onChange={(e) => setWantsViewing(e.target.checked)} />
-              I&apos;d like to schedule a viewing
+          <form ref={formRef} className="space-y-5" onSubmit={submit} noValidate>
+            <FormField id="inquiry-name" label="Full Name" required error={shown("name")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  autoComplete="name"
+                  maxLength={FIELD_LIMITS.name}
+                  placeholder="Your full name"
+                  value={values.name}
+                  onChange={(event) => setField("name", event.target.value)}
+                  onBlur={() => handleBlur("name")}
+                />
+              )}
+            </FormField>
+
+            <FormField id="inquiry-email" label="Email Address" required error={shown("email")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  maxLength={FIELD_LIMITS.email}
+                  placeholder="you@example.com"
+                  value={values.email}
+                  onChange={(event) => setField("email", event.target.value)}
+                  onBlur={() => handleBlur("email")}
+                />
+              )}
+            </FormField>
+
+            <FormField id="inquiry-phone" label="Phone Number" error={shown("phone")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  maxLength={FIELD_LIMITS.phone}
+                  placeholder="+234 800 000 0000"
+                  value={values.phone}
+                  onChange={(event) => setField("phone", event.target.value)}
+                  onBlur={() => handleBlur("phone")}
+                />
+              )}
+            </FormField>
+
+            <FormField id="inquiry-message" label="Message" error={shown("message")}>
+              {({ error, ...field }) => (
+                <Textarea
+                  {...field}
+                  error={error}
+                  maxLength={FIELD_LIMITS.message}
+                  placeholder="I'm interested in this property and would like to schedule a viewing…"
+                  value={values.message}
+                  onChange={(event) => setField("message", event.target.value)}
+                  onBlur={() => handleBlur("message")}
+                />
+              )}
+            </FormField>
+
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-5 w-5 shrink-0 accent-primary"
+                checked={wantsViewing}
+                onChange={(event) => setWantsViewing(event.target.checked)}
+              />
+              <span>I&rsquo;d like to schedule a viewing</span>
             </label>
 
-            {/* Honeypot — invisible to visitors, catches bots. */}
-            <input
-              type="text"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              className="hidden"
-              tabIndex={-1}
-              autoComplete="off"
+            {/* Honeypot — off-screen rather than `hidden`, so bots that skip
+                display:none fields still fill it in. Never focusable. */}
+            <div
               aria-hidden="true"
+              className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden"
+            >
+              <label htmlFor="inquiry-company">Company (leave this field empty)</label>
+              <input
+                id="inquiry-company"
+                name="company"
+                type="text"
+                value={company}
+                onChange={(event) => setCompany(event.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
+            <Turnstile
+              onToken={setCaptchaToken}
+              action="property-inquiry"
+              resetSignal={captchaReset}
+              className="space-y-2"
             />
 
             {result && !result.ok && (
-              <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{result.text}</p>
+              <p
+                role="alert"
+                className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
+              >
+                {result.text}
+              </p>
             )}
 
-            <Button className="w-full py-6 text-lg font-bold" disabled={sending}>
-              {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : "Send Inquiry"}
+            <Button size="lg" className="w-full font-bold" disabled={sending}>
+              {sending ? (
+                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+              ) : (
+                "Send Inquiry"
+              )}
             </Button>
+
+            <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-600">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+              <span>
+                Your details are used only to answer this enquiry. See our{" "}
+                <a
+                  href="/privacy"
+                  className="font-semibold text-primary underline underline-offset-2 hover:text-primary-dark"
+                >
+                  Privacy Policy
+                </a>
+                .
+              </span>
+            </p>
           </form>
         )}
       </div>

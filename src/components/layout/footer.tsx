@@ -1,16 +1,31 @@
 import Link from "next/link";
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Logo } from "@/components/ui/logo";
-import { SITE_CONFIG, NAV_LINKS, SOCIAL_LINKS } from "@/constants";
+import { CookieSettingsLink } from "@/components/layout/cookie-consent";
+import { SITE_CONFIG, NAV_LINKS, SOCIAL_LINKS, LEGAL_LINKS, SERVICES } from "@/constants";
 import type { CompanyInfo } from "@/lib/settings/company";
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, LucideIcon> = {
   Facebook,
   Instagram,
   Twitter,
   Linkedin,
 };
+
+/** Only http(s) URLs are rendered — a mis-typed setting must not become a link. */
+function safeUrl(value: string | undefined): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
 
 export function Footer({ company }: { company?: CompanyInfo }) {
   const contact = {
@@ -19,95 +34,135 @@ export function Footer({ company }: { company?: CompanyInfo }) {
     email: company?.email || SITE_CONFIG.contact.email,
   };
   const companyName = company?.name || SITE_CONFIG.name;
-  // Social URLs from Portal → Company Settings win over the shipped placeholders.
+  const telHref = `tel:${contact.phone.replace(/[^\d+]/g, "")}`;
+
+  // Social URLs come from Portal → Company Settings. Icons with no configured
+  // URL are dropped entirely rather than shipped as dead `#` links.
   const socialLinks = SOCIAL_LINKS.map((social) => ({
     ...social,
-    href: company?.socials?.[social.title.toLowerCase() as keyof CompanyInfo["socials"]] || social.href,
-  }));
+    href: safeUrl(
+      company?.socials?.[social.title.toLowerCase() as keyof CompanyInfo["socials"]] ||
+        social.href
+    ),
+  })).filter((social): social is typeof social & { href: string } => Boolean(social.href));
+
   return (
-    <footer className="bg-dark text-white pt-20 pb-10">
+    <footer className="bg-dark pb-10 pt-20 text-white">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
           {/* Brand Column */}
           <div className="flex flex-col gap-6">
             <Logo light logoUrl={company?.logoUrl} name={companyName} />
-            <p className="text-gray-400 leading-relaxed">
+            <p className="leading-relaxed text-gray-300">
               Real estate consulting, property development and facility management.
               We help clients buy, build and manage property through one team.
             </p>
-            <div className="flex gap-4">
-              {socialLinks.map((social) => {
-                const Icon = iconMap[social.icon];
-                return (
-                  <a
-                    key={social.title}
-                    href={social.href}
-                    className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary transition-colors"
-                    aria-label={social.title}
-                  >
-                    {Icon && <Icon className="w-5 h-5" />}
-                  </a>
-                );
-              })}
-            </div>
+            {socialLinks.length > 0 && (
+              <ul className="flex gap-4">
+                {socialLinks.map((social) => {
+                  const Icon = iconMap[social.icon];
+                  return (
+                    <li key={social.title}>
+                      <a
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      >
+                        {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
+                        <span className="sr-only">
+                          {companyName} on {social.title} (opens in a new tab)
+                        </span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
           </div>
 
           {/* Quick Links */}
-          <div className="flex flex-col gap-6">
-            <h3 className="text-xl font-bold font-heading">Quick Links</h3>
+          <nav className="flex flex-col gap-6" aria-labelledby="footer-quick-links">
+            <h2 id="footer-quick-links" className="font-heading text-xl font-bold">
+              Quick Links
+            </h2>
             <ul className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-primary transition-colors"
+                    className="text-gray-300 transition-colors hover:text-primary-light"
                   >
                     {link.title}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Services */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-xl font-bold font-heading">Our Services</h3>
+            <h2 className="font-heading text-xl font-bold">Our Services</h2>
             <ul className="flex flex-col gap-4">
-              {["Real Estate Consulting", "Property Development", "Facility Management", "Luxury Rentals"].map((service) => (
-                <li key={service} className="text-gray-400">
-                  {service}
+              {SERVICES.map((service) => (
+                <li key={service.id} className="text-gray-300">
+                  {service.title}
                 </li>
               ))}
+              <li className="text-gray-300">Luxury Rentals</li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-xl font-bold font-heading">Contact Us</h3>
+            <h2 className="font-heading text-xl font-bold">Contact Us</h2>
             <ul className="flex flex-col gap-6">
               <li className="flex gap-4">
-                <MapPin className="w-6 h-6 text-primary shrink-0" />
-                <span className="text-gray-400">{contact.address}</span>
+                <MapPin className="h-6 w-6 shrink-0 text-primary-light" aria-hidden="true" />
+                <span className="text-gray-300">{contact.address}</span>
               </li>
               <li className="flex gap-4">
-                <Phone className="w-6 h-6 text-primary shrink-0" />
-                <span className="text-gray-400">{contact.phone}</span>
+                <Phone className="h-6 w-6 shrink-0 text-primary-light" aria-hidden="true" />
+                <a href={telHref} className="text-gray-300 transition-colors hover:text-white">
+                  {contact.phone}
+                </a>
               </li>
               <li className="flex gap-4">
-                <Mail className="w-6 h-6 text-primary shrink-0" />
-                <span className="text-gray-400">{contact.email}</span>
+                <Mail className="h-6 w-6 shrink-0 text-primary-light" aria-hidden="true" />
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="break-all text-gray-300 transition-colors hover:text-white"
+                >
+                  {contact.email}
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} {companyName}. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="/portal/login" className="hover:text-white transition-colors">Staff Portal</Link>
-          </div>
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-white/15 pt-8 text-sm text-gray-300 md:flex-row">
+          <p>
+            © {new Date().getFullYear()} {companyName}. All rights reserved.
+          </p>
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+              {LEGAL_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="transition-colors hover:text-white">
+                    {link.title}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <CookieSettingsLink className="cursor-pointer underline-offset-4 transition-colors hover:text-white hover:underline" />
+              </li>
+              <li>
+                <Link href="/portal/login" className="transition-colors hover:text-white">
+                  Staff Portal
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
       </Container>
     </footer>

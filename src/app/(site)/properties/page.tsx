@@ -4,13 +4,18 @@ import { PropertiesList } from "@/components/sections/properties/properties-list
 import { CTASection } from "@/components/sections/home/cta-section";
 import { listPublishedProperties } from "@/lib/properties/property-service";
 import { toPublicProperty } from "@/lib/properties/public-property";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Properties",
-  description: "Browse our exclusive collection of luxury real estate properties available for sale and rent.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "All Properties in Lagos",
+  description:
+    "Every MCBHLUES Enterprises listing in one place — houses, apartments, land and commercial space for sale and to rent across Lagos. Filter by type, price and location.",
+  path: "/properties",
+  socialDescription:
+    "Houses, apartments, land and commercial space for sale and to rent across Lagos.",
+});
 
 export default async function PropertiesPage() {
   const properties = (await listPublishedProperties()).map(toPublicProperty);

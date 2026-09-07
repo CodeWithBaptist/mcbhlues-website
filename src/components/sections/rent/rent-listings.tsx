@@ -24,7 +24,7 @@ export function RentListings({ properties }: { properties: Property[] }) {
       <Container>
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-10">
           <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
               placeholder="Search rental locations..."
               className="pl-10 bg-white"
@@ -34,7 +34,7 @@ export function RentListings({ properties }: { properties: Property[] }) {
           </div>
           
           <div className="flex items-center gap-4 w-full md:w-auto">
-             <p className="text-sm font-medium text-gray-500 whitespace-nowrap">
+             <p className="text-sm font-medium text-gray-600 whitespace-nowrap">
                 Found <span className="text-dark font-bold">{filtered.length}</span> rentals
              </p>
              <div className="h-4 w-px bg-gray-300 hidden md:block" />
@@ -48,7 +48,7 @@ export function RentListings({ properties }: { properties: Property[] }) {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filtered.length > 0 ? (
-              filtered.map((property) => (
+              filtered.map((property, index) => (
                 <motion.div
                   key={property.id}
                   layout
@@ -57,13 +57,14 @@ export function RentListings({ properties }: { properties: Property[] }) {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <PropertyCard property={property} />
+                  {/* The first row is above the fold — fetch it eagerly. */}
+                  <PropertyCard property={property} priority={index < 3} />
                 </motion.div>
               ))
             ) : (
               <div className="col-span-full py-20 text-center">
                 <h3 className="text-2xl font-bold text-dark mb-2">No rentals matching your search</h3>
-                <p className="text-gray-500">Try broadening your search or check back later.</p>
+                <p className="text-gray-600">Try broadening your search or check back later.</p>
               </div>
             )}
           </AnimatePresence>

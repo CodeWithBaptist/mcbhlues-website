@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, Heart } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS, SITE_CONFIG } from "@/constants";
+import { NAV_LINKS, PRIMARY_CTA, SITE_CONFIG } from "@/constants";
 import { Container } from "@/components/ui/container";
-import { Button } from "@/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useFavorites } from "@/lib/favorites";
 
 interface NavbarProps {
   /** From Portal → Company Settings; falls back to the shipped constants. */
@@ -27,121 +28,190 @@ export function Navbar({
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const menuId = useId();
+  const reduceMotion = useReducedMotion();
+  const savedCount = useFavorites().length;
+
+  const telHref = `tel:${phone.replace(/[^\d+]/g, "")}`;
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when route changes (adjust state during render)
+  // Close the mobile menu on Escape — expected behaviour for a disclosure.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
+  // Close mobile menu when route changes (adjust state during render).
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (prevPathname !== pathname) {
     setPrevPathname(pathname);
     setIsOpen(false);
   }
 
+  const isCurrent = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-white/80 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
+        // A solid, blurred background at all times: transparent headers put
+        // dark text over unpredictable page backgrounds.
+        "fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md transition-shadow duration-300",
+        scrolled ? "shadow-sm" : "shadow-none"
       )}
     >
       <Container>
-        <nav className="flex items-center justify-between">
+        <nav aria-label="Primary" className="flex items-center justify-between py-3 lg:py-4">
           <Logo logoUrl={logoUrl} name={companyName} />
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.filter(link => link.title !== "Favorites").map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  pathname === link.href ? "text-primary" : "text-dark"
-                )}
-              >
-                {link.title}
-              </Link>
+          <ul className="hidden items-center gap-7 lg:flex xl:gap-8">
+            {NAV_LINKS.filter((link) => link.title !== "Favorites").map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={isCurrent(link.href) ? "page" : undefined}
+                  className={cn(
+                    "text-sm font-medium transition-colors hover:text-primary",
+                    isCurrent(link.href) ? "text-primary" : "text-dark"
+                  )}
+                >
+                  {link.title}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
 
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden items-center gap-3 lg:flex">
             <ThemeToggle />
-            <Link 
-              href="/favorites" 
+            <Link
+              href="/favorites"
+              aria-current={isCurrent("/favorites") ? "page" : undefined}
               className={cn(
-                "relative p-2 rounded-full hover:bg-primary/5 transition-colors",
-                pathname === "/favorites" ? "text-primary" : "text-dark"
+                "relative rounded-full p-2.5 transition-colors hover:bg-primary/10",
+                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                isCurrent("/favorites") || savedCount > 0 ? "text-primary" : "text-dark"
               )}
             >
-              <Heart className={cn("w-5 h-5", pathname === "/favorites" && "fill-primary")} />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-white" />
+              <Heart
+                className={cn(
+                  "h-5 w-5",
+                  (isCurrent("/favorites") || savedCount > 0) && "fill-primary"
+                )}
+                aria-hidden="true"
+              />
+              {savedCount > 0 && (
+                <span
+                  className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-bold leading-none text-white"
+                  aria-hidden="true"
+                >
+                  {savedCount > 99 ? "99+" : savedCount}
+                </span>
+              )}
+              <span className="sr-only">
+                Saved properties
+                {savedCount > 0 ? ` (${savedCount} saved)` : ""}
+              </span>
             </Link>
             <a
-              href={`tel:${phone}`}
-              className="flex items-center gap-2 text-sm font-semibold text-dark hover:text-primary transition-colors"
+              href={telHref}
+              className="hidden items-center gap-2 text-sm font-semibold text-dark transition-colors hover:text-primary xl:flex"
             >
-              <Phone className="w-4 h-4 text-primary" />
+              <Phone className="h-4 w-4 text-primary" aria-hidden="true" />
+              <span className="sr-only">Call us on </span>
               {phone}
             </a>
-            <Link href="/contact">
-              <Button size="sm">Get a Quote</Button>
+            {/* The single primary call to action, repeated site-wide. */}
+            <Link
+              href={PRIMARY_CTA.href}
+              className={buttonClasses({ size: "sm", className: "font-semibold" })}
+            >
+              {PRIMARY_CTA.shortLabel}
             </Link>
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Toggle — 44px target, per WCAG 2.5.8 */}
           <button
-            className="lg:hidden text-dark p-2"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
+            type="button"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-dark transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            onClick={() => setIsOpen((open) => !open)}
+            aria-expanded={isOpen}
+            aria-controls={menuId}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? (
+              <X className="h-6 w-6" aria-hidden="true" />
+            ) : (
+              <Menu className="h-6 w-6" aria-hidden="true" />
+            )}
           </button>
         </nav>
       </Container>
 
       {/* Mobile Navigation */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
+            id={menuId}
+            initial={reduceMotion ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-t overflow-hidden"
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden border-t border-gray-100 bg-white lg:hidden"
           >
-            <Container className="py-8 flex flex-col gap-6">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "text-lg font-semibold transition-colors",
-                    pathname === link.href ? "text-primary" : "text-dark"
-                  )}
-                >
-                  {link.title}
-                </Link>
-              ))}
+            <Container className="flex max-h-[calc(100dvh-5rem)] flex-col gap-6 overflow-y-auto py-6">
+              <ul className="flex flex-col">
+                {NAV_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      aria-current={isCurrent(link.href) ? "page" : undefined}
+                      className={cn(
+                        "flex items-center gap-2 py-3 text-lg font-semibold transition-colors",
+                        isCurrent(link.href) ? "text-primary" : "text-dark"
+                      )}
+                    >
+                      {link.title}
+                      {link.href === "/favorites" && savedCount > 0 && (
+                        <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+                          <span className="sr-only">, </span>
+                          {savedCount > 99 ? "99+" : savedCount}
+                          <span className="sr-only"> saved</span>
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
               <div className="border-t border-gray-100 pt-6">
                 <ThemeToggle showLabel />
               </div>
+
               <div className="flex flex-col gap-4">
                 <a
-                  href={`tel:${phone}`}
-                  className="flex items-center gap-3 text-lg font-semibold text-dark"
+                  href={telHref}
+                  className="flex items-center gap-3 py-2 text-lg font-semibold text-dark"
                 >
-                  <Phone className="w-5 h-5 text-primary" />
+                  <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
+                  <span className="sr-only">Call us on </span>
                   {phone}
                 </a>
-                <Link href="/contact" className="w-full">
-                  <Button className="w-full">Get a Quote</Button>
+                <Link
+                  href={PRIMARY_CTA.href}
+                  className={buttonClasses({ className: "w-full py-3 font-bold" })}
+                >
+                  {PRIMARY_CTA.label}
                 </Link>
               </div>
             </Container>

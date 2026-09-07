@@ -22,7 +22,7 @@ export function AboutHero() {
           <h1 className="text-4xl md:text-6xl font-extrabold font-heading mb-6">
             A real estate team that stays <br /> with your project
           </h1>
-          <p className="max-w-2xl mx-auto text-gray-400 text-lg leading-relaxed">
+          <p className="max-w-2xl mx-auto text-gray-300 text-lg leading-relaxed">
             We advise buyers and investors, develop residential and commercial
             property, and manage buildings and facilities. The people you meet at
             the start are the ones who carry the job through to the end.

@@ -1,10 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Loader2, Send } from "lucide-react";
+import { FormField } from "@/components/ui/form-field";
+import { Turnstile, isTurnstileEnabled } from "@/components/ui/turnstile";
+import { CheckCircle2, Loader2, Send, ShieldCheck } from "lucide-react";
+import {
+  FIELD_LIMITS,
+  hasErrors,
+  validateEnquiry,
+  type EnquiryErrors,
+  type EnquiryField,
+} from "@/lib/validation/enquiry";
 
 const SUBJECTS = [
   "General Inquiry",
@@ -14,126 +23,266 @@ const SUBJECTS = [
   "Renting a Property",
 ];
 
+const EMPTY = { name: "", email: "", phone: "", subject: SUBJECTS[0], message: "" };
+
 /**
  * Contact form. Submissions are stored as real enquiries in the Staff Portal
  * (Operations → Enquiries) via the public endpoint, and the enquiries team is
  * notified in-app immediately.
+ *
+ * Validation runs on blur and again on submit using the shared rules in
+ * `lib/validation/enquiry`; the API re-runs the identical rules server-side.
  */
 export function ContactForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [subject, setSubject] = useState(SUBJECTS[0]);
-  const [message, setMessage] = useState("");
+  const [values, setValues] = useState(EMPTY);
+  const [errors, setErrors] = useState<EnquiryErrors>({});
+  const [touched, setTouched] = useState<Partial<Record<EnquiryField, boolean>>>({});
   const [company, setCompany] = useState(""); // honeypot
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaReset, setCaptchaReset] = useState(0);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const captchaRequired = isTurnstileEnabled();
+
+  function setField(field: keyof typeof EMPTY, value: string) {
+    const next = { ...values, [field]: value };
+    setValues(next);
+    // Clear an error as soon as the visitor fixes it; never introduce a new one
+    // mid-typing (that is what blur is for).
+    if (errors[field as EnquiryField]) {
+      const fresh = validateEnquiry(next);
+      setErrors((current) => ({ ...current, [field]: fresh[field as EnquiryField] }));
+    }
+  }
+
+  function handleBlur(field: EnquiryField) {
+    setTouched((current) => ({ ...current, [field]: true }));
+    const fresh = validateEnquiry(values);
+    setErrors((current) => ({ ...current, [field]: fresh[field] }));
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    setSending(true);
     setResult(null);
+
+    const validation = validateEnquiry(values);
+    if (hasErrors(validation)) {
+      setErrors(validation);
+      setTouched({ name: true, email: true, phone: true, subject: true, message: true });
+      // Move focus to the first problem so keyboard and screen-reader users
+      // are not left guessing.
+      const firstInvalid = (["name", "email", "phone", "message"] as const).find(
+        (field) => validation[field]
+      );
+      if (firstInvalid) {
+        formRef.current?.querySelector<HTMLElement>(`#contact-${firstInvalid}`)?.focus();
+      }
+      return;
+    }
+
+    if (captchaRequired && !captchaToken) {
+      setResult({ ok: false, text: "Please complete the security check below." });
+      return;
+    }
+
+    setSending(true);
     try {
       const response = await fetch("/api/public/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, subject, message, company }),
+        body: JSON.stringify({ ...values, company, turnstileToken: captchaToken }),
       });
       const data = await response.json().catch(() => ({}));
+
       if (!response.ok) {
+        // The server sends field-level errors too — surface them inline.
+        if (data.fields) setErrors(data.fields as EnquiryErrors);
         setResult({ ok: false, text: data.error ?? "Something went wrong. Please try again." });
+        setCaptchaReset((count) => count + 1);
         return;
       }
+
       setResult({
         ok: true,
-        text: `Thank you, ${name.split(" ")[0]}. Your enquiry (${data.reference ?? "received"}) has been logged and a consultant will reach out shortly.`,
+        text: `Thank you, ${values.name.split(" ")[0]}. Your enquiry (${
+          data.reference ?? "received"
+        }) has been logged and a consultant will reach out shortly.`,
       });
-      setName("");
-      setEmail("");
-      setPhone("");
-      setSubject(SUBJECTS[0]);
-      setMessage("");
+      setValues(EMPTY);
+      setErrors({});
+      setTouched({});
+      setCaptchaReset((count) => count + 1);
     } catch {
-      setResult({ ok: false, text: "Network error. Please try again." });
+      setResult({ ok: false, text: "Network error. Please check your connection and try again." });
+      setCaptchaReset((count) => count + 1);
     } finally {
       setSending(false);
     }
   }
 
+  const shown = (field: EnquiryField) => (touched[field] ? errors[field] : undefined);
+
   return (
-    <div className="bg-white p-8 md:p-12 rounded-[2rem] border border-gray-100 shadow-xl">
-      <h3 className="text-2xl font-bold text-dark font-heading mb-8">Send Us a Message</h3>
+    <div className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-xl sm:p-8 md:p-12">
+      <h2 className="mb-8 font-heading text-2xl font-bold text-dark">Send Us a Message</h2>
 
       {result?.ok ? (
-        <div className="flex flex-col items-center gap-4 py-16 text-center">
-          <CheckCircle2 className="h-14 w-14 text-green-500" />
-          <p className="max-w-sm text-gray-600">{result.text}</p>
+        <div className="flex flex-col items-center gap-4 py-16 text-center" role="status">
+          <CheckCircle2 className="h-14 w-14 text-green-700" aria-hidden="true" />
+          <p className="max-w-sm text-gray-700">{result.text}</p>
           <Button variant="outline" onClick={() => setResult(null)}>
             Send another message
           </Button>
         </div>
       ) : (
-        <form className="space-y-6" onSubmit={submit}>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Full Name</label>
-              <Input required placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Email Address</label>
-              <Input required placeholder="john@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
+        <form ref={formRef} className="space-y-6" onSubmit={submit} noValidate>
+          <div className="grid gap-6 md:grid-cols-2">
+            <FormField id="contact-name" label="Full Name" required error={shown("name")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  autoComplete="name"
+                  maxLength={FIELD_LIMITS.name}
+                  placeholder="John Doe"
+                  value={values.name}
+                  onChange={(event) => setField("name", event.target.value)}
+                  onBlur={() => handleBlur("name")}
+                />
+              )}
+            </FormField>
+
+            <FormField id="contact-email" label="Email Address" required error={shown("email")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  maxLength={FIELD_LIMITS.email}
+                  placeholder="john@example.com"
+                  value={values.email}
+                  onChange={(event) => setField("email", event.target.value)}
+                  onBlur={() => handleBlur("email")}
+                />
+              )}
+            </FormField>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Phone Number</label>
-              <Input placeholder="+234 800 000 0000" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Subject</label>
-              <select
-                className="flex h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              >
-                {SUBJECTS.map((option) => (
-                  <option key={option}>{option}</option>
-                ))}
-              </select>
-            </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            <FormField id="contact-phone" label="Phone Number" error={shown("phone")}>
+              {({ error, ...field }) => (
+                <Input
+                  {...field}
+                  error={error}
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
+                  maxLength={FIELD_LIMITS.phone}
+                  placeholder="+234 800 000 0000"
+                  value={values.phone}
+                  onChange={(event) => setField("phone", event.target.value)}
+                  onBlur={() => handleBlur("phone")}
+                />
+              )}
+            </FormField>
+
+            <FormField id="contact-subject" label="Subject" required>
+              {(field) => (
+                <select
+                  id={field.id}
+                  name={field.name}
+                  required={field.required}
+                  aria-describedby={field["aria-describedby"]}
+                  className="h-12 w-full rounded-md border border-gray-500 bg-white px-4 py-2 text-base text-dark transition-all focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  value={values.subject}
+                  onChange={(event) => setField("subject", event.target.value)}
+                >
+                  {SUBJECTS.map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </select>
+              )}
+            </FormField>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Your Message</label>
-            <Textarea
-              required
-              placeholder="How can we help you today?"
-              className="min-h-[150px]"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+          <FormField
+            id="contact-message"
+            label="Your Message"
+            required
+            error={shown("message")}
+            hint={`Tell us what you're planning — the more detail, the better. ${values.message.length}/${FIELD_LIMITS.message} characters.`}
+          >
+            {({ error, ...field }) => (
+              <Textarea
+                {...field}
+                error={error}
+                maxLength={FIELD_LIMITS.message}
+                placeholder="How can we help you today?"
+                className="min-h-[150px]"
+                value={values.message}
+                onChange={(event) => setField("message", event.target.value)}
+                onBlur={() => handleBlur("message")}
+              />
+            )}
+          </FormField>
+
+          {/* Honeypot — off-screen rather than `hidden`, so bots that skip
+              display:none fields still fill it in. Never focusable. */}
+          <div aria-hidden="true" className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden">
+            <label htmlFor="contact-company">Company (leave this field empty)</label>
+            <input
+              id="contact-company"
+              name="company"
+              type="text"
+              value={company}
+              onChange={(event) => setCompany(event.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
             />
           </div>
 
-          {/* Honeypot — invisible to visitors, catches bots. */}
-          <input
-            type="text"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            className="hidden"
-            tabIndex={-1}
-            autoComplete="off"
-            aria-hidden="true"
+          <Turnstile
+            onToken={setCaptchaToken}
+            action="contact-form"
+            resetSignal={captchaReset}
+            className="space-y-2"
           />
 
           {result && !result.ok && (
-            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{result.text}</p>
+            <p
+              role="alert"
+              className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-800"
+            >
+              {result.text}
+            </p>
           )}
 
-          <Button className="w-full py-6 text-lg font-bold gap-2" disabled={sending}>
-            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-            {sending ? "Sending..." : "Send Message"}
+          <Button size="lg" className="w-full gap-2 font-bold" disabled={sending}>
+            {sending ? (
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+            ) : (
+              <Send className="h-5 w-5" aria-hidden="true" />
+            )}
+            {sending ? "Sending…" : "Send Message"}
           </Button>
+
+          <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-600">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <span>
+              We use your details only to answer this enquiry. See our{" "}
+              <a
+                href="/privacy"
+                className="font-semibold text-primary underline underline-offset-2 hover:text-primary-dark"
+              >
+                Privacy Policy
+              </a>
+              .
+            </span>
+          </p>
         </form>
       )}
     </div>

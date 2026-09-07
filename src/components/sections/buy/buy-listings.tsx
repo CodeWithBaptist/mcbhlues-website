@@ -31,7 +31,7 @@ export function BuyListings({ properties }: { properties: Property[] }) {
       <Container>
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-10 p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
               placeholder="Search by title or location..."
               className="pl-10"
@@ -41,7 +41,7 @@ export function BuyListings({ properties }: { properties: Property[] }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 font-medium">Sort by:</span>
+            <span className="text-sm text-gray-600 font-medium">Sort by:</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
@@ -54,14 +54,14 @@ export function BuyListings({ properties }: { properties: Property[] }) {
           </div>
         </div>
 
-        <p className="text-gray-500 font-medium mb-8">
+        <p className="text-gray-600 font-medium mb-8">
           Showing <span className="text-dark font-bold">{filtered.length}</span> properties for sale
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <AnimatePresence mode="popLayout">
             {filtered.length > 0 ? (
-              filtered.map((property) => (
+              filtered.map((property, index) => (
                 <motion.div
                   key={property.id}
                   layout
@@ -70,13 +70,14 @@ export function BuyListings({ properties }: { properties: Property[] }) {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <PropertyCard property={property} />
+                  {/* The first row is above the fold — fetch it eagerly. */}
+                  <PropertyCard property={property} priority={index < 3} />
                 </motion.div>
               ))
             ) : (
               <div className="col-span-full py-20 text-center">
                 <h3 className="text-2xl font-bold text-dark mb-2">No properties found</h3>
-                <p className="text-gray-500">Try adjusting your search criteria.</p>
+                <p className="text-gray-600">Try adjusting your search criteria.</p>
               </div>
             )}
           </AnimatePresence>

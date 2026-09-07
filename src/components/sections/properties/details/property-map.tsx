@@ -53,7 +53,7 @@ export function PropertyMap({ location, query, latitude, longitude }: PropertyMa
             <h3 className="text-2xl font-bold text-dark font-heading mb-2">
               Location
             </h3>
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-gray-600">
               <MapPin className="w-4 h-4 text-primary" />
               <span>{location || "Nigeria"}</span>
             </div>
@@ -66,7 +66,7 @@ export function PropertyMap({ location, query, latitude, longitude }: PropertyMa
                 "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer",
                 view === "map"
                   ? "bg-white text-primary shadow-sm"
-                  : "text-gray-500 hover:text-dark"
+                  : "text-gray-600 hover:text-dark"
               )}
             >
               <MapIcon className="w-4 h-4" />
@@ -78,7 +78,7 @@ export function PropertyMap({ location, query, latitude, longitude }: PropertyMa
                 "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer",
                 view === "directions"
                   ? "bg-white text-primary shadow-sm"
-                  : "text-gray-500 hover:text-dark"
+                  : "text-gray-600 hover:text-dark"
               )}
             >
               <Navigation className="w-4 h-4" />

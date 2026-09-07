@@ -9,6 +9,8 @@ import { PropertyMap } from "@/components/sections/properties/details/property-m
 import { FeaturedProperties } from "@/components/sections/home/featured-properties";
 import { listPublishedProperties, getPropertyBySlug } from "@/lib/properties/property-service";
 import { toPublicProperty, hasMapLocation } from "@/lib/properties/public-property";
+import { SITE_URL } from "@/constants";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -16,16 +18,45 @@ interface Props {
   params: Promise<{ id: string }>;
 }
 
+/** Trim to a clean sentence boundary so meta descriptions never end mid-word. */
+function clamp(text: string, max = 155): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(" ")) || cut}…`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const details = await getPropertyBySlug(id);
-  const property = details ? toPublicProperty(details) : null;
-  return {
-    title: property ? property.name : "Property Details",
-    description: property
-      ? `${property.title} in ${property.location}. ${property.description ?? ""}`.trim()
-      : "Property details.",
-  };
+
+  if (!details) {
+    return {
+      title: "Property not found",
+      description: "This listing is no longer available. Browse our current Lagos properties.",
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const property = toPublicProperty(details);
+  const action = property.type === "sale" ? "for sale" : "to rent";
+  const description = clamp(
+    property.description ||
+      `${property.title} in ${property.location}. ${property.beds} bedrooms, ${property.baths} bathrooms, ${property.sqft} sqft.`
+  );
+
+  return pageMetadata({
+    title: `${property.name} — ${property.location}`,
+    description,
+    path: `/properties/${property.slug}`,
+    type: "article",
+    socialTitle: `${property.name} ${action} in ${property.location}`,
+    socialDescription: description,
+    // Fall back to the brand card when a listing has no photo yet.
+    images: property.image
+      ? [{ url: property.image, alt: `${property.name} in ${property.location}` }]
+      : undefined,
+  });
 }
 
 export default async function PropertyDetailsPage({ params }: Props) {
@@ -41,8 +72,46 @@ export default async function PropertyDetailsPage({ params }: Props) {
   const featured = allProperties.map(toPublicProperty);
   const showMap = hasMapLocation(property);
 
+  // schema.org listing markup — lets Google show price, location and photos
+  // directly in the search result.
+  const listingSchema = {
+    "@context": "https://schema.org",
+    "@type": property.type === "sale" ? "SingleFamilyResidence" : "Apartment",
+    name: property.name,
+    description: property.description || property.title,
+    url: `${SITE_URL}/properties/${property.slug}`,
+    image: property.images.length > 0 ? property.images : undefined,
+    numberOfBedrooms: property.beds || undefined,
+    numberOfBathroomsTotal: property.baths || undefined,
+    floorSize: property.sqft
+      ? { "@type": "QuantitativeValue", value: property.sqft, unitCode: "FTK" }
+      : undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: property.address || undefined,
+      addressLocality: property.city || undefined,
+      addressRegion: property.state || undefined,
+      addressCountry: property.country || "NG",
+    },
+    offers: property.price
+      ? {
+          "@type": "Offer",
+          price: property.price,
+          priceCurrency: property.currency || "NGN",
+          availability:
+            property.status === "available"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+        }
+      : undefined,
+  };
+
   return (
     <div className="flex flex-col bg-gray-50/30">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }}
+      />
       <PropertyHeader property={property} />
       <PropertyGallery images={property.images} title={property.name} />
       

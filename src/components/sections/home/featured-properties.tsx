@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { PropertyCard } from "@/components/ui/property-card";
-import { Button } from "@/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 import { Property } from "@/types";
 import Link from "next/link";
 
@@ -26,11 +26,12 @@ export function FeaturedProperties({ properties }: { properties: Property[] }) {
             description="Explore our handpicked selection of premium residences and commercial spaces."
             className="mb-0"
           />
-          <Link href="/properties">
-            <Button variant="outline" className="gap-2">
-              View All Properties
-              <ArrowRight className="w-4 h-4" />
-            </Button>
+          <Link
+            href="/properties"
+            className={buttonClasses({ variant: "outline", className: "gap-2" })}
+          >
+            View All Properties
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         </div>
 

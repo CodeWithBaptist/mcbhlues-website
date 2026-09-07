@@ -1,5 +1,21 @@
+/**
+ * Canonical, absolute origin for the public website.
+ *
+ * Used for `metadataBase`, canonical URLs, Open Graph tags, the sitemap and
+ * robots.txt. Override per-environment with `NEXT_PUBLIC_SITE_URL` (e.g. a
+ * Vercel preview deployment) — it must be an absolute URL with no trailing
+ * slash.
+ */
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://mcbhlues.com"
+).replace(/\/+$/, "");
+
 export const SITE_CONFIG = {
   name: "MCBHLUES ENTERPRISES",
+  shortName: "MCBHLUES",
+  url: SITE_URL,
+  /** Used as the homepage <title> and the Open Graph site title. */
+  tagline: "Real Estate Consulting, Development & Facility Management in Lagos",
   description:
     "Real estate consulting, property development and facility management in Lagos, Nigeria from MCBHLUES Enterprises.",
   contact: {
@@ -14,6 +30,17 @@ export const SITE_CONFIG = {
   },
 };
 
+/**
+ * The single, site-wide primary call to action. Every page funnels visitors to
+ * this one action — secondary links are deliberately styled as low-emphasis so
+ * there is never more than one obvious next step on a screen.
+ */
+export const PRIMARY_CTA = {
+  label: "Book a Free Consultation",
+  shortLabel: "Book a Consultation",
+  href: "/contact",
+} as const;
+
 export const NAV_LINKS = [
   { title: "Home", href: "/" },
   { title: "About", href: "/about" },
@@ -24,11 +51,24 @@ export const NAV_LINKS = [
   { title: "Contact", href: "/contact" },
 ];
 
+/** Footer-only links. Kept out of NAV_LINKS so they stay out of the sitemap's
+ *  high-priority set and out of the main navigation. */
+export const LEGAL_LINKS = [
+  { title: "Privacy Policy", href: "/privacy" },
+  { title: "Terms & Conditions", href: "/terms" },
+  { title: "Cookie Policy", href: "/privacy#cookies" },
+];
+
+/**
+ * Social profiles. `href` is intentionally empty: real URLs are configured in
+ * Portal → Company Settings. Icons without a configured URL are not rendered
+ * at all, so the footer never ships dead `#` links.
+ */
 export const SOCIAL_LINKS = [
-  { title: "Facebook", href: "#", icon: "Facebook" },
-  { title: "Instagram", href: "#", icon: "Instagram" },
-  { title: "Twitter", href: "#", icon: "Twitter" },
-  { title: "LinkedIn", href: "#", icon: "Linkedin" },
+  { title: "Facebook", href: "", icon: "Facebook" },
+  { title: "Instagram", href: "", icon: "Instagram" },
+  { title: "Twitter", href: "", icon: "Twitter" },
+  { title: "LinkedIn", href: "", icon: "Linkedin" },
 ];
 
 export const SERVICES = [
@@ -51,5 +91,3 @@ export const SERVICES = [
     icon: "ShieldCheck",
   },
 ];
-
-

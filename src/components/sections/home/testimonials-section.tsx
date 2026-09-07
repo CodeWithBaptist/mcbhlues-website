@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Quote, Star } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { SmartImage } from "@/components/ui/smart-image";
 import { cn } from "@/lib/utils";
 
 export interface PublicTestimonial {
@@ -40,25 +41,36 @@ export function TestimonialsSection({ testimonials }: { testimonials: PublicTest
               transition={{ delay: index * 0.08 }}
               className="flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
             >
-              <Quote className="mb-4 h-6 w-6 text-primary/40" />
-              <blockquote className="flex-1 text-sm leading-relaxed text-gray-600">
+              <Quote className="mb-4 h-6 w-6 text-primary/40" aria-hidden="true" />
+              <blockquote className="flex-1 text-sm leading-relaxed text-gray-700">
                 “{item.quote}”
               </blockquote>
-              <div className="mt-4 flex items-center gap-0.5">
+              <div
+                className="mt-4 flex items-center gap-0.5"
+                role="img"
+                aria-label={`Rated ${item.rating} out of 5`}
+              >
                 {Array.from({ length: 5 }).map((_, star) => (
                   <Star
                     key={star}
+                    aria-hidden="true"
                     className={cn(
                       "h-4 w-4",
-                      star < item.rating ? "fill-amber-400 text-amber-400" : "text-gray-200"
+                      star < item.rating ? "fill-amber-500 text-amber-500" : "text-gray-300"
                     )}
                   />
                 ))}
               </div>
               <figcaption className="mt-4 flex items-center gap-3 border-t border-gray-50 pt-4">
                 {item.avatarUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.avatarUrl} alt={item.name} className="h-10 w-10 rounded-full object-cover" />
+                  <SmartImage
+                    src={item.avatarUrl}
+                    alt={`Photo of ${item.name}`}
+                    width={40}
+                    height={40}
+                    sizes="40px"
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
                 ) : (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                     {item.name
@@ -70,7 +82,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: PublicTest
                 )}
                 <div>
                   <p className="text-sm font-bold text-dark">{item.name}</p>
-                  <p className="text-xs text-gray-400">{item.role || "Client"}</p>
+                  <p className="text-xs text-gray-600">{item.role || "Client"}</p>
                 </div>
               </figcaption>
             </motion.figure>

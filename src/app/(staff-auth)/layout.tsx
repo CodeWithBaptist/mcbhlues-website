@@ -18,7 +18,10 @@ export default function StaffAuthLayout({ children }: { children: React.ReactNod
       <div className="absolute right-4 top-4">
         <PortalThemeToggle onDarkSurface />
       </div>
-      {children}
+      {/* Target for the global "Skip to main content" link. */}
+      <main id="main-content" className="contents">
+        {children}
+      </main>
     </div>
   );
 }

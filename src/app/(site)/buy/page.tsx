@@ -7,14 +7,18 @@ import { CTASection } from "@/components/sections/home/cta-section";
 import { listPublishedProperties } from "@/lib/properties/property-service";
 import { toPublicProperty } from "@/lib/properties/public-property";
 import { listPublishedFaqs } from "@/lib/cms/cms-service";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Buy",
+export const metadata: Metadata = pageMetadata({
+  title: "Property for Sale in Lagos",
   description:
-    "Explore premium luxury properties for sale. Find your dream home or investment property with MCBHLUES ENTERPRISES.",
-};
+    "Browse verified homes, land and commercial property for sale in Lagos. MCBHLUES Enterprises handles the search, valuation, title checks and purchase from start to finish.",
+  path: "/buy",
+  socialDescription:
+    "Verified homes, land and commercial property for sale in Lagos, with title checks and valuation handled for you.",
+});
 
 export default async function BuyPage() {
   const [properties, faqs] = await Promise.all([
