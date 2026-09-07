@@ -9,6 +9,7 @@ const SECTION_PERMISSION: Record<string, string> = {
   about: "cms:about",
   services: "cms:services",
   contact: "cms:contact",
+  rent: "cms:update",
   general: "cms:update",
 };
 

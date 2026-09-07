@@ -25,7 +25,7 @@ export interface PropertySeed {
   price: number;
   beds: number;
   baths: number;
-  sqft: number;
+  sqm: number;
   yearBuilt: number;
   address: string;
   city: string;
@@ -51,7 +51,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 350000000,
     beds: 4,
     baths: 5,
-    sqft: 4200,
+    sqm: 390,
     yearBuilt: 2021,
     address: "12 Adeola Odeku Street, Victoria Island",
     city: "Lagos",
@@ -84,7 +84,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 650000000,
     beds: 4,
     baths: 5,
-    sqft: 6000,
+    sqm: 557,
     yearBuilt: 2019,
     address: "Plot 7, Banana Island Road, Ikoyi",
     city: "Lagos",
@@ -117,7 +117,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 12000000,
     beds: 2,
     baths: 2,
-    sqft: 1400,
+    sqm: 130,
     yearBuilt: 2020,
     address: "15 Admiralty Way, Lekki Phase 1",
     city: "Lekki",
@@ -150,7 +150,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 480000000,
     beds: 5,
     baths: 6,
-    sqft: 5800,
+    sqm: 539,
     yearBuilt: 2018,
     address: "23 Bourdillon Road, Ikoyi",
     city: "Lagos",
@@ -183,7 +183,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 1800000,
     beds: 1,
     baths: 1,
-    sqft: 480,
+    sqm: 45,
     yearBuilt: 2022,
     address: "8 Herbert Macaulay Way, Yaba",
     city: "Lagos",
@@ -215,7 +215,7 @@ export const PROPERTY_SEED: PropertySeed[] = [
     price: 220000000,
     beds: 4,
     baths: 5,
-    sqft: 3200,
+    sqm: 297,
     yearBuilt: 2017,
     address: "Plot 41, Aminu Kano Crescent, Wuse II",
     city: "Abuja",

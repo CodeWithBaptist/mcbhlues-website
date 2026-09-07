@@ -43,6 +43,8 @@ export default async function Home() {
           badge: cms["home.hero_badge"] ?? "",
           title: cms["home.hero_title"] ?? "",
           subtitle: cms["home.hero_subtitle"] ?? "",
+          image: cms["home.hero_image"] ?? "",
+          imageAlt: cms["home.hero_image_alt"] ?? "",
         }}
       />
       <ServicesSection />

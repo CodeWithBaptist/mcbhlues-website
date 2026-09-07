@@ -102,7 +102,7 @@ export function PropertyCard({ property, className, priority = false }: Property
           </li>
           <li className="flex items-center gap-1.5 text-sm text-gray-700 sm:gap-2">
             <Maximize2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-            {property.sqft} sqft
+            {property.sqm} sqm
           </li>
         </ul>
       </div>

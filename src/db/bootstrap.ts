@@ -26,6 +26,33 @@ async function upgradePropertyName(db: Database): Promise<void> {
 }
 
 /**
+ * Floor areas moved from square feet (`sqft`) to square metres (`sqm`). New
+ * databases get `sqm` from the DDL; existing ones gain the column here with
+ * their stored areas converted (1 sqft = 0.092903 sqm, rounded). Only
+ * pre-migration rows (`sqm IS NULL`) convert, so re-running is a no-op, and
+ * the legacy `sqft` column is left in place untouched.
+ */
+async function upgradePropertySqm(db: Database): Promise<void> {
+  await db.execute(sql`ALTER TABLE properties ADD COLUMN IF NOT EXISTS sqm integer`);
+
+  const legacy = await db.execute<{ present: boolean }>(sql`
+    SELECT EXISTS (
+      SELECT 1 FROM pg_attribute
+      WHERE attrelid = to_regclass('properties')
+        AND attname = 'sqft'
+        AND NOT attisdropped
+    ) AS "present"
+  `);
+  if (legacy.rows[0]?.present) {
+    await db.execute(sql`UPDATE properties SET sqm = ROUND(sqft * 0.092903)::integer WHERE sqm IS NULL`);
+  }
+
+  await db.execute(sql`UPDATE properties SET sqm = 0 WHERE sqm IS NULL`);
+  await db.execute(sql`ALTER TABLE properties ALTER COLUMN sqm SET NOT NULL`);
+  await db.execute(sql`ALTER TABLE properties ALTER COLUMN sqm SET DEFAULT 0`);
+}
+
+/**
  * Bootstrap on one connection, atomically. The transaction-scoped advisory
  * lock serialises cold starts across server instances; it is released on
  * commit or rollback, including when a migration/seed fails.
@@ -48,6 +75,7 @@ export async function bootstrapDatabase(db: Database): Promise<void> {
     }
 
     await upgradePropertyName(tx);
+    await upgradePropertySqm(tx);
     await seedDatabase(tx, { seedProperties });
   });
 }

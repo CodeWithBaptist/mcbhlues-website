@@ -201,7 +201,7 @@ export async function seedDatabase(db: Database, { seedProperties }: { seedPrope
           price: seed.price,
           beds: seed.beds,
           baths: seed.baths,
-          sqft: seed.sqft,
+          sqm: seed.sqm,
           yearBuilt: seed.yearBuilt,
           address: seed.address,
           city: seed.city,

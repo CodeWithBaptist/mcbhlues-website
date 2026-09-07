@@ -62,19 +62,21 @@ test("upgrades the previous schema without replacing the owner's property data",
   await client.query(`
     INSERT INTO properties (
       id, title, slug, price, city, postal_code, google_maps_url,
-      is_published, created_at, updated_at
+      sqft, is_published, created_at, updated_at
     ) VALUES ($1, 'Owner-edited residence', 'my-existing-listing', 91000000,
-      'Lagos', '101233', 'https://maps.example.invalid/original', true,
-      '2026-08-01T12:00:00Z', '2026-09-01T12:00:00Z')
+      'Lagos', '101233', 'https://maps.example.invalid/original',
+      1076, true, '2026-08-01T12:00:00Z', '2026-09-01T12:00:00Z')
   `, [listingId]);
   const before = (await client.query<Record<string, unknown>>("SELECT * FROM properties")).rows[0];
 
   await bootstrapDatabase(db);
 
   const after = (await client.query("SELECT * FROM properties")).rows;
-  assert.deepEqual(after, [{ ...before, name: "Owner-edited residence" }]);
+  // 1076 sqft converts to 100 sqm; the legacy sqft column is left untouched.
+  assert.deepEqual(after, [{ ...before, name: "Owner-edited residence", sqm: 100 }]);
   usePropertyServiceDatabase(t, db);
   assert.equal((await listPublishedProperties())[0].name, "Owner-edited residence");
+  assert.equal((await listPublishedProperties())[0].sqm, 100);
   assert.equal((await getPropertyBySlug("my-existing-listing"))?.id, listingId);
 
   // A second cold start must preserve the owner's now-separate name and title.
