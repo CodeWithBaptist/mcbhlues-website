@@ -5,6 +5,7 @@ import { getNavigationForUser } from "@/lib/rbac/navigation";
 import { PermissionProvider } from "@/components/portal/permission-provider";
 import { PortalSidebar } from "@/components/portal/portal-sidebar";
 import { PortalTopbar } from "@/components/portal/portal-topbar";
+import { PortalBackToTop } from "@/components/portal/portal-back-to-top";
 
 export const metadata: Metadata = {
   title: "Staff Portal",
@@ -35,13 +36,14 @@ export default async function PortalLayout({ children }: { children: React.React
         permissions: user.permissions,
       }}
     >
-      <div className="staff-portal flex min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(37,99,235,0.08),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
+      <div className="staff-portal flex min-h-screen bg-[radial-gradient(1100px_560px_at_8%_-8%,rgba(37,99,235,0.08),transparent),radial-gradient(900px_520px_at_92%_0%,rgba(96,165,250,0.06),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
         <PortalSidebar navigation={navigation} />
         <div className="flex min-w-0 flex-1 flex-col">
           <PortalTopbar />
-          <main id="main-content" className="portal-enter flex-1 px-4 py-6 lg:px-8 lg:py-8">
+          <main id="main-content" className="portal-enter flex-1 px-4 py-6 lg:px-6 lg:py-7 xl:px-8 xl:py-8">
             {children}
           </main>
+          <PortalBackToTop />
         </div>
       </div>
     </PermissionProvider>
