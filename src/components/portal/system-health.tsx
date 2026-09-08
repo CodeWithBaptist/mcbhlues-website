@@ -43,7 +43,7 @@ export function SystemHealth({ stats }: { stats: { label: string; value: string 
           onClick={check}
           className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:border-primary hover:text-primary"
         >
-          <RefreshCw className="h-3.5 w-3.5" /> Refresh
+          <RefreshCw className={state === "checking" ? "h-3.5 w-3.5 animate-spin" : "h-3.5 w-3.5"} /> Refresh
         </button>
       }
     >

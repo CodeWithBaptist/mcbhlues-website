@@ -4,7 +4,11 @@ import { useState } from "react";
 import { ImageOff } from "lucide-react";
 import { SmartImage } from "@/components/ui/smart-image";
 
-/** Public image renderer and 4:3 crop, with an honest unavailable-image state. */
+/**
+ * Public image renderer and 4:3 crop, with an honest unavailable-image state.
+ * The photo eases to a slight zoom while its row is hovered — a pure transform
+ * inside an overflow-hidden frame, so the layout never shifts.
+ */
 export function PropertyThumbnail({ src, alt }: { src?: string; alt: string }) {
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   if (!src || src === failedSrc) {
@@ -14,5 +18,5 @@ export function PropertyThumbnail({ src, alt }: { src?: string; alt: string }) {
     </span>;
   }
   return <SmartImage src={src} alt={alt} width={192} height={144} sizes="96px"
-    className="h-full w-full object-cover" onError={() => setFailedSrc(src)} />;
+    className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.06]" onError={() => setFailedSrc(src)} />;
 }

@@ -21,6 +21,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import type { EnquiryDetail, EnquiryListItem } from "@/lib/enquiries/enquiry-service";
 import { Card, EmptyState, Notice } from "./ui";
+import { DrawerShell, ModalShell } from "./modal-shell";
 
 export interface StaffOption {
   id: string;
@@ -464,7 +465,8 @@ function EnquiryEditor({
     "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+    <ModalShell onClose={onClose} label={isEdit ? "Edit enquiry" : "Log enquiry"}>
+      {(close) => (
       <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
@@ -475,7 +477,7 @@ function EnquiryEditor({
               {isEdit ? form.subject || form.name : "Record a phone, walk-in or referral enquiry"}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -547,7 +549,7 @@ function EnquiryEditor({
         {error && <p className="border-t border-red-100 bg-red-50 px-6 py-2 text-sm text-red-700">{error}</p>}
 
         <footer className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -556,7 +558,8 @@ function EnquiryEditor({
           </Button>
         </footer>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }
 
@@ -661,7 +664,8 @@ function EnquiryDetailPanel({
   }
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex justify-end bg-black/40">
+    <DrawerShell onClose={onClose} label={detail.subject || "Enquiry"}>
+      {(close) => (
       <div className="portal-drawer-panel h-full w-full max-w-2xl overflow-y-auto bg-white shadow-2xl">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-4">
           <div>
@@ -672,7 +676,7 @@ function EnquiryDetailPanel({
               {detail.reference} · {detail.type} · {new Date(detail.createdAt).toLocaleString()}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -830,7 +834,8 @@ function EnquiryDetailPanel({
           </section>
         </div>
       </div>
-    </div>
+      )}
+    </DrawerShell>
   );
 }
 

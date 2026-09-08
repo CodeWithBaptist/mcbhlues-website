@@ -20,6 +20,7 @@ import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import type { BookingListItem } from "@/lib/bookings/booking-service";
 import { Card, EmptyState, Notice } from "./ui";
+import { ModalShell } from "./modal-shell";
 
 export interface StaffOption {
   id: string;
@@ -487,7 +488,8 @@ function BookingEditor({
     "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+    <ModalShell onClose={onClose} label={isEdit ? "Edit booking" : "New booking"}>
+      {(close) => (
       <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
@@ -498,7 +500,7 @@ function BookingEditor({
               {isEdit ? form.name : "Schedule a viewing, consultation or inspection"}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -576,7 +578,7 @@ function BookingEditor({
         {error && <p className="border-t border-red-100 bg-red-50 px-6 py-2 text-sm text-red-700">{error}</p>}
 
         <footer className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -585,7 +587,8 @@ function BookingEditor({
           </Button>
         </footer>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }
 
@@ -632,8 +635,9 @@ function RescheduleDialog({
   }
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
+    <ModalShell onClose={onClose} label={`Reschedule ${booking.reference}`} align="center">
+      {(close) => (
+      <form onSubmit={submit} className="portal-modal-panel w-full max-w-sm rounded-xl bg-white p-6 shadow-2xl">
         <h2 className="font-heading text-base font-bold text-dark">Reschedule {booking.reference}</h2>
         <p className="mb-4 text-xs text-gray-500">
           Currently {new Date(booking.scheduledAt).toLocaleString()}
@@ -648,7 +652,7 @@ function RescheduleDialog({
         </div>
         {error && <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">{error}</p>}
         <div className="mt-4 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -657,7 +661,8 @@ function RescheduleDialog({
           </Button>
         </div>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }
 

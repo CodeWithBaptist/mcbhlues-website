@@ -52,14 +52,14 @@ export function NotificationBell() {
       title="Notifications"
     >
       <Bell
-        className="h-5 w-5"
+        className="h-5 w-5 transition-transform duration-200 ease-soft group-hover:scale-110"
         aria-hidden="true"
       />
       {unread !== null && unread > 0 && (
         /* Re-keyed so the badge pops each time the count changes. */
         <span
           key={unread}
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white ring-2 ring-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 animate-pop items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white ring-2 ring-white"
           aria-hidden="true"
         >
           {unread > 99 ? "99+" : unread}

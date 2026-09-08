@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -143,7 +144,13 @@ export function PortalTableSkeleton({
         <div
           key={`row-${rowIndex}`}
           className="grid gap-3 border-b border-gray-50 py-4 last:border-b-0"
-          style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+          style={
+            {
+              gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+              // Staggered shimmer phase so rows shimmer as a wave, not in lockstep.
+              "--shimmer-delay": `-${(rowIndex % 6) * 0.15}s`,
+            } as CSSProperties
+          }
         >
           {Array.from({ length: columns }).map((_, cellIndex) => (
             <Skeleton
@@ -157,41 +164,50 @@ export function PortalTableSkeleton({
   );
 }
 
-/** Full portal page placeholder: hero banner, toolbar, then a table or cards. */
+/** Full portal page placeholder: heading, toolbar, then a table or cards. */
 export function PortalPageSkeleton({ variant = "table" }: { variant?: "table" | "cards" }) {
   return (
-    <div className="space-y-6">
+    <div className="animate-fade-in space-y-6">
       <StatusLabel text="Loading portal page" />
 
-      <div aria-hidden="true" className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-light px-6 py-6">
-        <div className="flex items-start gap-4">
-          <div className="h-11 w-11 shrink-0 rounded-xl bg-white/20" />
-          <div className="space-y-2">
-            <div className="h-2.5 w-24 rounded bg-white/25" />
-            <div className="h-5 w-56 rounded bg-white/30" />
-            <div className="h-3 w-72 max-w-full rounded bg-white/20" />
-          </div>
+      {/* Page heading: title + description on the left, actions on the right. */}
+      <div aria-hidden="true" className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2.5">
+          <Skeleton className="h-7 w-52" />
+          <Skeleton className="h-4 w-80 max-w-full" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-11 w-28" />
+          <Skeleton className="h-11 w-28" />
         </div>
       </div>
 
+      {/* Filter toolbar: search + segmented filter + primary action. */}
       <div aria-hidden="true" className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
           <Skeleton className="h-12 w-full sm:max-w-xs" />
-          <Skeleton className="h-12 w-full sm:w-56" />
+          <Skeleton className="h-10 w-full sm:w-56" />
         </div>
         <Skeleton className="h-11 w-40" />
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-        {variant === "table" ? (
-          <PortalTableSkeleton />
-        ) : (
-          <div aria-hidden="true" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-28 w-full rounded-xl" />
-            ))}
-          </div>
-        )}
+      {/* Content card mirroring the portal `Card` (header + body). */}
+      <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+        <div aria-hidden="true" className="space-y-2 border-b border-gray-200 px-5 py-4">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-3.5 w-64 max-w-full" />
+        </div>
+        <div className="p-5">
+          {variant === "table" ? (
+            <PortalTableSkeleton />
+          ) : (
+            <div aria-hidden="true" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} className="h-28 w-full rounded-xl" />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

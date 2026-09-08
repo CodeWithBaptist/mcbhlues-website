@@ -4,6 +4,10 @@
   overflow-wrap: anywhere;
 }
 .portal-main > * { max-width: 1440px; margin-inline: auto; }
+/* `clip` (unlike `hidden`) never creates a scroll container, so sticky
+   descendants keep working — it only absorbs stray sub-pixel overflow from
+   hover micro-interactions. */
+.portal-main { overflow-x: clip; }
 .staff-portal :where(h1, h2, h3, p) { text-wrap: pretty; }
 .staff-portal :where(button, a) { -webkit-tap-highlight-color: transparent; }
 .staff-portal :where(button, input, select, textarea):disabled,
@@ -53,6 +57,7 @@
   box-shadow: none;
   transform: none;
   font-size: 13px;
+  transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
 }
 .staff-portal [role="radio"][aria-checked="true"] { border-bottom-color: var(--color-primary); }
 .staff-portal .portal-theme-toggle,
@@ -136,4 +141,9 @@
 .public-dark .staff-portal :is([role="radiogroup"], [role="radio"]) { background: transparent !important; }
 .staff-portal .portal-modal-panel button[aria-label="Close"] { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 
-.portal-navigation-panel { animation: fade-in 200ms ease; }
+@keyframes portal-nav-drawer-in {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+/* The left-hand drawer slides a short distance in the direction it opens. */
+.portal-navigation-panel { animation: portal-nav-drawer-in 250ms ease-out backwards; }
