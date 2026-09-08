@@ -11,6 +11,7 @@ import { listPublishedProperties, getPropertyBySlug } from "@/lib/properties/pro
 import { toPublicProperty, hasMapLocation } from "@/lib/properties/public-property";
 import { SITE_URL } from "@/constants";
 import { pageMetadata } from "@/lib/seo";
+import { toJsonLd, webPageSchema } from "@/lib/schema";
 
 // ISR: listing pages are prerendered for every published slug, then served
 // from the edge cache — regenerated in the background every 60 s and purged
@@ -94,12 +95,13 @@ export default async function PropertyDetailsPage({ params }: Props) {
 
   // schema.org listing markup — lets Google show price, location and photos
   // directly in the search result.
+  const propertyUrl = `${SITE_URL}/properties/${property.slug}`;
   const listingSchema = {
-    "@context": "https://schema.org",
     "@type": property.type === "sale" ? "SingleFamilyResidence" : "Apartment",
+    "@id": `${propertyUrl}#property`,
     name: property.name,
     description: property.description || property.title,
-    url: `${SITE_URL}/properties/${property.slug}`,
+    url: propertyUrl,
     image: property.images.length > 0 ? property.images : undefined,
     numberOfBedrooms: property.beds || undefined,
     numberOfBathroomsTotal: property.baths || undefined,
@@ -126,11 +128,27 @@ export default async function PropertyDetailsPage({ params }: Props) {
       : undefined,
   };
 
+  // A page node connecting this URL to the listing above and to the business
+  // that publishes it (the organization node in the site layout), so every
+  // listing sits inside the same MCBHLUES entity graph.
+  const pageSchema = webPageSchema({
+    path: `/properties/${property.slug}`,
+    name: `${property.name} — ${property.location}`,
+    description: clamp(property.description || property.title),
+    about: [{ "@id": `${propertyUrl}#property` }],
+  });
+
   return (
     <div className="flex flex-col bg-gray-50/30">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }}
+        // Listing copy is staff-authored, so escape it for inline JSON-LD.
+        dangerouslySetInnerHTML={{
+          __html: toJsonLd({
+            "@context": "https://schema.org",
+            "@graph": [listingSchema, pageSchema],
+          }),
+        }}
       />
       <PropertyHeader property={property} />
       <PropertyGallery images={property.images} title={property.name} />

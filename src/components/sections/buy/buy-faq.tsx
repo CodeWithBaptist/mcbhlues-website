@@ -58,7 +58,7 @@ export function BuyFAQ({ items }: { items?: FaqItem[] }) {
         <SectionHeading
           eyebrow="Questions Answered"
           title="Frequently Asked Questions"
-          description="Everything you need to know about buying a luxury property through MCBHLUES ENTERPRISES."
+          description="Everything you need to know about buying a luxury property through MCBHLUES Enterprises."
         />
 
         <div className="max-w-3xl mx-auto">

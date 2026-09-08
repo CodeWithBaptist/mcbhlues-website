@@ -41,7 +41,7 @@ export const CMS_BLOCKS: CmsBlock[] = [
     label: "Homepage hero subtitle",
     section: "homepage",
     value:
-      "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.",
+      "MCBHLUES Enterprises advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.",
     multiline: true,
   },
   {

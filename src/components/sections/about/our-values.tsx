@@ -35,7 +35,7 @@ export function OurValues() {
         <SectionHeading
           eyebrow="Core Principles"
           title="What Defines Us"
-          description="At MCBHLUES ENTERPRISES, we are driven by a set of core values that ensure we remain at the pinnacle of the real estate industry."
+          description="At MCBHLUES Enterprises, we are driven by a set of core values that ensure we remain at the pinnacle of the real estate industry."
         />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

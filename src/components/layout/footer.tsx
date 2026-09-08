@@ -59,8 +59,9 @@ export function Footer({ company }: { company?: CompanyInfo }) {
           <div className="flex flex-col gap-6">
             <Logo light logoUrl={company?.logoUrl} name={companyName} />
             <p className="leading-relaxed text-gray-300">
-              Real estate consulting, property development and facility management.
-              We help clients buy, build and manage property through one team.
+              {companyName} provides real estate consulting, property development
+              and facility management. We help clients buy, build and manage
+              property through one team.
             </p>
             {socialLinks.length > 0 && (
               <ul className="flex gap-4">

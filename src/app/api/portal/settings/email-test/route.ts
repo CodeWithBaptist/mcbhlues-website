@@ -16,7 +16,7 @@ export const POST = withPermission("settings:system", async (_request, { user })
       "This is a test message from the MCBHLUES Staff Portal.\n\n" +
       "If you are reading this, your email delivery settings are working — " +
       "customer enquiry replies, auto-replies and staff invitations will now be sent automatically.\n\n" +
-      "MCBHLUES ENTERPRISES",
+      "MCBHLUES Enterprises",
     purpose: "email_test",
   });
 

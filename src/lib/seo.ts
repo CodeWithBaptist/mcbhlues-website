@@ -8,6 +8,11 @@ import { SITE_CONFIG, SITE_URL } from "@/constants";
  * route defines one — it is not deep-merged. Building it here keeps
  * `og:type`, `og:site_name`, `og:locale` and the social preview image on every
  * page instead of silently dropping them.
+ *
+ * `og:site_name` is the brand (`MCBHLUES`), matching the wordmark and the
+ * `WebSite` schema node; the full business name (`MCBHLUES Enterprises`) rides
+ * in the title suffix instead, so both names appear without either crowding
+ * out the other.
  */
 
 export const DEFAULT_OG_IMAGE = {
@@ -18,7 +23,7 @@ export const DEFAULT_OG_IMAGE = {
 };
 
 export interface PageMetadataInput {
-  /** Goes through the root `%s | MCBHLUES ENTERPRISES` template. */
+  /** Goes through the root `%s | MCBHLUES Enterprises` template. */
   title: string;
   description: string;
   /** Absolute path, e.g. `/about`. Used for the canonical and `og:url`. */
@@ -52,7 +57,7 @@ export function pageMetadata({
     alternates: { canonical: path },
     openGraph: {
       type,
-      siteName: SITE_CONFIG.name,
+      siteName: SITE_CONFIG.brand,
       locale: "en_NG",
       url: `${SITE_URL}${path === "/" ? "" : path}`,
       title: ogTitle,

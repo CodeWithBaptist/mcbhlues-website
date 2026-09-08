@@ -98,7 +98,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
     fromName:
       get("system.email_from_name") ||
       process.env.EMAIL_FROM_NAME ||
-      "MCBHLUES ENTERPRISES",
+      "MCBHLUES Enterprises",
   };
 }
 
