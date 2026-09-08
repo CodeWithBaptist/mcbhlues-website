@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@/components/theme/theme-provider";
 
 /**
  * Cloudflare Turnstile widget (explicit render).
@@ -95,6 +96,8 @@ export function Turnstile({
   const widgetIdRef = useRef<string | null>(null);
   const onTokenRef = useRef(onToken);
   const [failed, setFailed] = useState(false);
+  // Rendered only inside public forms, so the public theme is always available.
+  const { theme: siteTheme } = useTheme();
 
   useEffect(() => {
     onTokenRef.current = onToken;
@@ -113,7 +116,9 @@ export function Turnstile({
         widgetIdRef.current = window.turnstile.render(containerRef.current, {
           sitekey: SITE_KEY,
           action,
-          theme: "auto",
+          // Follow the site theme, not the OS setting: `auto` would leave a
+          // light widget on dark pages (or vice versa) whenever the two differ.
+          theme: siteTheme === "dark" ? "dark" : "light",
           callback: (token) => onTokenRef.current(token),
           "expired-callback": () => onTokenRef.current(""),
           "timeout-callback": () => onTokenRef.current(""),
@@ -134,11 +139,14 @@ export function Turnstile({
         } catch {
           /* widget already gone */
         }
+        // The widget is destroyed (theme change, action change, unmount), so
+        // any token it issued is no longer valid.
+        onTokenRef.current("");
       }
     };
-    // `action` is a constant per form; re-rendering the widget on change is
-    // intentional and cheap.
-  }, [action]);
+    // Re-rendering the widget on theme or action change is intentional and
+    // cheap; the stale token is cleared above so it can never be submitted.
+  }, [action, siteTheme]);
 
   useEffect(() => {
     if (resetSignal === 0) return;
