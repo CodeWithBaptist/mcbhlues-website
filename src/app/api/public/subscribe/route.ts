@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { normaliseSubscriberEmail, validateSubscriptionEmail } from "@/lib/newsletter/subscription";
+import { sendNewsletterWelcomeEmail } from "@/lib/newsletter/welcome-email";
 import { addSubscriber } from "@/lib/subscribers/subscriber-service";
-import { recordAudit } from "@/lib/rbac/audit";
+import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
 import { clientIp, rateLimit } from "@/lib/security/rate-limit";
 
 /**
@@ -19,8 +20,17 @@ import { clientIp, rateLimit } from "@/lib/security/rate-limit";
  *   4. Address validation    — the same rules the browser applied, re-run.
  *   5. Acceptance limit      — only well-formed addresses consume this.
  *
- * A successful call writes a real row (see `lib/subscribers`), so the popup's
- * success state is reporting something that actually happened.
+ * A successful call writes a real row (see `lib/subscribers`), so the form's
+ * success state is reporting something that actually happened. It then does the
+ * two follow-ups a sign-up owes:
+ *
+ *   • the address is listed in the Staff Portal under Newsletter
+ *     (Portal → Content → Newsletter), and
+ *   • the visitor receives the "Newsletter welcome" auto-reply, editable under
+ *     System Settings → Email templates.
+ *
+ * Neither follow-up can fail the sign-up: both are best-effort and the email
+ * attempt is always written to the outbox for auditing.
  */
 
 const BURST_LIMIT = { limit: 10, windowMs: 10 * 60 * 1000 };
@@ -76,18 +86,39 @@ export async function POST(request: Request) {
   try {
     const result = await addSubscriber(email);
 
+    // The auto-reply. A sign-up that already sits on the list gets no second
+    // welcome, but someone who had opted out and came back does — they need to
+    // see that the re-subscription landed. A delivery failure never undoes a
+    // stored address; the outbox records what happened either way.
+    let welcomeSent = false;
+    if (!result.alreadySubscribed || result.reactivated) {
+      try {
+        const welcome = await sendNewsletterWelcomeEmail({ email });
+        welcomeSent = welcome.status === "sent";
+      } catch (error) {
+        // Swallowed on purpose — `sendEmail` already logged the failure.
+        console.error("[subscribe] welcome email failed", error);
+      }
+    }
+
     await recordAudit({
       actor: null,
-      action: result.alreadySubscribed ? "subscriber.repeated" : "subscriber.added",
+      action: result.alreadySubscribed ? AUDIT_ACTIONS.SUBSCRIBER_REPEATED : AUDIT_ACTIONS.SUBSCRIBER_ADDED,
       resource: "subscriber",
       resourceId: result.id,
-      // Only a hash of the address goes into the log — the audit trail records
-      // that a sign-up happened without becoming a second copy of the list.
-      metadata: { source: "website" },
+      // No address in the log — the audit trail records that a sign-up happened
+      // without becoming a second copy of the list.
+      metadata: { source: "website", welcomeSent },
     });
 
     return NextResponse.json(
-      { ok: true, alreadySubscribed: result.alreadySubscribed },
+      {
+        ok: true,
+        alreadySubscribed: result.alreadySubscribed,
+        // Lets the form tell the visitor where to look, and lets the tests
+        // assert the auto-reply was attempted without a live SMTP server.
+        welcomeSent,
+      },
       { status: result.alreadySubscribed ? 200 : 201 }
     );
   } catch (error) {

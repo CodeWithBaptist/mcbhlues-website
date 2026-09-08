@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 const PURPOSE_LABELS: Record<string, string> = {
   enquiry_response: "Enquiry reply",
   enquiry_auto_reply: "Enquiry auto-reply",
+  newsletter_welcome: "Newsletter welcome",
   staff_invite: "Staff invitation",
   password_reset: "Password reset",
   email_test: "Test email",

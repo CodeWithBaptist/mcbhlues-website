@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const email = process.env.PORTAL_E2E_EMAIL;
 const password = process.env.PORTAL_E2E_PASSWORD;
-const routes = ["", "account/password", "activity-logs", "audit-logs", "bookings", "cms", "cms/announcements", "cms/faqs", "cms/legal", "cms/testimonials", "customers", "enquiries", "logs", "media", "notifications", "permissions", "properties", "reports", "roles", "settings/company", "settings/system", "staff"];
+const routes = ["", "account/password", "activity-logs", "audit-logs", "bookings", "cms", "cms/announcements", "cms/faqs", "cms/legal", "cms/testimonials", "customers", "enquiries", "logs", "media", "notifications", "permissions", "properties", "reports", "roles", "settings/company", "settings/system", "staff", "subscribers"];
 
 async function signIn(page: Page) {
   await page.goto("/portal/login");
@@ -156,6 +156,31 @@ test.describe("authenticated portal — use a disposable Super Admin account", (
     expect(await other.locator("main").evaluate(el => getComputedStyle(el).animationName)).toBe("none");
     await other.close();
   });
+});
+
+test("newsletter sign-up confirms, retires itself, and reaches the staff portal", async ({ page }) => {
+  test.skip(!email || !password || process.env.PORTAL_E2E_ALLOW_WRITES !== "true", "Writes require an explicitly opted-in disposable database.");
+  const address = `ui-regression-${Date.now()}@example.invalid`;
+
+  await page.goto("/");
+  const heading = page.getByRole("heading", { name: "See the right homes before the market does." });
+  await expect(heading).toBeVisible();
+
+  await page.getByLabel("Email address").fill(address);
+  await page.getByRole("button", { name: "Join the list" }).click();
+
+  // The form is replaced by a single acknowledgement the moment the address lands.
+  await expect(page.getByRole("status")).toContainText("You're on the list.");
+  await expect(page.getByLabel("Email address")).toHaveCount(0);
+
+  // The browser remembers, so the ask never returns on a later visit.
+  await page.reload();
+  await expect(heading).toHaveCount(0);
+
+  // And the staff portal can see the address the same visitor just typed in.
+  await signIn(page);
+  await page.goto("/portal/subscribers");
+  await expect(page.getByText(address)).toBeVisible();
 });
 
 test("disposable property workflow: create, edit, publish, status, delete", async ({ page }) => {

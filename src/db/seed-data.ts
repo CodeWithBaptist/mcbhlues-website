@@ -63,6 +63,10 @@ export const PERMISSION_SEED: PermissionSeed[] = [
   p("customer:bookings_read", "Customer Management", "View customer bookings"),
   p("customer:saved_read", "Customer Management", "View customer saved properties"),
 
+  // ---- Newsletter ---------------------------------------------------------
+  p("subscriber:read", "Newsletter", "View the mailing list"),
+  p("subscriber:update", "Newsletter", "Put an address on or off the mailing list"),
+
   // ---- Enquiry management -------------------------------------------------
   p("enquiry:read", "Enquiry Management", "View all enquiries"),
   p("enquiry:property_read", "Enquiry Management", "View property related enquiries"),
@@ -206,6 +210,8 @@ export const ROLE_SEED: RoleSeed[] = [
       "cms:featured_properties",
       "cms:hero",
       "cms:legal",
+      "subscriber:read",
+      "subscriber:update",
       "media:read",
       "media:upload",
       "media:delete",
@@ -273,6 +279,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "customer:read",
       "customer:create",
       "customer:notes",
+      "subscriber:read",
       "enquiry:read",
       "enquiry:create",
       "enquiry:update",
@@ -302,6 +309,7 @@ export const ROLE_SEED: RoleSeed[] = [
       "cms:featured_properties",
       "cms:hero",
       "cms:legal",
+      "subscriber:read",
       "media:read",
       "media:upload",
     ],
@@ -341,6 +349,7 @@ export const NAV_SEED: NavSeed[] = [
   { key: "faqs", label: "FAQs", href: "/portal/cms/faqs", icon: "HelpCircle", group: "Content", permissionKey: "cms:faqs", sortOrder: 63 },
   { key: "announcements", label: "Announcements", href: "/portal/cms/announcements", icon: "Megaphone", group: "Content", permissionKey: "cms:announcements", sortOrder: 64 },
   { key: "legal", label: "Legal Documents", href: "/portal/cms/legal", icon: "Scale", group: "Content", permissionKey: "cms:legal", sortOrder: 65 },
+  { key: "newsletter", label: "Newsletter", href: "/portal/subscribers", icon: "Mails", group: "Content", permissionKey: "subscriber:read", sortOrder: 66 },
 
   { key: "staff", label: "Staff Management", href: "/portal/staff", icon: "UserCog", group: "Administration", permissionKey: "staff:read", sortOrder: 70 },
   { key: "roles", label: "Roles", href: "/portal/roles", icon: "ShieldCheck", group: "Administration", permissionKey: "role:read", sortOrder: 71 },
