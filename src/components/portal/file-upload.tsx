@@ -71,7 +71,7 @@ export function FileUpload({
         <button
           type="button"
           disabled={busy}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => !busy && inputRef.current?.click()}
           className={cn(
             "inline-flex h-12 shrink-0 items-center gap-2 rounded-md border border-gray-200 px-4 text-sm font-medium text-gray-700 transition-all duration-200 hover:border-primary hover:text-primary active:translate-y-px disabled:opacity-50",
             className
@@ -94,6 +94,16 @@ export function FileUpload({
 
   return (
     <div
+      role="button"
+      tabIndex={busy ? -1 : 0}
+      aria-label={label}
+      aria-disabled={busy}
+      onKeyDown={(event) => {
+        if (!busy && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
       onDragOver={(event) => {
         event.preventDefault();
         setDragging(true);
@@ -105,7 +115,7 @@ export function FileUpload({
         send(event.dataTransfer.files);
       }}
       className={cn(
-        "flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ease-soft",
+        "flex flex-col items-center justify-center gap-2 rounded-md border border-dashed px-6 py-8 text-center transition-all duration-200 ease-soft",
         dragging
           ? "scale-[1.01] border-primary bg-primary/10 shadow-inner"
           : "border-gray-200 bg-gray-50/60 hover:border-primary/50 hover:bg-primary/[0.03]",
@@ -125,7 +135,7 @@ export function FileUpload({
       <button
         type="button"
         disabled={busy}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !busy && inputRef.current?.click()}
         className="text-sm font-semibold text-primary underline-offset-2 hover:underline disabled:opacity-50"
       >
         {busy ? progressNote ?? "Uploading…" : label}

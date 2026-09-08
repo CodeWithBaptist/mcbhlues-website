@@ -214,24 +214,24 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
             description={list.length === 0 ? "Add your first customer to get started." : "Try adjusting your search or filters."}
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Customers table" tabIndex={0}>
+            <table role="table"
               data-busy={busyId !== null || undefined}
-              className="portal-table w-full min-w-[980px] text-left text-sm">
+              className="portal-table portal-record-table w-full min-w-[980px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">Customer</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Budget</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Assigned to</th>
-                  <th className="px-3 py-2 text-right">Actions</th>
+                  <th scope="col" className="px-3 py-2">Customer</th>
+                  <th scope="col" className="px-3 py-2">Type</th>
+                  <th scope="col" className="px-3 py-2">Budget</th>
+                  <th scope="col" className="px-3 py-2">Status</th>
+                  <th scope="col" className="px-3 py-2">Assigned to</th>
+                  <th scope="col" className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((customer) => (
                   <tr key={customer.id} className="border-b border-gray-50 align-top">
-                    <td className="px-3 py-3">
+                    <td data-label="Customer" className="px-3 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                           <UserRound className="h-4 w-4" />
@@ -249,21 +249,21 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-3">
+                    <td data-label="Type" className="px-3 py-3">
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium capitalize text-primary">
                         {customer.type}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-xs text-gray-600">
+                    <td data-label="Budget" className="px-3 py-3 text-xs text-gray-600">
                       {customer.budgetMin || customer.budgetMax
                         ? `$${customer.budgetMin.toLocaleString()} – $${customer.budgetMax.toLocaleString()}`
                         : "—"}
                     </td>
-                    <td className="px-3 py-3">
+                    <td data-label="Status" className="px-3 py-3">
                       <StatusPill status={customer.status} />
                     </td>
-                    <td className="px-3 py-3 text-xs text-gray-600">{staffName(customer.assignedTo)}</td>
-                    <td className="px-3 py-3">
+                    <td data-label="Assigned to" className="px-3 py-3 text-xs text-gray-600">{staffName(customer.assignedTo)}</td>
+                    <td data-label="Actions" className="px-3 py-3">
                       <div className="flex flex-wrap items-center justify-end gap-1.5">
                         <IconAction title="View record" disabled={busyId !== null || detailLoading} onClick={() => openDetail(customer)}>
                           <BookOpen className="h-3.5 w-3.5" />

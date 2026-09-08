@@ -61,21 +61,6 @@ export interface PermissionOption {
 const SUPER_LEVEL = 100;
 
 /** Deterministic gradient per person so avatars are colourful but stable. */
-const AVATAR_GRADIENTS = [
-  "from-blue-500 to-indigo-600",
-  "from-emerald-500 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-sky-500 to-blue-600",
-  "from-rose-500 to-pink-600",
-  "from-cyan-500 to-teal-600",
-];
-
-function avatarGradient(seed: string) {
-  let hash = 0;
-  for (const char of seed) hash = (hash * 31 + char.charCodeAt(0)) % 997;
-  return AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length];
-}
-
 function initials(firstName: string, lastName: string) {
   return `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase() || "·";
 }
@@ -103,8 +88,7 @@ function Avatar({ row, size = "md" }: { row: StaffRow; size?: "md" | "lg" }) {
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br font-heading font-bold text-white shadow-sm ring-2 ring-white",
-        avatarGradient(row.email),
+        "flex shrink-0 items-center justify-center rounded-full bg-gray-100 font-heading font-semibold text-gray-700",
         size === "md" ? "h-10 w-10 text-xs" : "h-12 w-12 text-sm"
       )}
       aria-hidden
@@ -211,7 +195,7 @@ export function StaffManager({
       {/* ---------------------------------------------------------------- */}
       {/*  Live overview                                                    */}
       {/* ---------------------------------------------------------------- */}
-      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
         <StatCard label="Team members" value={`${stats.total}`} hint="All staff accounts" icon="Users" tone="primary" />
         <StatCard label="Active" value={`${stats.active}`} hint="Can sign in now" icon="UserCheck" tone="emerald" />
         <StatCard label="Invited" value={`${stats.invited}`} hint="Awaiting first sign-in" icon="MailPlus" tone="amber" />
@@ -350,15 +334,15 @@ export function StaffManager({
             }
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Staff table" tabIndex={0}>
+            <table role="table" className="portal-table portal-record-table w-full min-w-[920px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2.5 font-medium">Team member</th>
-                  <th className="px-3 py-2.5 font-medium">Roles</th>
-                  <th className="px-3 py-2.5 font-medium">Status</th>
-                  <th className="px-3 py-2.5 font-medium">Last login</th>
-                  <th className="px-3 py-2.5 text-right font-medium">Actions</th>
+                  <th scope="col" className="px-3 py-2.5 font-medium">Team member</th>
+                  <th scope="col" className="px-3 py-2.5 font-medium">Roles</th>
+                  <th scope="col" className="px-3 py-2.5 font-medium">Status</th>
+                  <th scope="col" className="px-3 py-2.5 font-medium">Last login</th>
+                  <th scope="col" className="px-3 py-2.5 text-right font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -369,7 +353,7 @@ export function StaffManager({
                       key={row.id}
                       className="border-b border-gray-50 align-middle transition-colors last:border-0 hover:bg-blue-50/40"
                     >
-                      <td className="px-3 py-3.5">
+                      <td data-label="Team member" className="px-3 py-3.5">
                         <div className="flex items-center gap-3">
                           <Avatar row={row} />
                           <div className="min-w-0">
@@ -387,7 +371,7 @@ export function StaffManager({
                         </div>
                       </td>
 
-                      <td className="px-3 py-3.5">
+                      <td data-label="Roles" className="px-3 py-3.5">
                         <div className="flex flex-wrap items-center gap-1.5">
                           {row.roles.map((role) => (
                             <span
@@ -443,11 +427,11 @@ export function StaffManager({
                         )}
                       </td>
 
-                      <td className="px-3 py-3.5">
+                      <td data-label="Status" className="px-3 py-3.5">
                         <StatusPill status={row.status} />
                       </td>
 
-                      <td className="px-3 py-3.5">
+                      <td data-label="Last login" className="px-3 py-3.5">
                         <span
                           className="text-xs text-gray-500"
                           title={row.lastLoginAt ? new Date(row.lastLoginAt).toLocaleString() : undefined}
@@ -456,7 +440,7 @@ export function StaffManager({
                         </span>
                       </td>
 
-                      <td className="px-3 py-3.5">
+                      <td data-label="Actions" className="px-3 py-3.5">
                         <div className="flex flex-wrap justify-end gap-1.5">
                           <Can permission="staff:update">
                             <IconAction

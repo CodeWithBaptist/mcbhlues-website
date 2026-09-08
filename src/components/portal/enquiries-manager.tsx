@@ -232,25 +232,25 @@ export function EnquiriesManager({
             }
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Enquiries table" tabIndex={0}>
+            <table role="table"
               data-busy={busyId !== null || undefined}
-              className="portal-table w-full min-w-[1060px] text-left text-sm">
+              className="portal-table portal-record-table w-full min-w-[1060px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">Enquiry</th>
-                  <th className="px-3 py-2">Contact</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Property</th>
-                  <th className="px-3 py-2">Assigned</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2 text-right">Actions</th>
+                  <th scope="col" className="px-3 py-2">Enquiry</th>
+                  <th scope="col" className="px-3 py-2">Contact</th>
+                  <th scope="col" className="px-3 py-2">Type</th>
+                  <th scope="col" className="px-3 py-2">Property</th>
+                  <th scope="col" className="px-3 py-2">Assigned</th>
+                  <th scope="col" className="px-3 py-2">Status</th>
+                  <th scope="col" className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((enquiry) => (
                   <tr key={enquiry.id} className="border-b border-gray-50 align-top">
-                    <td className="px-3 py-3">
+                    <td data-label="Enquiry" className="px-3 py-3">
                       <button
                         type="button"
                         onClick={() => openDetail(enquiry)}
@@ -268,18 +268,18 @@ export function EnquiriesManager({
                         )}
                       </p>
                     </td>
-                    <td className="px-3 py-3 text-xs text-gray-600">
+                    <td data-label="Contact" className="px-3 py-3 text-xs text-gray-600">
                       <p className="font-medium text-gray-700">{enquiry.name}</p>
                       {enquiry.email && <p>{enquiry.email}</p>}
                       {enquiry.phone && <p className="text-gray-400">{enquiry.phone}</p>}
                     </td>
-                    <td className="px-3 py-3">
+                    <td data-label="Type" className="px-3 py-3">
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium capitalize text-primary">
                         {enquiry.type}
                       </span>
                       <p className="mt-1 text-[11px] text-gray-400">{enquiry.source}</p>
                     </td>
-                    <td className="px-3 py-3 text-xs text-gray-600">
+                    <td data-label="Property" className="px-3 py-3 text-xs text-gray-600">
                       {enquiry.propertyTitle ? (
                         <span className="inline-flex items-center gap-1">
                           <Building2 className="h-3 w-3 text-gray-400" />
@@ -289,10 +289,10 @@ export function EnquiriesManager({
                         <span className="text-gray-400">—</span>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-xs text-gray-600">
+                    <td data-label="Assigned" className="px-3 py-3 text-xs text-gray-600">
                       {enquiry.assignedName ?? <span className="text-gray-400">Unassigned</span>}
                     </td>
-                    <td className="px-3 py-3">
+                    <td data-label="Status" className="px-3 py-3">
                       <span
                         className={cn(
                           "rounded-full border px-2.5 py-0.5 text-xs font-medium",
@@ -302,7 +302,7 @@ export function EnquiriesManager({
                         {enquiry.status.replace(/_/g, " ")}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
+                    <td data-label="Actions" className="px-3 py-3">
                       <div className="flex flex-wrap items-center justify-end gap-1.5">
                         <IconAction title="Open thread" disabled={busyId !== null} onClick={() => openDetail(enquiry)}>
                           <MessageSquare className="h-3.5 w-3.5" />

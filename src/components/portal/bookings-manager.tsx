@@ -236,19 +236,19 @@ export function BookingsManager({
             description={list.length === 0 ? "Create the first viewing or consultation." : "Try adjusting your search or filters."}
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Bookings table" tabIndex={0}>
+            <table role="table"
               data-busy={busyId !== null || undefined}
-              className="portal-table w-full min-w-[1080px] text-left text-sm">
+              className="portal-table portal-record-table w-full min-w-[1080px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">Schedule</th>
-                  <th className="px-3 py-2">Guest</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Property</th>
-                  <th className="px-3 py-2">Assigned</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2 text-right">Actions</th>
+                  <th scope="col" className="px-3 py-2">Schedule</th>
+                  <th scope="col" className="px-3 py-2">Guest</th>
+                  <th scope="col" className="px-3 py-2">Type</th>
+                  <th scope="col" className="px-3 py-2">Property</th>
+                  <th scope="col" className="px-3 py-2">Assigned</th>
+                  <th scope="col" className="px-3 py-2">Status</th>
+                  <th scope="col" className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -257,7 +257,7 @@ export function BookingsManager({
                   const overdue = when.getTime() < now && booking.status === "pending";
                   return (
                     <tr key={booking.id} className="border-b border-gray-50 align-top">
-                      <td className="px-3 py-3">
+                      <td data-label="Schedule" className="px-3 py-3">
                         <p className="font-semibold text-dark">{when.toLocaleDateString()}</p>
                         <p className="flex items-center gap-1 text-xs text-gray-500">
                           <Clock className="h-3 w-3" />
@@ -268,17 +268,17 @@ export function BookingsManager({
                           {overdue && <span className="ml-1 text-amber-600">(overdue)</span>}
                         </p>
                       </td>
-                      <td className="px-3 py-3 text-xs text-gray-600">
+                      <td data-label="Guest" className="px-3 py-3 text-xs text-gray-600">
                         <p className="font-medium text-gray-700">{booking.name}</p>
                         {booking.email && <p>{booking.email}</p>}
                         {booking.phone && <p className="text-gray-400">{booking.phone}</p>}
                       </td>
-                      <td className="px-3 py-3">
+                      <td data-label="Type" className="px-3 py-3">
                         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium capitalize text-primary">
                           {booking.type}
                         </span>
                       </td>
-                      <td className="px-3 py-3 text-xs text-gray-600">
+                      <td data-label="Property" className="px-3 py-3 text-xs text-gray-600">
                         {booking.propertyTitle || propertyTitle(booking.propertyId) ? (
                           <span className="inline-flex items-center gap-1">
                             <Building2 className="h-3 w-3 text-gray-400" />
@@ -288,10 +288,10 @@ export function BookingsManager({
                           <span className="text-gray-400">{booking.location || "—"}</span>
                         )}
                       </td>
-                      <td className="px-3 py-3 text-xs text-gray-600">
+                      <td data-label="Assigned" className="px-3 py-3 text-xs text-gray-600">
                         {booking.assignedName ?? <span className="text-gray-400">Unassigned</span>}
                       </td>
-                      <td className="px-3 py-3">
+                      <td data-label="Status" className="px-3 py-3">
                         <span
                           className={cn(
                             "rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
@@ -301,7 +301,7 @@ export function BookingsManager({
                           {booking.status}
                         </span>
                       </td>
-                      <td className="px-3 py-3">
+                      <td data-label="Actions" className="px-3 py-3">
                         <div className="flex flex-wrap items-center justify-end gap-1.5">
                           {canApprove && booking.status === "pending" && (
                             <IconAction success title="Confirm booking" disabled={busyId !== null} onClick={() => transition(booking, "confirmed", "confirmed")}>

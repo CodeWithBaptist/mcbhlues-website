@@ -1,3 +1,4 @@
+import { getCompanyInfo } from "@/lib/settings/company";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -24,6 +25,7 @@ export default async function PortalLayout({ children }: { children: React.React
   if (!user) redirect("/portal/login");
 
   const navigation = await getNavigationForUser(user);
+  const company = await getCompanyInfo();
 
   return (
     <PermissionProvider
@@ -37,14 +39,14 @@ export default async function PortalLayout({ children }: { children: React.React
         permissions: user.permissions,
       }}
     >
-      <div className="staff-portal flex min-h-screen bg-[radial-gradient(1100px_560px_at_8%_-8%,rgba(37,99,235,0.08),transparent),radial-gradient(900px_520px_at_92%_0%,rgba(96,165,250,0.06),transparent),linear-gradient(to_bottom,#f8fafc,#f1f5f9)]">
+      <div className="staff-portal flex min-h-screen">
         <a href="#main-content" className="sr-only fixed left-4 top-4 z-[120] rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-lg focus:not-sr-only focus:outline-none focus:ring-4 focus:ring-primary/30">
           Skip to main content
         </a>
-        <PortalSidebar navigation={navigation} />
+        <PortalSidebar navigation={navigation} logoUrl={company.logoUrl} companyName={company.name} />
         <div className="flex min-w-0 flex-1 flex-col">
           <PortalTopbar />
-          <main id="main-content" className="portal-enter flex-1 px-4 py-6 lg:px-6 lg:py-7 xl:px-8 xl:py-8">
+          <main id="main-content" className="portal-main min-w-0 flex-1 px-4 py-6 sm:px-6 lg:py-8 xl:px-8">
             {children}
           </main>
           <PortalBackToTop />

@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import Font from "next/font/local";
 import "./globals.css";
 import { SITE_CONFIG, SITE_URL } from "@/constants";
-import { StaffThemeProvider } from "@/components/theme/staff-theme-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
 // Fonts are self-hosted (src/fonts) so builds don't need to reach
@@ -130,7 +129,7 @@ export default function RootLayout({
         {/* Apply the saved public theme before the first paint to avoid a flash. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try { var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; var publicTheme = localStorage.getItem("mcbhlues-public-theme"); var portalTheme = localStorage.getItem("mcbhlues-portal-theme"); if (publicTheme === "dark" || (!publicTheme && prefersDark)) document.documentElement.classList.add("public-dark"); if (portalTheme === "dark" || (!portalTheme && prefersDark)) document.documentElement.classList.add("portal-dark"); } catch (error) {}`,
+            __html: `try { var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches; var theme = localStorage.getItem("mcbhlues-public-theme") || localStorage.getItem("mcbhlues-portal-theme"); if (theme === "dark" || (!theme && prefersDark)) document.documentElement.classList.add("public-dark", "portal-dark"); } catch (error) { if (window.matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("public-dark", "portal-dark"); }`,
           }}
         />
       </head>
@@ -143,7 +142,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ThemeProvider>
-          <StaffThemeProvider>{children}</StaffThemeProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

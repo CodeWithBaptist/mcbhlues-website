@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -61,11 +61,9 @@ export default function AcceptInvitePage({ params }: { params: Promise<{ token: 
   }
 
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
-      <div className="mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-          <KeyRound className="h-6 w-6 text-primary" />
-        </div>
+    <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 sm:p-8">
+      <div className="mb-6">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-primary">Staff Portal</p>
         <h1 className="font-heading text-xl font-bold text-dark">Set your password</h1>
         {invite && (
           <p className="mt-1 text-sm text-gray-500">

@@ -47,19 +47,19 @@ export function NotificationBell() {
   return (
     <Link
       href="/portal/notifications"
-      className="group relative rounded-md p-2 text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      className="group relative flex h-11 w-11 items-center justify-center rounded-md text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       aria-label={unread ? `${unread} unread notifications` : "Notifications"}
       title="Notifications"
     >
       <Bell
-        className="h-5 w-5 transition-transform duration-300 ease-soft group-hover:-rotate-12"
+        className="h-5 w-5"
         aria-hidden="true"
       />
       {unread !== null && unread > 0 && (
         /* Re-keyed so the badge pops each time the count changes. */
         <span
           key={unread}
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 animate-pop items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-white"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white ring-2 ring-white"
           aria-hidden="true"
         >
           {unread > 99 ? "99+" : unread}
