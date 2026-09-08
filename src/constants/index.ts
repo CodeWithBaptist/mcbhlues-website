@@ -11,8 +11,25 @@ export const SITE_URL = (
 ).replace(/\/+$/, "");
 
 export const SITE_CONFIG = {
-  name: "MCBHLUES ENTERPRISES",
-  shortName: "MCBHLUES",
+  /**
+   * The full business name — the company as a legal/commercial entity.
+   *
+   * Use this wherever the *company* is being named: the `Organization` schema
+   * node, the page-title suffix, `creator`/`publisher` metadata, the footer
+   * copyright and email signatures. Portal → Company Settings
+   * (`company.name`) is the source of truth at runtime and falls back here.
+   */
+  name: "MCBHLUES Enterprises",
+
+  /**
+   * The public-facing brand — the wordmark rendered in the navbar and footer
+   * logo ("MCBHLUES" large, "Enterprises" as the subtitle beneath it).
+   *
+   * This is the primary branded search term and the `schema:brand` value, so
+   * it is the name attached to the *website* (`WebSite.name`, `og:site_name`).
+   */
+  brand: "MCBHLUES",
+
   url: SITE_URL,
   /** Used as the homepage <title> and the Open Graph site title. */
   tagline: "Real Estate Consulting, Development & Facility Management in Lagos",

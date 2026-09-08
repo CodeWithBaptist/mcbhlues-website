@@ -66,7 +66,7 @@ Verified: `curl -sI` against the production build returns the HSTS header plus
 
 Every public page goes through one helper, `pageMetadata()` in `src/lib/seo.ts`:
 
-- a short page title feeding the `%s | MCBHLUES ENTERPRISES` template;
+- a short page title feeding the `%s | MCBHLUES Enterprises` template;
 - a 150–160 character, benefit-led description that names Lagos;
 - a canonical URL;
 - a complete Open Graph block **and** a matching Twitter card.
@@ -80,6 +80,10 @@ Property pages build their own from the listing (title, clamped description,
 the listing photo) and also emit schema.org JSON-LD
 (`SingleFamilyResidence` / `Apartment` with price, beds, baths, floor size,
 address and offer availability). `/favorites` is `noindex, follow`.
+
+Branded search — how the **MCBHLUES** wordmark and the **MCBHLUES Enterprises**
+company name are tied to one organisation in structured data, metadata and the
+footer — is documented separately in [docs/SEO.md](./SEO.md).
 
 ## 6. Social preview image — Done
 
@@ -287,6 +291,10 @@ consent; Speed Insights sets no cookies and always runs.
 - [ ] Fill in the real social profile URLs in Portal → Company Settings (the
       footer hides icons with no URL, so nothing is broken until you do).
 - [ ] Submit `https://mcbhlues.com/sitemap.xml` to Google Search Console.
+- [ ] Create the Google Business Profile for MCBHLUES Enterprises using the
+      **same** name, address and phone number as Portal → Company Settings.
+      That off-site match is the other half of the entity work described in
+      [docs/SEO.md](./SEO.md).
 - [ ] Run PageSpeed Insights on `/`, `/properties` and one listing.
 
 ## 20. Also fixed along the way

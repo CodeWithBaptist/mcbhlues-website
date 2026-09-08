@@ -49,8 +49,12 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description: SITE_CONFIG.description,
-  applicationName: SITE_CONFIG.name,
+  // The web app is the brand; the company behind it is the business name.
+  applicationName: SITE_CONFIG.brand,
   keywords: [
+    // Branded queries first — these are the searches the site exists to win.
+    SITE_CONFIG.brand,
+    SITE_CONFIG.name,
     "real estate Lagos",
     "property for sale Lagos",
     "property for rent Lagos",
@@ -58,7 +62,6 @@ export const metadata: Metadata = {
     "property development Lagos",
     "facility management Lagos",
     "Victoria Island property",
-    "MCBHLUES Enterprises",
   ],
   authors: [{ name: SITE_CONFIG.name, url: SITE_URL }],
   creator: SITE_CONFIG.name,
@@ -68,7 +71,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: SITE_CONFIG.name,
+    // The site is the brand; the business name is carried by the Organization
+    // schema, the page titles and `publisher`/`creator` above.
+    siteName: SITE_CONFIG.brand,
     locale: "en_NG",
     url: SITE_URL,
     title: TITLE_DEFAULT,

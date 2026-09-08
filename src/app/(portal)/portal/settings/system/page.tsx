@@ -57,7 +57,7 @@ export default async function SystemSettingsPage() {
     "system.smtp_user": "",
     "system.smtp_pass": "",
     "system.email_from": "",
-    "system.email_from_name": "MCBHLUES ENTERPRISES",
+    "system.email_from_name": "MCBHLUES Enterprises",
     ...saved,
   };
 
@@ -301,7 +301,7 @@ export default async function SystemSettingsPage() {
               {
                 key: "system.email_from_name",
                 label: "From name",
-                placeholder: "MCBHLUES ENTERPRISES",
+                placeholder: "MCBHLUES Enterprises",
                 help: "The sender name customers see in their inbox.",
               },
             ]}

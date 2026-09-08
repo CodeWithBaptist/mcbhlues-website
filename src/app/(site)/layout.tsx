@@ -7,7 +7,7 @@ import { CookieConsent } from "@/components/layout/cookie-consent";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { SiteMotion } from "@/components/theme/site-motion";
 import { getCompanyInfo } from "@/lib/settings/company";
-import { SITE_CONFIG, SITE_URL } from "@/constants";
+import { siteSchemaGraph, toJsonLd } from "@/lib/schema";
 
 // Cached at the edge (stale-while-revalidate) instead of re-rendered on every
 // click — the company info and banner reads ride along in the cached HTML.
@@ -23,57 +23,17 @@ export default async function SiteLayout({
   // Portal → Company Settings is the source of truth; constants are the fallback.
   const company = await getCompanyInfo();
 
-  // schema.org RealEstateAgent — gives Google the business card for rich results.
-  const organisationSchema = {
-    "@context": "https://schema.org",
-    "@type": "RealEstateAgent",
-    "@id": `${SITE_URL}/#organization`,
-    name: company.name,
-    // The spellings people actually type when searching for the firm; keeps
-    // the "MCBH Blues" variant resolving to the same business card.
-    alternateName: ["MCBHLUES", "MCBHLUES Enterprises", "MCBH Blues"],
-    url: SITE_URL,
-    image: `${SITE_URL}/og-image.jpg`,
-    logo: company.logoUrl ? `${SITE_URL}${company.logoUrl}` : `${SITE_URL}/og-image.jpg`,
-    description: SITE_CONFIG.description,
-    email: company.email,
-    telephone: company.phone,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: company.address,
-      addressLocality: SITE_CONFIG.location.city,
-      addressRegion: SITE_CONFIG.location.state,
-      addressCountry: "NG",
-    },
-    areaServed: { "@type": "City", name: SITE_CONFIG.location.city },
-    sameAs: Object.values(company.socials).filter(Boolean),
-    knowsAbout: [
-      "Real estate consulting",
-      "Property development",
-      "Facility management",
-    ],
-  };
-
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${SITE_URL}/#website`,
-    url: SITE_URL,
-    name: company.name,
-    alternateName: SITE_CONFIG.shortName,
-    publisher: { "@id": `${SITE_URL}/#organization` },
-    inLanguage: "en-NG",
-  };
+  // schema.org graph: the brand node, the business behind it and the website.
+  // Rendered once here so every public page — listings included — describes
+  // the same organization instead of its own near-duplicate. See src/lib/schema.ts.
+  const schema = siteSchemaGraph(company);
 
   return (
     <SiteMotion>
       <div className="public-site flex min-h-screen flex-col">
         <script
           type="application/ld+json"
-          // Values come from our own settings table, not from visitor input.
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([organisationSchema, websiteSchema]),
-          }}
+          dangerouslySetInnerHTML={{ __html: toJsonLd(schema) }}
         />
         <ScrollProgress />
         <AnnouncementBanner />

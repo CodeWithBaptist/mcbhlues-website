@@ -30,7 +30,7 @@ export function Hero({ content }: { content?: HeroContent }) {
   const title = content?.title || "We help you buy, build and manage property";
   const subtitle =
     content?.subtitle ||
-    "MCBHLUES ENTERPRISES advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.";
+    "MCBHLUES Enterprises advises buyers and investors, develops residential and commercial buildings, and runs day to day facility management. One team and one point of contact from the first viewing through to handover and beyond.";
   const image = content?.image || DEFAULT_HERO_IMAGE;
   const imageAlt = content?.imageAlt || DEFAULT_HERO_IMAGE_ALT;
 
