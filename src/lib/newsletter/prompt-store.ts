@@ -1,10 +1,13 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+
 /**
  * Remembers how the visitor responded to the newsletter prompt.
  *
  * A prompt that reappears on every page view is the fastest way to make a
- * brand feel cheap, so the *decision* — not just the dismissal — is persisted.
+ * brand feel cheap, so the *decision* — not just the dismissal — is persisted,
+ * and the hero sign-up hides itself for good once the address is on the list.
  * Mirrors `lib/consent.ts`: localStorage only (no cookie for a preference),
  * every read guarded, and nothing throws in private mode.
  */
@@ -74,4 +77,31 @@ export function resetNewsletterPrompt(): void {
   } catch {
     /* ignore */
   }
+}
+
+/* -------------------------------------------------------------------------- */
+/*  React binding                                                              */
+/* -------------------------------------------------------------------------- */
+
+/** A second tab signing up should retire the form in this one too. */
+function subscribeToPrompt(onStoreChange: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", onStoreChange);
+  return () => window.removeEventListener("storage", onStoreChange);
+}
+
+/**
+ * `true` once this browser has joined the list.
+ *
+ * `useSyncExternalStore` rather than an effect: the server has no storage to
+ * read, so it always renders the sign-up and the client decides during
+ * hydration. No flash of a form for someone who is already subscribed, and no
+ * cascading render to wait for.
+ */
+export function useHasSubscribedToNewsletter(): boolean {
+  return useSyncExternalStore(
+    subscribeToPrompt,
+    () => readNewsletterPrompt()?.outcome === "subscribed",
+    () => false
+  );
 }

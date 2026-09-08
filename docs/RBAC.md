@@ -149,6 +149,7 @@ property:create   property:read   property:update   property:delete   property:p
 property:assign   property:image_manage   property:amenity_manage   property:feature_manage
 property:location_manage   property:status_update   property:price_update
 customer:create   customer:read   customer:update   customer:delete
+subscriber:read   subscriber:update   (Newsletter list — Portal → Content → Newsletter)
 enquiry:create    enquiry:read    enquiry:update    enquiry:delete    enquiry:assign
 booking:create    booking:read    booking:update    booking:delete    booking:approve
 cms:read          cms:update      media:upload      media:read        media:delete

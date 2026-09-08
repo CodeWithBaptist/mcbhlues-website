@@ -16,8 +16,11 @@ import { seedDatabase } from "./seed";
  * **Bump this number in the same commit that changes the seed catalogue or
  * the upgrade steps below**, so existing databases pick the change up on
  * their next boot.
+ *
+ * History: 2 added the Newsletter module — `subscriber:read` /
+ * `subscriber:update` and the Portal → Content → Newsletter navigation entry.
  */
-const BOOTSTRAP_REVISION = 1;
+const BOOTSTRAP_REVISION = 2;
 
 /**
  * CREATE TABLE IF NOT EXISTS does not upgrade a table that already exists.

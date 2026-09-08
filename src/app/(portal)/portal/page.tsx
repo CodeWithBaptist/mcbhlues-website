@@ -9,6 +9,7 @@ import {
   permissions,
   properties,
   roles,
+  subscribers,
   users,
 } from "@/db/schema";
 import { requireAuth } from "@/lib/rbac/permissions";
@@ -36,6 +37,7 @@ export default async function PortalDashboard() {
   const canSeeProperties = user.permissions.some((key) => key.startsWith("property:read"));
   const canSeeEnquiries = user.permissions.includes("enquiry:read");
   const canSeeBookings = user.permissions.includes("booking:read");
+  const canSeeSubscribers = user.permissions.includes("subscriber:read");
 
   const zero = [{ value: 0 }];
   const [staffCount] = canSeeStaff ? await db.select({ value: count() }).from(users) : zero;
@@ -67,6 +69,16 @@ export default async function PortalDashboard() {
         .from(bookings)
         .where(and(gt(bookings.scheduledAt, new Date()), eq(bookings.status, "confirmed")))
     : zero;
+  // Anyone holding subscriber:read sees the whole list, so a single query for
+  // both numbers is cheaper than two round trips.
+  const [subscriberCount] = canSeeSubscribers
+    ? await db
+        .select({
+          value: count(),
+          active: sql<number>`count(*) filter (where ${eq(subscribers.status, "active")})::int`,
+        })
+        .from(subscribers)
+    : [{ value: 0, active: 0 }];
 
   const stats = [
     canSeeProperties && {
@@ -92,6 +104,14 @@ export default async function PortalDashboard() {
       icon: "MessageSquare",
       tone: "amber" as const,
       href: "/portal/enquiries",
+    },
+    canSeeSubscribers && {
+      label: "Newsletter list",
+      value: String(subscriberCount.value),
+      hint: `${subscriberCount.active} subscribed`,
+      icon: "Mails",
+      tone: "sky" as const,
+      href: "/portal/subscribers",
     },
     canSeeBookings && {
       label: "Upcoming viewings",

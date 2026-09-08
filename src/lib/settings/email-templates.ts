@@ -36,6 +36,15 @@ export const EMAIL_TEMPLATE_DEFAULTS = [
     subject: "Re: {{subject}} ({{reference}})",
     body: "Hello {{name}},\n\nThank you for contacting {{companyName}} about your enquiry {{reference}}.\n\n{{message}}\n\nKind regards,\n{{staffName}}\n{{companyName}}\n{{companyPhone}}\n{{companyEmail}}",
   },
+  {
+    key: "newsletter_welcome",
+    name: "Newsletter welcome",
+    description:
+      "Auto-reply sent to a visitor the moment they join the mailing list. The sign-up form on the homepage triggers it.",
+    subject: "You're on the {{companyName}} list",
+    body:
+      "Hello {{name}},\n\nYou're on the list. Once a month we send new Lagos listings, pricing context and the occasional off-market home — nothing else.\n\nBrowse what is available today: {{listingsUrl}}\n\nIf a particular property type, budget or neighbourhood matters to you, reply to this email and say so. A consultant reads every reply.\n\nKind regards,\n{{companyName}}\n{{companyPhone}}\n{{companyEmail}}",
+  },
 ] as const;
 
 export interface EmailTemplateView {
