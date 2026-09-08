@@ -10,10 +10,8 @@ import {
   LogOut,
   Search,
   Command,
-  Sparkles,
   Bell,
   KeyRound,
-  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -34,19 +32,11 @@ export function PortalTopbar() {
   const pathname = usePathname();
   const [busy, setBusy] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Global search shortcut — focus topbar search
+  // Find a portal section shortcut — focus topbar search
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -107,33 +97,15 @@ export function PortalTopbar() {
   const showSearchResults = searchQuery.trim().length > 1;
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 border-b backdrop-blur-xl transition-all duration-300",
-        scrolled
-          ? "border-gray-200/80 bg-white/85 shadow-[0_4px_20px_rgba(15,23,42,0.06)] supports-[backdrop-filter]:bg-white/75"
-          : "border-gray-200/60 bg-white/70 shadow-sm"
-      )}
-    >
-      <div className="flex items-center gap-3 px-4 py-3 pl-16 sm:gap-4 lg:px-6 xl:px-8 lg:pl-6">
+    <header className="portal-topbar sticky top-0 z-30 border-b border-gray-200 bg-white">
+      <div className="flex flex-wrap items-center gap-3 px-4 py-3 pl-16 sm:gap-4 lg:px-6 xl:px-8">
         {/* Left: breadcrumbs + title */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <div className="hidden h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/15 sm:inline-flex">
-              <Sparkles className="h-3.5 w-3.5" />
-            </div>
-            <h1 className="truncate font-heading text-[15px] font-bold tracking-tight text-dark sm:text-base">
-              {currentLabel}
-            </h1>
-            {crumbs.length === 0 && (
-              <span className="hidden items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 ring-1 ring-emerald-200 sm:inline-flex">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Live
-              </span>
-            )}
+            <p className="truncate font-heading text-sm font-semibold text-dark">{currentLabel}</p>
           </div>
 
-          <nav className="mt-0.5 flex items-center gap-1 text-xs text-gray-500" aria-label="Breadcrumb">
+          <nav className="mt-1 flex flex-wrap items-center gap-1 text-xs text-gray-500" aria-label="Breadcrumb">
             <Link
               href="/portal"
               className="inline-flex items-center gap-1 rounded-md px-1 py-0.5 font-medium transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -161,26 +133,26 @@ export function PortalTopbar() {
           </nav>
         </div>
 
-        {/* Center: global search — hidden on small screens, visible from md */}
-        <div className="relative hidden w-full max-w-[360px] md:block lg:max-w-[420px]">
+        {/* Section shortcuts — one input shared by desktop and mobile */}
+        <div className="relative order-last w-full lg:order-none lg:w-52 xl:w-64">
           <label className="group relative block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-primary" />
             <input
               ref={searchRef}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search properties, customers…"
-              aria-label="Global search"
-              className="h-9 w-full rounded-full border border-gray-200 bg-gray-50/80 py-2 pl-9 pr-[72px] text-sm text-dark placeholder:text-gray-400 transition-all hover:border-gray-300 hover:bg-white focus:border-primary/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10"
+              placeholder="Find a portal section…"
+              aria-label="Find a portal section"
+              className="h-11 w-full rounded-md border border-gray-200 bg-gray-50/80 py-2 pl-9 pr-[72px] text-sm text-dark placeholder:text-gray-400 transition-all hover:border-gray-300 hover:bg-white focus:border-primary/30 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10"
             />
-            <span className="pointer-events-none absolute right-1.5 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-full bg-white px-2 py-1 text-[11px] font-medium leading-none text-gray-500 shadow-sm ring-1 ring-gray-200 sm:inline-flex">
+            <span className="pointer-events-none absolute right-1.5 top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md bg-white px-2 py-1 text-[11px] font-medium leading-none text-gray-500 shadow-sm ring-1 ring-gray-200 sm:inline-flex">
               <Command className="h-3 w-3" />K
             </span>
           </label>
 
-          {/* Mock results dropdown */}
+          {/* Existing section suggestions */}
           {showSearchResults && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
+            <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white p-2 shadow-xl">
               <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
                 Quick suggestions
               </p>
@@ -203,12 +175,7 @@ export function PortalTopbar() {
                       {s.label}
                     </Link>
                   ))}
-                <div className="border-t border-gray-100 pt-2">
-                  <p className="px-3 py-1 text-xs text-gray-500">
-                    Press <kbd className="rounded border bg-gray-50 px-1 font-mono text-[11px]">Enter</kbd> to
-                    search all records
-                  </p>
-                </div>
+
               </div>
               <button
                 type="button"
@@ -224,36 +191,10 @@ export function PortalTopbar() {
 
         {/* Right actions */}
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          {/* Mobile search button */}
-          <button
-            type="button"
-            onClick={() => searchRef.current?.focus()}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden"
-            aria-label="Search"
-          >
-            <Search className="h-4 w-4" />
-          </button>
-
-          <div className="hidden sm:flex items-center gap-1.5">
-            <PortalThemeToggle />
-            <Link
-              href="/"
-              target="_blank"
-              className="hidden items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition-all hover:border-primary/20 hover:bg-primary hover:text-white hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:inline-flex xl:px-3.5"
-            >
-              <span className="hidden xl:inline">View website</span>
-              <span className="xl:hidden">Website</span>
-              <ExternalLink className="h-3 w-3 opacity-70" aria-hidden="true" />
-            </Link>
-          </div>
-
-          <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] font-semibold text-emerald-700 sm:flex" title="Your portal session is protected">
-            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="hidden lg:inline">Secure session</span>
-          </div>
-
-          <span className="hidden h-6 w-px bg-gray-200 sm:block" aria-hidden />
-
+          <PortalThemeToggle />
+          <Link href="/" target="_blank" className="hidden min-h-11 items-center gap-2 px-2 text-sm font-medium text-gray-600 transition-colors hover:text-primary xl:inline-flex">
+            Website <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+          </Link>
           <NotificationBell />
 
           <div className="relative" ref={menuRef}>
@@ -264,17 +205,16 @@ export function PortalTopbar() {
               aria-haspopup="menu"
               aria-label="Account menu"
               className={cn(
-                "group flex items-center gap-2 rounded-full border bg-white py-1 pl-1 pr-2 shadow-sm transition-all hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "group flex min-h-11 items-center gap-2 rounded-md border border-transparent bg-white py-1 px-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 menuOpen
-                  ? "border-primary/20 bg-primary/[0.04] shadow-md"
+                  ? "border-gray-200 bg-gray-50"
                   : "border-gray-200 hover:border-gray-300"
               )}
             >
-              <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-dark text-xs font-bold text-white shadow-sm ring-1 ring-white transition-transform duration-200 ease-soft group-hover:scale-[1.03]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-700">
                 {initials}
-                <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
               </span>
-              <span className="hidden text-left md:block">
+              <span className="hidden text-left 2xl:block">
                 <span className="block max-w-[10rem] truncate text-sm font-semibold leading-none text-dark">
                   {user.firstName} {user.lastName}
                 </span>
@@ -294,49 +234,46 @@ export function PortalTopbar() {
               role="menu"
               aria-label="Account"
               className={cn(
-                "absolute right-0 top-full z-40 mt-2 w-72 origin-top-right overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl ring-1 ring-black/5",
+                "absolute right-0 top-full z-40 mt-2 w-72 origin-top-right overflow-hidden rounded-lg border border-gray-200 bg-white shadow-soft",
                 "transition-[opacity,transform,visibility] duration-200 ease-soft",
                 menuOpen
                   ? "visible translate-y-0 scale-100 opacity-100"
                   : "pointer-events-none invisible -translate-y-1 scale-95 opacity-0"
               )}
             >
-              <div className="bg-gradient-to-br from-primary-dark via-primary to-primary-light p-4 text-white">
+              <div className="border-b border-gray-200 bg-gray-50 p-4 text-dark">
                 <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-sm font-bold ring-1 ring-white/20 backdrop-blur">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
                     {initials}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold leading-tight">
                       {user.firstName} {user.lastName}
                     </p>
-                    <p className="truncate text-xs text-blue-100">{user.email}</p>
+                    <p className="truncate text-xs text-gray-500">{user.email}</p>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {user.roles.slice(0, 2).map((role) => (
                         <span
                           key={role.key}
-                          className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold leading-none ring-1 ring-white/20"
+                          className="text-xs text-gray-500"
                         >
                           {role.name}
                         </span>
                       ))}
                       {user.roles.length > 2 && (
-                        <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold leading-none ring-1 ring-white/20">
+                        <span className="text-xs text-gray-500">
                           +{user.roles.length - 2}
                         </span>
                       )}
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 flex items-center gap-2 text-xs text-blue-100">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 ring-1 ring-white/15">
+                <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                  <span className="inline-flex items-center gap-1">
                     <KeyRound className="h-3 w-3" />
                     {user.permissions.length} permissions
                   </span>
-                  <span className="ml-auto flex items-center gap-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    Active now
-                  </span>
+
                 </div>
               </div>
 
@@ -344,7 +281,7 @@ export function PortalTopbar() {
                 <Link
                   href="/portal/account/password"
                   role="menuitem"
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  className="flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                     <KeyRound className="h-4 w-4" />
@@ -355,21 +292,18 @@ export function PortalTopbar() {
                 <Link
                   href="/portal/notifications"
                   role="menuitem"
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  className="flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Bell className="h-4 w-4" />
                   </span>
                   Notifications
-                  <span className="ml-auto rounded-full bg-primary px-1.5 py-0.5 text-[11px] font-bold leading-none text-white">
-                    New
-                  </span>
                 </Link>
                 <Link
                   href="/"
                   target="_blank"
                   role="menuitem"
-                  className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  className="flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
                 >
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                     <ExternalLink className="h-4 w-4" />
@@ -383,7 +317,7 @@ export function PortalTopbar() {
                   type="button"
                   onClick={logout}
                   disabled={busy}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-700 transition-colors hover:bg-red-600 hover:text-white hover:border-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-sm font-semibold text-red-700 transition-colors hover:bg-red-600 hover:text-white hover:border-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:opacity-50"
                 >
                   {busy ? (
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -404,7 +338,7 @@ export function PortalTopbar() {
             type="button"
             onClick={logout}
             disabled={busy}
-            className="hidden h-9 items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 xl:inline-flex"
+            className="hidden min-h-11 items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 xl:inline-flex"
           >
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
             <span className="hidden xl:inline">{busy ? "Signing out…" : "Sign out"}</span>
@@ -412,16 +346,6 @@ export function PortalTopbar() {
         </div>
       </div>
 
-      {/* Mobile: inline search row when needed */}
-      <div className="border-t border-gray-100 bg-gray-50/50 px-4 py-2 md:hidden">
-        <label className="relative flex items-center">
-          <Search className="pointer-events-none absolute left-3 h-4 w-4 text-gray-400" />
-          <input
-            placeholder="Search properties, customers…"
-            className="h-9 w-full rounded-full border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm placeholder:text-gray-400 focus:border-primary/30 focus:outline-none focus:ring-4 focus:ring-primary/10"
-          />
-        </label>
-      </div>
     </header>
   );
 }

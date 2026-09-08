@@ -1,0 +1,139 @@
+/* Staff presentation only. Palette, fonts, buttons, inputs and theme come from
+   the public site; these rules supply operational density and responsive data. */
+.staff-portal, .staff-auth {
+  overflow-wrap: anywhere;
+}
+.portal-main > * { max-width: 1440px; margin-inline: auto; }
+.staff-portal :where(h1, h2, h3, p) { text-wrap: pretty; }
+.staff-portal :where(button, a) { -webkit-tap-highlight-color: transparent; }
+.staff-portal :where(button, input, select, textarea):disabled,
+.staff-auth :where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.staff-portal :where(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]), select, textarea),
+.staff-auth :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 44px;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background-color: var(--site-surface);
+  color: var(--site-foreground);
+  border-color: var(--site-copy-muted);
+  transition: border-color 200ms ease, background-color 200ms ease;
+}
+.staff-portal :where(input, select, textarea)::placeholder { color: var(--site-copy-muted); }
+.staff-portal :where(input, select, textarea):focus-visible,
+.staff-auth :where(input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.staff-portal :where(input, select, textarea)[aria-invalid="true"],
+.staff-auth :where(input, select, textarea)[aria-invalid="true"] { border-color: #b91c1c; }
+.staff-portal :where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--color-primary); }
+.staff-portal textarea { min-height: 112px; }
+.staff-portal select { padding-inline: 12px 28px; }
+.staff-portal :where(button[class*="border"], button[class*="bg-primary"], a[class*="bg-primary"]) {
+  min-height: 44px;
+  border-radius: var(--radius-md);
+}
+.staff-portal [role="radiogroup"] {
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 0;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 1px solid var(--site-border);
+  padding: 0;
+}
+.staff-portal [role="radiogroup"] > span[aria-hidden] { display: none; }
+.staff-portal [role="radio"] {
+  min-height: 44px;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  box-shadow: none;
+  transform: none;
+  font-size: 13px;
+}
+.staff-portal [role="radio"][aria-checked="true"] { border-bottom-color: var(--color-primary); }
+.staff-portal .portal-theme-toggle,
+.staff-portal button[aria-label="Toggle color theme"],
+.staff-auth button[aria-label="Toggle color theme"] { width: 44px; height: 44px; border-radius: 999px; }
+.portal-nav-link[aria-current="page"] { background: color-mix(in srgb, var(--color-primary) 4%, transparent); }
+.portal-table { width: 100%; }
+.portal-table thead th {
+  padding: 14px 12px;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--site-copy);
+  background: var(--site-surface-soft);
+}
+.portal-table tbody td { padding: 16px 12px; vertical-align: middle; }
+.portal-table :where(button, a[title]) {
+  min-width: 38px;
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.portal-table td[data-label="Actions"] > div { min-width: 160px; }
+.portal-table tbody td:first-child { min-width: 220px; }
+.portal-table-scroll { max-width: 100%; overscroll-behavior-inline: contain; }
+.portal-property-table td:first-child { min-width: 310px; }
+.portal-property-table td[data-label="Price"] { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.portal-modal-panel, .portal-drawer-panel {
+  background-color: var(--site-surface);
+  color: var(--site-foreground);
+}
+.staff-portal .portal-modal-panel { border-radius: var(--radius-lg); max-height: 90dvh; overflow-y: auto; }
+.staff-portal :where([role="dialog"]) { max-height: 100dvh; }
+.staff-portal :where(pre) { max-width: 100%; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.public-dark .staff-portal :focus-visible,
+.public-dark .staff-auth :focus-visible { outline-color: var(--color-primary-light); }
+
+@media (max-width: 767px) {
+  .portal-main { padding-inline: 16px; }
+  .portal-card > div { padding: 16px; }
+  .staff-portal :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+  .staff-auth :where(input, select, textarea) { font-size: 16px; }
+  .portal-table :where(button, a[title]) { min-height: 44px; min-width: 44px; }
+  /* Records keep every field and every action, reflowed with visible labels.
+     The real header remains available to assistive technology. */
+  .portal-record-table { display: block; min-width: 0; }
+  .portal-record-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .portal-record-table tbody { display: block; }
+  .portal-record-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--site-border);
+  }
+  .portal-record-table tbody tr:first-child { padding-top: 0; }
+  .portal-record-table tbody td { display: block; min-width: 0; padding: 0; text-align: left; white-space: normal; }
+  .portal-record-table td::before { content: attr(data-label); display: block; margin-bottom: 6px; font-size: 11px; font-weight: 500; color: var(--site-copy-muted); }
+  .portal-record-table td:first-child, .portal-record-table td:last-child { grid-column: 1 / -1; }
+  .portal-record-table td:first-child::before { display: none; }
+  .portal-record-table td[data-label="Actions"] > div { justify-content: flex-start; min-width: 0; flex-wrap: wrap; }
+  .portal-record-table td :where(.truncate, .whitespace-nowrap) { white-space: normal; overflow-wrap: anywhere; }
+  /* Permission matrices must remain two-dimensional, with a pinned row label. */
+  .portal-table:not(.portal-record-table) :where(th, td):first-child {
+    position: sticky; left: 0; z-index: 10; min-width: 180px; max-width: 220px;
+    background-color: var(--site-surface);
+    box-shadow: 1px 0 var(--site-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staff-portal *, .staff-auth * { animation: none !important; transition: none !important; }
+}
+
+/* Remaining translucent utilities in legacy managers use the same surfaces. */
+.public-dark :is(.staff-portal, .staff-auth) [class~="bg-gray-50/70"] { background-color: var(--site-surface-soft) !important; }
+.public-dark .staff-portal :is([class~="bg-green-50/40"], [class~="bg-green-50/50"], [class~="bg-green-50/60"], [class~="bg-green-50/70"]) { background-color: #102d25 !important; }
+.public-dark :is(.staff-portal, .staff-auth) :is([class~="text-red-800"], [class~="text-red-700"]) { color: #fda4af !important; }
+.public-dark .staff-portal [class~="border-sky-200"] { border-color: var(--site-border) !important; }
+.public-dark :is(.staff-portal, .staff-auth) [class~="hover:text-white"]:hover { color: white !important; }
+.public-dark .staff-portal :is([role="radiogroup"], [role="radio"]) { background: transparent !important; }
+.staff-portal .portal-modal-panel button[aria-label="Close"] { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+.portal-navigation-panel { animation: fade-in 200ms ease; }

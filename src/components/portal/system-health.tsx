@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Activity, CheckCircle2, Loader2, RefreshCw, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, RefreshCw, XCircle } from "lucide-react";
 import { Card } from "./ui";
 
 /**
@@ -47,7 +47,7 @@ export function SystemHealth({ stats }: { stats: { label: string; value: string 
         </button>
       }
     >
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <div
           className={
             state === "ok"
@@ -73,9 +73,9 @@ export function SystemHealth({ stats }: { stats: { label: string; value: string 
         </div>
 
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-lg border border-gray-200 bg-white px-4 py-3">
+          <div key={stat.label} className="border-b border-gray-200 py-3">
             <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wide text-gray-500">
-              <Activity className="h-3 w-3 text-primary" /> {stat.label}
+              {stat.label}
             </p>
             <p className="mt-0.5 text-sm font-semibold text-dark">{stat.value}</p>
           </div>

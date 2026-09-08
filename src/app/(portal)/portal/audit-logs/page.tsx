@@ -24,40 +24,40 @@ export default async function AuditLogsPage() {
         {logs.length === 0 ? (
           <EmptyState title="No audit entries yet" />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table className="portal-table w-full min-w-[900px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Records table" tabIndex={0}>
+            <table role="table" className="portal-table portal-record-table w-full min-w-[900px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">When</th>
-                  <th className="px-3 py-2">User</th>
-                  <th className="px-3 py-2">Action</th>
-                  <th className="px-3 py-2">Resource</th>
-                  <th className="px-3 py-2">Metadata</th>
-                  <th className="px-3 py-2">IP</th>
+                  <th scope="col" className="px-3 py-2">When</th>
+                  <th scope="col" className="px-3 py-2">User</th>
+                  <th scope="col" className="px-3 py-2">Action</th>
+                  <th scope="col" className="px-3 py-2">Resource</th>
+                  <th scope="col" className="px-3 py-2">Metadata</th>
+                  <th scope="col" className="px-3 py-2">IP</th>
                 </tr>
               </thead>
               <tbody>
                 {logs.map((log) => (
                   <tr key={log.id} className="border-b border-gray-50 align-top">
-                    <td className="whitespace-nowrap px-3 py-2 text-xs text-gray-500">
+                    <td data-label="When" className="whitespace-nowrap px-3 py-2 text-xs text-gray-500">
                       {new Date(log.createdAt).toLocaleString()}
                     </td>
-                    <td className="px-3 py-2 text-xs text-gray-700">{log.userEmail}</td>
-                    <td className="px-3 py-2">
+                    <td data-label="User" className="px-3 py-2 text-xs text-gray-700">{log.userEmail}</td>
+                    <td data-label="Action" className="px-3 py-2">
                       <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">{log.action}</code>
                     </td>
-                    <td className="px-3 py-2 text-xs text-gray-600">
+                    <td data-label="Resource" className="px-3 py-2 text-xs text-gray-600">
                       {log.resource}
                       {log.resourceId && (
                         <span className="block text-[10px] text-gray-400">{log.resourceId}</span>
                       )}
                     </td>
-                    <td className="max-w-xs px-3 py-2">
+                    <td data-label="Metadata" className="max-w-xs px-3 py-2">
                       <pre className="overflow-x-auto whitespace-pre-wrap break-all text-[10px] text-gray-500">
                         {log.metadata ? JSON.stringify(log.metadata) : "—"}
                       </pre>
                     </td>
-                    <td className="px-3 py-2 text-[10px] text-gray-400">{log.ipAddress || "—"}</td>
+                    <td data-label="IP" className="px-3 py-2 text-[10px] text-gray-400">{log.ipAddress || "—"}</td>
                   </tr>
                 ))}
               </tbody>

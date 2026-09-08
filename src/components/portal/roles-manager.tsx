@@ -206,7 +206,7 @@ export function RolesManager({
       {/* ---------------------------------------------------------------- */}
       {/*  Overview                                                         */}
       {/* ---------------------------------------------------------------- */}
-      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
         <StatCard label="Roles" value={`${stats.roles}`} hint="Across the hierarchy" icon="ShieldCheck" tone="primary" />
         <StatCard label="System roles" value={`${stats.system}`} hint="Protected, cannot be deleted" icon="Lock" tone="violet" />
         <StatCard label="Custom roles" value={`${stats.custom}`} hint="Created by your team" icon="Shield" tone="amber" />

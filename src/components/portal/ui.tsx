@@ -1,86 +1,24 @@
 import { cn } from "@/lib/utils";
 
-/**
- * Gradient hero banner used to headline the redesigned administration pages.
- * Refreshed to match the new dashboard hero: deeper gradient, subtle grid and
- * frosted-glass meta pills, with improved contrast and depth.
- */
-export function PageHero({
-  kicker,
-  title,
-  description,
-  icon,
-  children,
-}: {
-  kicker?: string;
-  title: string;
-  description?: string;
-  icon: React.ReactNode;
-  children?: React.ReactNode;
+/** Shared editorial page heading. Icons remain accepted for existing callers. */
+export function PageHero({ kicker, title, description, children }: {
+  kicker?: string; title: string; description?: string; icon: React.ReactNode; children?: React.ReactNode;
 }) {
-  return (
-    <section className="portal-enter relative mb-6 overflow-hidden rounded-[20px] bg-gradient-to-br from-[#0f2a64] via-[#1a3ea1] to-[#2a7fff] px-6 py-6 text-white shadow-[0_12px_32px_-16px_rgba(16,42,100,0.40),0_4px_12px_rgba(16,42,100,0.10)] ring-1 ring-white/10 sm:px-7">
-      {/* depth */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -right-16 -top-20 h-60 w-60 rounded-full bg-white/[0.09] blur-3xl" />
-        <div className="absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-white/[0.07] blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(520px_220px_at_20%_0%,rgba(255,255,255,0.10),transparent)]" />
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.9) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.9) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
-      </div>
-
-      <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-start gap-4">
-          <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-primary shadow-sm ring-1 ring-white/20 transition-transform duration-300 ease-soft hover:scale-[1.04] hover:rotate-[-2deg]">
-            {icon}
-          </span>
-          <div className="min-w-0">
-            {kicker && (
-              <p className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-blue-100 ring-1 ring-white/15 backdrop-blur">
-                {kicker}
-              </p>
-            )}
-            <h1 className="mt-2 font-heading text-2xl font-extrabold tracking-tight sm:text-[26px]">{title}</h1>
-            {description && (
-              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-blue-100/90">{description}</p>
-            )}
-          </div>
-        </div>
-        {children && <div className="flex flex-wrap items-center gap-2">{children}</div>}
-      </div>
-    </section>
-  );
+  return <section className="mb-6 flex flex-col justify-between gap-5 border-b border-gray-200 pb-6 lg:flex-row lg:items-end">
+    <div className="min-w-0">
+      {kicker && <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-primary">{kicker}</p>}
+      <h1 className="font-heading text-2xl font-bold tracking-tight text-dark sm:text-[28px]">{title}</h1>
+      {description && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{description}</p>}
+    </div>
+    {children && <div className="flex shrink-0 flex-wrap gap-x-6 gap-y-3">{children}</div>}
+  </section>;
 }
 
-/** Frosted-glass pill used inside {@link PageHero} for contextual meta. */
-export function HeroMeta({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center gap-2.5 rounded-xl bg-white/10 px-3.5 py-2.5 ring-1 ring-white/20 backdrop-blur-md transition-colors duration-200 hover:bg-white/15">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white ring-1 ring-white/15">
-        {icon}
-      </span>
-      <span>
-        <span className="block text-[10px] font-semibold uppercase tracking-wider text-blue-200">
-          {label}
-        </span>
-        <span className="block text-sm font-bold leading-tight">{value}</span>
-      </span>
-    </div>
-  );
+export function HeroMeta({ label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return <div className="border-l border-gray-200 pl-4">
+    <p className="text-xs text-gray-500">{label}</p>
+    <p className="mt-1 text-sm font-semibold text-dark">{value}</p>
+  </div>;
 }
 
 export function PageHeader({
@@ -93,9 +31,9 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="portal-enter mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="font-heading text-2xl font-extrabold tracking-tight text-dark sm:text-[26px]">{title}</h1>
+        <h1 className="font-heading text-2xl font-bold tracking-tight text-dark sm:text-[26px]">{title}</h1>
         {description && <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
@@ -119,15 +57,15 @@ export function Card({
   return (
     <section
       className={cn(
-        "portal-enter overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.10)] transition-all duration-300 hover:shadow-[0_8px_28px_-14px_rgba(15,23,42,0.15),0_4px_12px_rgba(15,23,42,0.05)]",
+        "portal-card min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-white",
         className
       )}
     >
       {(title || actions) && (
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50/60 to-white px-5 py-4">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200 px-5 py-4">
           <div className="min-w-0">
-            {title && <h2 className="font-heading text-[15px] font-bold tracking-tight text-dark">{title}</h2>}
-            {description && <p className="mt-0.5 text-xs font-medium text-gray-500">{description}</p>}
+            {title && <h2 className="font-heading text-base font-bold tracking-tight text-dark">{title}</h2>}
+            {description && <p className="mt-0.5 text-sm text-gray-500">{description}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </header>
@@ -167,7 +105,7 @@ export function StatusPill({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold capitalize shadow-sm transition-colors duration-200",
+        "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium capitalize",
         tone.className
       )}
     >
@@ -189,10 +127,10 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="animate-fade-up rounded-2xl border border-dashed border-gray-300 bg-gradient-to-b from-gray-50/80 to-white px-6 py-10 text-center shadow-sm transition-all duration-300 hover:border-primary/25 hover:bg-primary/[0.02] hover:shadow-md">
+    <div className="px-4 py-8 text-center">
       {icon && (
         <div
-          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15"
+          className="mx-auto mb-3 flex h-8 w-8 items-center justify-center text-gray-400"
           aria-hidden="true"
         >
           {icon}
@@ -232,7 +170,7 @@ export function Notice({
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "animate-fade-up flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm backdrop-blur-sm",
+        "animate-fade-in flex items-start justify-between gap-3 rounded-md border px-4 py-3 text-sm font-medium",
         tones[tone],
         className
       )}

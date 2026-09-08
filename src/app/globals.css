@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./portal.css";
 
 @theme {
   --color-primary: #2563EB;
@@ -168,7 +169,7 @@
   background-size: 100% 1px;
 }
 
-/* Staggered entrance for the public site, mirroring `.portal-stagger`. */
+/* Staggered entrance for public editorial sections only. */
 .site-stagger > * {
   animation: fade-up 0.5s var(--ease-soft) both;
 }
@@ -184,58 +185,16 @@
 /*  Staff Portal motion & polish                                               */
 /* -------------------------------------------------------------------------- */
 
-@keyframes portal-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes portal-shimmer {
-  0% {
-    background-position: -400px 0;
-  }
-  100% {
-    background-position: 400px 0;
-  }
-}
-
-.portal-enter {
-  animation: portal-fade-up 0.35s ease-out both;
-}
-
-/* Staggered entrance for grids of cards. */
-.portal-stagger > * {
-  animation: portal-fade-up 0.4s ease-out both;
-}
-.portal-stagger > *:nth-child(1) { animation-delay: 0.02s; }
-.portal-stagger > *:nth-child(2) { animation-delay: 0.06s; }
-.portal-stagger > *:nth-child(3) { animation-delay: 0.1s; }
-.portal-stagger > *:nth-child(4) { animation-delay: 0.14s; }
-.portal-stagger > *:nth-child(5) { animation-delay: 0.18s; }
-.portal-stagger > *:nth-child(6) { animation-delay: 0.22s; }
-.portal-stagger > *:nth-child(7) { animation-delay: 0.26s; }
-.portal-stagger > *:nth-child(8) { animation-delay: 0.3s; }
-
-.portal-card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.portal-card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px -12px rgb(37 99 235 / 0.35);
-  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
-}
+/* Operational content stays still. Motion is reserved for interactions. */
+.portal-card-hover { transition: border-color 200ms ease, color 200ms ease; }
+.portal-card-hover:hover { border-color: var(--color-primary); }
 
 .portal-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 .portal-scrollbar::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.2);
+  background: var(--site-border);
   border-radius: 999px;
 }
 .portal-scrollbar::-webkit-scrollbar-track {
@@ -334,7 +293,7 @@
 
 .portal-modal-backdrop {
   animation: portal-backdrop-in 0.2s ease-out both;
-  backdrop-filter: blur(3px);
+
 }
 
 .portal-modal-panel {
@@ -417,180 +376,187 @@
 /*  Public website theme                                                       */
 /* -------------------------------------------------------------------------- */
 
-/* The public site has its own theme boundary. The staff portal deliberately
-   sits outside `.public-site`, so changing this preference never restyles or
-   leaks into the private operations UI. */
-.public-site {
-  --public-background: #ffffff;
-  --public-surface: #ffffff;
-  --public-surface-soft: #f8fafc;
-  --public-surface-muted: #f1f5f9;
-  --public-foreground: #111827;
-  --public-copy: #475569;
-  --public-copy-muted: #64748b;
-  --public-border: #e2e8f0;
-  --public-border-soft: #f1f5f9;
-  background-color: var(--public-background);
-  color: var(--public-foreground);
+/* One palette for both MCBHLUES surfaces; legacy names remain aliases. */
+:root {
+  --site-background: #ffffff;
+  --site-surface: #ffffff;
+  --site-surface-soft: #f8fafc;
+  --site-surface-muted: #f1f5f9;
+  --site-foreground: #111827;
+  --site-copy: #475569;
+  --site-copy-muted: #64748b;
+  --site-border: #e2e8f0;
+  --site-border-soft: #f1f5f9;
+}
+.public-dark {
+  --site-background: #0a1220;
+  --site-surface: #111c2d;
+  --site-surface-soft: #0f1a2b;
+  --site-surface-muted: #17253a;
+  --site-foreground: #f4f7fb;
+  --site-copy: #c3cfdf;
+  --site-copy-muted: #91a1b7;
+  --site-border: #2a3b55;
+  --site-border-soft: #1c2b41;
+  color-scheme: dark;
+}
+.public-site, .staff-portal, .staff-auth {
+  --public-background: var(--site-background);
+  --portal-background: var(--site-background);
+  --public-surface: var(--site-surface);
+  --portal-surface: var(--site-surface);
+  --public-surface-soft: var(--site-surface-soft);
+  --portal-surface-soft: var(--site-surface-soft);
+  --public-surface-muted: var(--site-surface-muted);
+  --portal-surface-muted: var(--site-surface-muted);
+  --public-foreground: var(--site-foreground);
+  --portal-foreground: var(--site-foreground);
+  --public-copy: var(--site-copy);
+  --portal-copy: var(--site-copy);
+  --public-copy-muted: var(--site-copy-muted);
+  --portal-copy-muted: var(--site-copy-muted);
+  --public-border: var(--site-border);
+  --portal-border: var(--site-border);
+  --public-border-soft: var(--site-border-soft);
+  --portal-border-soft: var(--site-border-soft);
+  background-color: var(--site-background);
+  color: var(--site-foreground);
   transition: background-color 220ms ease, color 220ms ease;
 }
-
-.public-dark .public-site {
-  --public-background: #0a1220;
-  --public-surface: #111c2d;
-  --public-surface-soft: #0f1a2b;
-  --public-surface-muted: #17253a;
-  --public-foreground: #f4f7fb;
-  --public-copy: #c3cfdf;
-  --public-copy-muted: #91a1b7;
-  --public-border: #2a3b55;
-  --public-border-soft: #1c2b41;
-  color-scheme: dark;
-}
-
-/* The page chrome behind `.public-site` (overscroll area, root scrollbar
-   gutter) follows the public theme too. Scoped with `:has()` so the staff
-   portal — which never renders `.public-site` — keeps its own root colors
-   even when both themes are stored in the same browser. `#0a1220` is the
-   existing public dark background, not a new color. */
-html.public-dark:has(.public-site),
-html.public-dark:has(.public-site) body {
-  background-color: #0a1220;
-}
-html.public-dark:has(.public-site) {
-  color-scheme: dark;
+html.public-dark, html.public-dark body {
+  background-color: var(--site-background);
 }
 
 /* Map the existing public components' utility classes onto the dark palette.
    Keeping this scoped means the current card/section components, and future
    CMS-driven public content using the same utilities, all switch together. */
-.public-dark .public-site .public-theme-moon {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .public-theme-moon {
   display: none;
 }
 
-.public-dark .public-site .public-theme-sun {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .public-theme-sun {
   display: block;
 }
 
-.public-dark .public-site [class~="bg-white"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-white"] {
   background-color: var(--public-surface) !important;
 }
 
-.public-dark .public-site [class~="bg-white/80"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-white/80"] {
   background-color: rgb(17 28 45 / 0.88) !important;
 }
 
-.public-dark .public-site [class~="bg-gray-50"],
-.public-dark .public-site [class~="bg-gray-50/30"],
-.public-dark .public-site [class~="bg-gray-50/60"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-50"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-50/30"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-50/60"] {
   background-color: var(--public-surface-soft) !important;
 }
 
-.public-dark .public-site [class~="bg-gray-100"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-100"] {
   background-color: var(--public-surface-muted) !important;
 }
 
-.public-dark .public-site [class~="bg-gray-200"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-200"] {
   background-color: #22334d !important;
 }
 
-.public-dark .public-site [class~="bg-gray-300"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-300"] {
   background-color: #304563 !important;
 }
 
-.public-dark .public-site [class~="bg-background-soft"],
-.public-dark .public-site [class~="bg-primary-soft"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-background-soft"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-primary-soft"] {
   background-color: #12243c !important;
 }
 
-.public-dark .public-site [class~="bg-dark"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-dark"] {
   background-color: #060b14 !important;
 }
 
-.public-dark .public-site [class~="text-dark"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-dark"] {
   color: var(--public-foreground) !important;
 }
 
-.public-dark .public-site [class~="text-gray-700"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-700"] {
   color: #dbe5f2 !important;
 }
 
-.public-dark .public-site [class~="text-gray-600"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-600"] {
   color: var(--public-copy) !important;
 }
 
-.public-dark .public-site [class~="text-gray-500"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-500"] {
   color: var(--public-copy-muted) !important;
 }
 
-.public-dark .public-site [class~="text-gray-400"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-400"] {
   color: #8fa1b8 !important;
 }
 
-.public-dark .public-site [class~="text-gray-300"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-300"] {
   color: #c0ccdc !important;
 }
 
-.public-dark .public-site [class~="text-gray-200"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-200"] {
   color: #dce5f0 !important;
 }
 
-.public-dark .public-site [class~="text-primary-dark"],
-.public-dark .public-site [class~="text-primary-dark/50"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary-dark"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary-dark/50"] {
   color: #a7c9ff !important;
 }
 
-.public-dark .public-site [class~="text-primary-light"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary-light"] {
   color: #83b8ff !important;
 }
 
-.public-dark .public-site [class~="border-gray-100"],
-.public-dark .public-site [class~="border-gray-50"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-100"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-50"] {
   border-color: var(--public-border-soft) !important;
 }
 
-.public-dark .public-site [class~="border-gray-200"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-200"] {
   border-color: var(--public-border) !important;
 }
 
-.public-dark .public-site [class~="border-gray-300"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-300"] {
   border-color: #38506f !important;
 }
 
-.public-dark .public-site [class~="border-white"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-white"] {
   border-color: #263750 !important;
 }
 
-.public-dark .public-site [class~="divide-gray-50"] > :not(:last-child),
-.public-dark .public-site [class~="divide-gray-100"] > :not(:last-child) {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="divide-gray-50"] > :not(:last-child),
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="divide-gray-100"] > :not(:last-child) {
   border-color: var(--public-border-soft) !important;
 }
 
-.public-dark .public-site [class~="hover:bg-gray-50"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-gray-50"]:hover {
   background-color: #17253a !important;
 }
 
-.public-dark .public-site [class~="hover:bg-gray-100"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-gray-100"]:hover {
   background-color: #1d2d45 !important;
 }
 
-.public-dark .public-site [class~="hover:text-dark"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-dark"]:hover {
   color: var(--public-foreground) !important;
 }
 
-.public-dark .public-site input,
-.public-dark .public-site textarea,
-.public-dark .public-site select {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) input,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) textarea,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) select {
   color: var(--public-foreground);
   caret-color: var(--public-foreground);
 }
 
-.public-dark .public-site input::placeholder,
-.public-dark .public-site textarea::placeholder {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) input::placeholder,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) textarea::placeholder {
   color: #7f91a9;
 }
 
-.public-dark .public-site hr {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) hr {
   border-color: var(--public-border-soft);
 }
 
@@ -599,40 +565,40 @@ html.public-dark:has(.public-site) {
    roughly 2.5:1, which fails even large-text contrast. Every interactive
    variant used on the public site is covered so hover/focus/peer/marker
    states can never strand an element in the unreadable light color. */
-.public-dark .public-site [class~="text-primary"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary"] {
   color: var(--color-primary-light) !important;
 }
-.public-dark .public-site [class~="hover:text-primary"]:hover,
-.public-dark .public-site [class~="active:text-primary"]:active,
-.public-dark .public-site .group:hover [class~="group-hover:text-primary"],
-.public-dark .public-site .peer:focus ~ [class~="peer-focus:text-primary"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-primary"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="active:text-primary"]:active,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .group:hover [class~="group-hover:text-primary"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .peer:focus ~ [class~="peer-focus:text-primary"] {
   color: var(--color-primary-light) !important;
 }
-.public-dark .public-site [class~="marker:text-primary"]::marker,
-.public-dark .public-site [class~="marker:text-primary"] *::marker {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="marker:text-primary"]::marker,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="marker:text-primary"] *::marker {
   color: var(--color-primary-light) !important;
 }
-.public-dark .public-site [class~="hover:text-primary-dark"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-primary-dark"]:hover {
   color: #a7c9ff !important;
 }
-.public-dark .public-site [class~="border-primary"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-primary"] {
   border-color: var(--color-primary-light) !important;
 }
-.public-dark .public-site [class~="hover:border-primary"]:hover,
-.public-dark .public-site .group:hover [class~="group-hover:border-primary"],
-.public-dark .public-site [class~="focus:border-primary"]:focus {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-primary"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .group:hover [class~="group-hover:border-primary"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus:border-primary"]:focus {
   border-color: var(--color-primary-light) !important;
 }
 /* Invalid fields keep their dark error border on focus instead of flashing
    the light `#b91c1c` — the same `#7f3346` the resting `border-red-700`
    already maps to. */
-.public-dark .public-site [class~="focus:border-red-700"]:focus {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus:border-red-700"]:focus {
   border-color: #7f3346 !important;
 }
-.public-dark .public-site [class~="ring-primary"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-primary"] {
   --tw-ring-color: var(--color-primary-light) !important;
 }
-.public-dark .public-site [class~="fill-primary"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="fill-primary"] {
   fill: var(--color-primary-light) !important;
 }
 
@@ -642,29 +608,29 @@ html.public-dark:has(.public-site) {
    low-opacity whites (`/5`, `/10`) are deliberately untouched — they only
    ever sit on surfaces that are dark in both themes (heroes, footer, the
    brand-blue panel). */
-.public-dark .public-site [class~="bg-white/90"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-white/90"] {
   background-color: rgb(17 28 45 / 0.9) !important;
 }
-.public-dark .public-site [class~="bg-white/95"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-white/95"] {
   background-color: rgb(17 28 45 / 0.95) !important;
 }
-.public-dark .public-site [class~="hover:bg-white"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-white"]:hover {
   background-color: var(--public-surface) !important;
 }
 
 /* Skeleton blocks keep their translucency over the dark surface instead of
    flashing light gray while content loads. `#22334d` is the existing dark
    value for `bg-gray-200`. */
-.public-dark .public-site [class~="bg-gray-200/90"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-200/90"] {
   background-color: rgb(34 51 77 / 0.9) !important;
 }
-.public-dark .public-site [class~="bg-gray-200/70"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-200/70"] {
   background-color: rgb(34 51 77 / 0.7) !important;
 }
 
 /* The skeleton sheen is white by default; the portal already quiets it for
    dark mode and the public site needs the identical treatment. */
-.public-dark .public-site .shimmer::after {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .shimmer::after {
   background: linear-gradient(
     90deg,
     transparent 0%,
@@ -677,38 +643,38 @@ html.public-dark:has(.public-site) {
 
 /* Row hover tint on the property details page — the same `#12243c` the
    resting `bg-background-soft` already maps to. */
-.public-dark .public-site [class~="hover:bg-background-soft"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-background-soft"]:hover {
   background-color: #12243c !important;
 }
 
 /* Form controls: hover lightens the border toward the field text instead of
    darkening it (the light-theme direction, which would vanish on dark
    surfaces). `#8fa1b8` is the existing dark `text-gray-400` tone. */
-.public-dark .public-site [class~="hover:border-gray-700"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-gray-700"]:hover {
   border-color: #8fa1b8 !important;
 }
-.public-dark .public-site select:hover:not(:disabled) {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) select:hover:not(:disabled) {
   border-color: #8fa1b8;
 }
 
 /* The navbar's scrolled hairline carries an alpha the base `border-gray-200`
    mapping doesn't cover. */
-.public-dark .public-site [class~="border-gray-200/80"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-200/80"] {
   border-color: var(--public-border) !important;
 }
 
 /* Favorites badge ring matches the dark navbar instead of haloing white. */
-.public-dark .public-site [class~="ring-white"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-white"] {
   --tw-ring-color: var(--public-surface) !important;
 }
 
 /* Decorative translucent brand text (giant 404 numeral, testimonial quote
    marks) is mixed from the existing primary-light token so it stays visible
    without turning solid. */
-.public-dark .public-site [class~="text-primary/15"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary/15"] {
   color: color-mix(in srgb, var(--color-primary-light) 15%, transparent) !important;
 }
-.public-dark .public-site [class~="text-primary/40"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary/40"] {
   color: color-mix(in srgb, var(--color-primary-light) 40%, transparent) !important;
 }
 
@@ -717,13 +683,13 @@ html.public-dark:has(.public-site) {
    it the global `bg-white` / `hover:bg-gray-100` / `text-primary-dark`
    remaps would paint a dark button on the unchanged blue panel. The values
    are the light-theme originals, re-asserted with higher specificity. */
-.public-dark .public-site [class~="keep-light"][class~="bg-white"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="keep-light"][class~="bg-white"] {
   background-color: #ffffff !important;
 }
-.public-dark .public-site [class~="keep-light"][class~="hover:bg-gray-100"]:hover {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="keep-light"][class~="hover:bg-gray-100"]:hover {
   background-color: #f3f4f6 !important;
 }
-.public-dark .public-site [class~="keep-light"][class~="text-primary-dark"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="keep-light"][class~="text-primary-dark"] {
   color: var(--color-primary-dark) !important;
 }
 
@@ -736,45 +702,6 @@ html.public-dark:has(.public-site) {
 /* -------------------------------------------------------------------------- */
 /*  Staff Portal theme                                                         */
 /* -------------------------------------------------------------------------- */
-
-/* The portal gets an independent preference from the public website. These
-   selectors deliberately require `.staff-portal` or `.staff-auth`, so the
-   private UI can switch themes without affecting public pages. */
-.staff-portal {
-  --portal-background: #f8fafc;
-  --portal-surface: #ffffff;
-  --portal-surface-soft: #f8fafc;
-  --portal-surface-muted: #f1f5f9;
-  --portal-foreground: #111827;
-  --portal-copy: #475569;
-  --portal-copy-muted: #64748b;
-  --portal-border: #e2e8f0;
-  --portal-border-soft: #f1f5f9;
-  color: var(--portal-foreground);
-}
-
-.portal-dark .staff-portal {
-  --portal-background: #0a1220;
-  --portal-surface: #111c2d;
-  --portal-surface-soft: #0f1a2b;
-  --portal-surface-muted: #17253a;
-  --portal-foreground: #f4f7fb;
-  --portal-copy: #c3cfdf;
-  --portal-copy-muted: #91a1b7;
-  --portal-border: #2a3b55;
-  --portal-border-soft: #1c2b41;
-  background-image: radial-gradient(1200px 600px at 10% -10%, rgb(37 99 235 / 0.16), transparent), linear-gradient(to bottom, #0f1a2b, #09111e) !important;
-  color-scheme: dark;
-}
-
-.staff-auth {
-  color-scheme: light;
-}
-
-.portal-dark .staff-auth {
-  background-image: linear-gradient(to bottom right, #071120, #102b58, #193a75) !important;
-  color-scheme: dark;
-}
 
 .portal-dark .staff-portal .portal-theme-moon,
 .portal-dark .staff-auth .portal-theme-moon {
@@ -1045,7 +972,7 @@ html.public-dark:has(.public-site) {
 
 /* On the dark footer / dark hero sections the blue ring is hard to see. */
 .bg-dark :where(a, button, [tabindex]):focus-visible,
-.public-dark .public-site :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline-color: #93c5fd;
 }
 
@@ -1085,35 +1012,35 @@ html {
 /*  Public dark-mode mappings for the classes added by the a11y pass           */
 /* -------------------------------------------------------------------------- */
 
-.public-dark .public-site [class~="border-gray-500"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-gray-500"] {
   border-color: #4a5f7e !important;
 }
 
-.public-dark .public-site [class~="text-gray-800"],
-.public-dark .public-site [class~="text-gray-900"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-800"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-gray-900"] {
   color: #e6edf7 !important;
 }
 
-.public-dark .public-site [class~="bg-red-50"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-red-50"] {
   background-color: #3a1620 !important;
 }
-.public-dark .public-site [class~="text-red-700"],
-.public-dark .public-site [class~="text-red-800"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-red-700"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-red-800"] {
   color: #ffb4b4 !important;
 }
-.public-dark .public-site [class~="border-red-300"],
-.public-dark .public-site [class~="border-red-700"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-red-300"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="border-red-700"] {
   border-color: #7f3346 !important;
 }
 
-.public-dark .public-site [class~="bg-amber-100"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-amber-100"] {
   background-color: #4a3708 !important;
 }
-.public-dark .public-site [class~="text-amber-950"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-amber-950"] {
   color: #ffe2a8 !important;
 }
 
-.public-dark .public-site [class~="text-green-700"] {
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-green-700"] {
   color: #6ee7a8 !important;
 }
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { PropertyThumbnail } from "./property-thumbnail";
+
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -294,41 +296,32 @@ export function PropertiesManager({
             }
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Properties table" tabIndex={0}>
+            <table role="table"
               data-busy={busyId !== null || undefined}
-              className="portal-table w-full min-w-[980px] text-left text-sm">
+              className="portal-table portal-record-table portal-property-table w-full min-w-[980px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">Property</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Price</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Visibility</th>
-                  <th className="px-3 py-2">Assigned</th>
-                  <th className="px-3 py-2 text-right">Actions</th>
+                  <th scope="col" className="px-3 py-2">Property</th>
+                  <th scope="col" className="px-3 py-2">Type</th>
+                  <th scope="col" className="px-3 py-2">Price</th>
+                  <th scope="col" className="px-3 py-2">Status</th>
+                  <th scope="col" className="px-3 py-2">Visibility</th>
+                  <th scope="col" className="px-3 py-2">Assigned</th>
+                  <th scope="col" className="px-3 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map((property) => (
                   <tr key={property.id} className="border-b border-gray-50 align-top">
-                    <td className="px-3 py-3">
+                    <td data-label="Property" className="px-3 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
-                          {property.images[0] ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={property.images[0].url}
-                              alt={property.name}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <Building2 className="h-5 w-5 text-gray-300" />
-                          )}
+                        <div className="flex aspect-[4/3] w-24 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+                          <PropertyThumbnail src={property.images[0]?.url} alt={property.name} />
                         </div>
                         <div className="min-w-0">
-                          <p className="flex items-center gap-1.5 font-semibold text-dark">
-                            <span className="truncate">{property.name}</span>
+                          <p className="flex items-center gap-1.5 font-heading font-semibold text-dark">
+                            <span>{property.name}</span>
                             {property.isFeatured && <Star className="h-3.5 w-3.5 shrink-0 fill-amber-400 text-amber-400" />}
                           </p>
                           <p className="flex items-center gap-1 text-xs text-gray-500">
@@ -342,22 +335,22 @@ export function PropertiesManager({
                       </div>
                     </td>
 
-                    <td className="px-3 py-3">
+                    <td data-label="Type" className="px-3 py-3">
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium capitalize text-primary">
                         {property.type === "sale" ? "For Sale" : "For Rent"}
                       </span>
                     </td>
 
-                    <td className="px-3 py-3 font-semibold text-dark">
+                    <td data-label="Price" className="px-3 py-3 font-semibold text-dark">
                       {formatCurrency(property.price, property.currency)}
                       {property.type === "rent" && <span className="text-xs text-gray-400">/mo</span>}
                     </td>
 
-                    <td className="px-3 py-3">
+                    <td data-label="Status" className="px-3 py-3">
                       <StatusPill status={property.status} />
                     </td>
 
-                    <td className="px-3 py-3">
+                    <td data-label="Visibility" className="px-3 py-3">
                       {property.isPublished ? (
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700">
                           <Eye className="h-3.5 w-3.5" /> Published
@@ -369,7 +362,7 @@ export function PropertiesManager({
                       )}
                     </td>
 
-                    <td className="px-3 py-3 text-xs text-gray-600">
+                    <td data-label="Assigned" className="px-3 py-3 text-xs text-gray-600">
                       {property.assignedUserIds.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {property.assignedUserIds.map((id) => (
@@ -383,7 +376,7 @@ export function PropertiesManager({
                       )}
                     </td>
 
-                    <td className="px-3 py-3">
+                    <td data-label="Actions" className="px-3 py-3">
                       <div className="flex flex-wrap items-center justify-end gap-1.5">
                         {canEdit && (
                           <IconAction title="Edit" disabled={busyId !== null} onClick={() => setEditor(fromProperty(property))}>
@@ -392,7 +385,8 @@ export function PropertiesManager({
                         )}
                         {canStatus && (
                           <select
-                            className="rounded border border-gray-200 px-1.5 py-1 text-xs"
+                            aria-label={`Status for ${property.name}`}
+                            className="rounded-md border border-gray-200 px-2 py-1 text-xs"
                             value={property.status}
                             disabled={busyId !== null}
                             onChange={(event) => changeStatus(property, event.target.value)}

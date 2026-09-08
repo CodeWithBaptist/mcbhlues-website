@@ -6,3 +6,5 @@ node_modules
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo
+playwright-report
+test-results

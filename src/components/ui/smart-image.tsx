@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { ReactEventHandler } from "react";
 
 /**
  * Image wrapper that routes through the Next.js optimizer (AVIF/WebP, correct
@@ -36,6 +37,7 @@ export function canOptimize(src: string): boolean {
 }
 
 type SmartImageProps = {
+  onError?: ReactEventHandler<HTMLImageElement>;
   src: string;
   /**
    * Required. Pass `alt=""` **only** for purely decorative images — every
@@ -56,6 +58,7 @@ export function SmartImage({
   className,
   sizes,
   priority = false,
+  onError,
   ...dimensions
 }: SmartImageProps) {
   if (canOptimize(src)) {
@@ -63,10 +66,11 @@ export function SmartImage({
     const loadingProps = priority ? { priority: true } : { loading: "lazy" as const };
 
     if (dimensions.fill) {
-      return <Image src={src} alt={alt} className={className} sizes={sizes} fill {...loadingProps} />;
+      return <Image onError={onError} src={src} alt={alt} className={className} sizes={sizes} fill {...loadingProps} />;
     }
     return (
       <Image
+        onError={onError}
         src={src}
         alt={alt}
         className={className}
@@ -83,6 +87,7 @@ export function SmartImage({
        it, so serve it directly — still lazy-loaded and async-decoded. */
     // eslint-disable-next-line @next/next/no-img-element
     <img
+      onError={onError}
       src={src}
       alt={alt}
       className={className}

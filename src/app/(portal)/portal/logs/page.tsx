@@ -63,25 +63,25 @@ export default async function SystemLogsPage() {
             description="Reply to a customer enquiry or send a test email from System Settings and it will appear here."
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
-            <table className="portal-table w-full min-w-[900px] text-left text-sm">
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Records table" tabIndex={0}>
+            <table role="table" className="portal-table portal-record-table w-full min-w-[900px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="px-3 py-2">When</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">To</th>
-                  <th className="px-3 py-2">Subject</th>
-                  <th className="px-3 py-2">Type</th>
-                  <th className="px-3 py-2">Detail</th>
+                  <th scope="col" className="px-3 py-2">When</th>
+                  <th scope="col" className="px-3 py-2">Status</th>
+                  <th scope="col" className="px-3 py-2">To</th>
+                  <th scope="col" className="px-3 py-2">Subject</th>
+                  <th scope="col" className="px-3 py-2">Type</th>
+                  <th scope="col" className="px-3 py-2">Detail</th>
                 </tr>
               </thead>
               <tbody>
                 {entries.map((entry) => (
                   <tr key={entry.id} className="border-b border-gray-50 align-top">
-                    <td className="whitespace-nowrap px-3 py-2 text-xs text-gray-500">
+                    <td data-label="When" className="whitespace-nowrap px-3 py-2 text-xs text-gray-500">
                       {new Date(entry.createdAt).toLocaleString()}
                     </td>
-                    <td className="px-3 py-2">
+                    <td data-label="Status" className="px-3 py-2">
                       <span
                         className={`rounded-full border px-2 py-0.5 text-xs font-medium capitalize ${
                           entry.status === "sent"
@@ -94,14 +94,14 @@ export default async function SystemLogsPage() {
                         {entry.status}
                       </span>
                     </td>
-                    <td className="max-w-[200px] truncate px-3 py-2 text-xs text-gray-700">{entry.toEmail}</td>
-                    <td className="max-w-[260px] px-3 py-2 text-xs text-gray-600">
+                    <td data-label="To" className="max-w-[200px] truncate px-3 py-2 text-xs text-gray-700">{entry.toEmail}</td>
+                    <td data-label="Subject" className="max-w-[260px] px-3 py-2 text-xs text-gray-600">
                       <span className="line-clamp-2">{entry.subject || "—"}</span>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-2 text-xs text-gray-600">
+                    <td data-label="Type" className="whitespace-nowrap px-3 py-2 text-xs text-gray-600">
                       {PURPOSE_LABELS[entry.purpose] ?? entry.purpose}
                     </td>
-                    <td className="max-w-[280px] px-3 py-2 text-[11px] text-gray-400">
+                    <td data-label="Detail" className="max-w-[280px] px-3 py-2 text-[11px] text-gray-400">
                       {entry.error ? (
                         <span className="text-red-500">{entry.error}</span>
                       ) : entry.sentAt ? (

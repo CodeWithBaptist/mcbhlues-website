@@ -160,7 +160,7 @@ export default async function PortalDashboard() {
         moduleCount={modules.length}
       />
 
-      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
@@ -180,7 +180,7 @@ export default async function PortalDashboard() {
         ].filter(Boolean) as { label: string; href: string; icon: string }[]}
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid items-start gap-6 lg:grid-cols-3">
         <ActivityFeed
           className="lg:col-span-2"
           items={recentActivity.map((row) => ({
@@ -201,7 +201,7 @@ export default async function PortalDashboard() {
               {user.roles.map((role) => (
                 <li
                   key={role.id}
-                  className="rounded-lg border border-gray-100 bg-gradient-to-r from-primary/5 to-transparent px-3 py-2"
+                  className="border-b border-gray-100 py-2 last:border-0"
                 >
                   <p className="text-sm font-semibold text-dark">{role.name}</p>
                   <p className="text-xs text-gray-500">
@@ -218,7 +218,7 @@ export default async function PortalDashboard() {
                 <Link
                   key={item.key}
                   href={item.href}
-                  className="portal-card-hover flex items-center justify-between rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-primary"
+                  className="portal-card-hover flex min-h-11 items-center justify-between border-b border-gray-100 py-2.5 text-sm font-medium text-gray-700 hover:text-primary"
                 >
                   {item.label}
                   <span aria-hidden className="text-gray-300">

@@ -2,7 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -40,7 +40,7 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submit} className="space-y-5">
       <div>
         <label className="mb-1.5 block text-sm font-medium text-gray-700" htmlFor="email">
           Work email
@@ -74,7 +74,7 @@ function LoginForm() {
           <button
             type="button"
             onClick={() => setShow((value) => !value)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 transition-colors duration-200 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-gray-500 transition-colors duration-200 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             aria-label={show ? "Hide password" : "Show password"}
           >
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -85,7 +85,7 @@ function LoginForm() {
       {error && (
         <p
           role="alert"
-          className="animate-shake rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
         >
           {error}
         </p>
@@ -100,12 +100,10 @@ function LoginForm() {
 
 export default function StaffLoginPage() {
   return (
-    <div className="portal-enter w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl">
-      <div className="mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
-          <Lock className="h-6 w-6 text-primary" aria-hidden="true" />
-        </div>
-        <h1 className="font-heading text-xl font-bold text-dark">MCBHLUES Staff Portal</h1>
+    <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 sm:p-8">
+      <div className="mb-7">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-primary">Staff Portal</p>
+        <h1 className="font-heading text-2xl font-bold tracking-tight text-dark">Welcome back</h1>
         <p className="mt-1 text-sm text-gray-500">
           Sign in with your staff account. Access is granted by your assigned role.
         </p>
@@ -113,7 +111,7 @@ export default function StaffLoginPage() {
 
       <Suspense
         fallback={
-          <div className="space-y-4" aria-hidden="true">
+          <div className="space-y-5" aria-hidden="true">
             <p className="sr-only" role="status">
               Loading sign in form
             </p>

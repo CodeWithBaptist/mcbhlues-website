@@ -61,11 +61,11 @@ export default async function ReportsPage() {
         description="Live operational snapshot across properties, customers, enquiries and bookings."
       />
 
-      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-5">
         {report.totals.map((stat) => (
           <div
             key={stat.label}
-            className="portal-card-hover rounded-xl border border-gray-200 bg-white p-5 shadow-soft"
+            className="border-b border-gray-200 py-4"
           >
             <p className="text-xs uppercase tracking-wide text-gray-500">{stat.label}</p>
             <p className="mt-2 font-heading text-2xl font-bold tabular-nums text-dark">{stat.value}</p>

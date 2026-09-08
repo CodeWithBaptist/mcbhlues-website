@@ -78,7 +78,7 @@ export function PermissionsManager({
       {/* ---------------------------------------------------------------- */}
       {/*  Overview                                                         */}
       {/* ---------------------------------------------------------------- */}
-      <div className="portal-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
         <StatCard label="Permissions" value={`${stats.total}`} hint="Keys in the catalogue" icon="KeyRound" tone="primary" />
         <StatCard label="Modules" value={`${stats.modules}`} hint="Functional groupings" icon="LayoutGrid" tone="sky" />
         <StatCard label="Custom keys" value={`${stats.custom}`} hint="Added on top of the defaults" icon="Sparkles" tone="violet" />
@@ -163,17 +163,17 @@ export function PermissionsManager({
             description="Try a different search term or module."
           />
         ) : (
-          <div className="portal-table-scroll overflow-x-auto">
+          <div className="portal-table-scroll overflow-x-auto" role="region" aria-label="Permissions table" tabIndex={0}>
             <table className="portal-table w-full min-w-[760px] text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70 text-xs uppercase tracking-wide text-gray-500">
-                  <th className="sticky top-0 z-10 bg-white/95 px-3 py-2.5 font-medium shadow-[0_1px_0_0_rgb(243_244_246)] backdrop-blur">
+                  <th className="sticky top-0 z-10 border-b border-gray-200 bg-white px-3 py-2.5 font-medium">
                     Permission
                   </th>
                   {roles.map((role) => (
                     <th
                       key={role.key}
-                      className="sticky top-0 z-10 bg-white/95 px-3 py-2.5 text-center font-medium shadow-[0_1px_0_0_rgb(243_244_246)] backdrop-blur"
+                      className="sticky top-0 z-10 border-b border-gray-200 bg-white px-3 py-2.5 text-center font-medium"
                     >
                       <span className="block text-gray-700">{role.name}</span>
                       <span className="block text-[10px] normal-case tracking-normal text-gray-400">

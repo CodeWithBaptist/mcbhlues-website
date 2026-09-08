@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { SITE_CONFIG } from "@/constants";
 
 interface LogoProps {
+  href?: string;
   className?: string;
   light?: boolean;
   /**
@@ -14,11 +15,11 @@ interface LogoProps {
   name?: string;
 }
 
-export function Logo({ className, light = false, logoUrl, name = SITE_CONFIG.name }: LogoProps) {
+export function Logo({ className, light = false, logoUrl, name = SITE_CONFIG.name, href = "/" }: LogoProps) {
   return (
     <Link
-      href="/"
-      aria-label={`${name} — go to the homepage`}
+      href={href}
+      aria-label={`${name} — ${href === "/" ? "go to the homepage" : "Staff Portal"}`}
       className={cn(
         "flex items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary",
         className
