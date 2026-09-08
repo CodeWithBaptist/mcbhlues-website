@@ -162,11 +162,6 @@ export function Footer({ company }: { company?: CompanyInfo }) {
               <li>
                 <CookieSettingsLink className="cursor-pointer underline-offset-4 transition-colors duration-200 hover:text-white hover:underline" />
               </li>
-              <li>
-                <Link href="/portal/login" className="link-underline transition-colors duration-200 hover:text-white">
-                  Staff Portal
-                </Link>
-              </li>
             </ul>
           </nav>
         </div>
