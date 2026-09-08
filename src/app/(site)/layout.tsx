@@ -5,6 +5,7 @@ import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
+import { SiteMotion } from "@/components/theme/site-motion";
 import { getCompanyInfo } from "@/lib/settings/company";
 import { SITE_CONFIG, SITE_URL } from "@/constants";
 
@@ -28,6 +29,9 @@ export default async function SiteLayout({
     "@type": "RealEstateAgent",
     "@id": `${SITE_URL}/#organization`,
     name: company.name,
+    // The spellings people actually type when searching for the firm; keeps
+    // the "MCBH Blues" variant resolving to the same business card.
+    alternateName: ["MCBHLUES", "MCBHLUES Enterprises", "MCBH Blues"],
     url: SITE_URL,
     image: `${SITE_URL}/og-image.jpg`,
     logo: company.logoUrl ? `${SITE_URL}${company.logoUrl}` : `${SITE_URL}/og-image.jpg`,
@@ -56,29 +60,32 @@ export default async function SiteLayout({
     "@id": `${SITE_URL}/#website`,
     url: SITE_URL,
     name: company.name,
+    alternateName: SITE_CONFIG.shortName,
     publisher: { "@id": `${SITE_URL}/#organization` },
     inLanguage: "en-NG",
   };
 
   return (
-    <div className="public-site flex min-h-screen flex-col">
-      <script
-        type="application/ld+json"
-        // Values come from our own settings table, not from visitor input.
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify([organisationSchema, websiteSchema]),
-        }}
-      />
-      <ScrollProgress />
-      <AnnouncementBanner />
-      <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
-      <main id="main-content" className="flex-grow pt-20">
-        {children}
-      </main>
-      <Footer company={company} />
-      <BackToTop />
-      <CookieConsent />
-      <SiteAnalytics />
-    </div>
+    <SiteMotion>
+      <div className="public-site flex min-h-screen flex-col">
+        <script
+          type="application/ld+json"
+          // Values come from our own settings table, not from visitor input.
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([organisationSchema, websiteSchema]),
+          }}
+        />
+        <ScrollProgress />
+        <AnnouncementBanner />
+        <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
+        <main id="main-content" className="flex-grow pt-20">
+          {children}
+        </main>
+        <Footer company={company} />
+        <BackToTop />
+        <CookieConsent />
+        <SiteAnalytics />
+      </div>
+    </SiteMotion>
   );
 }

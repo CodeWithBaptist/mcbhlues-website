@@ -207,10 +207,10 @@ export function RolesManager({
       {/*  Overview                                                         */}
       {/* ---------------------------------------------------------------- */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
-        <StatCard label="Roles" value={`${stats.roles}`} hint="Across the hierarchy" icon="ShieldCheck" tone="primary" />
-        <StatCard label="System roles" value={`${stats.system}`} hint="Protected, cannot be deleted" icon="Lock" tone="violet" />
-        <StatCard label="Custom roles" value={`${stats.custom}`} hint="Created by your team" icon="Shield" tone="amber" />
-        <StatCard label="Members covered" value={`${stats.members}`} hint="Role assignments in total" icon="Users" tone="emerald" />
+        <StatCard label="Roles" value={`${stats.roles}`} hint="Across the hierarchy" />
+        <StatCard label="System roles" value={`${stats.system}`} hint="Protected, cannot be deleted" />
+        <StatCard label="Custom roles" value={`${stats.custom}`} hint="Created by your team" />
+        <StatCard label="Members covered" value={`${stats.members}`} hint="Role assignments in total" />
       </div>
 
       {message && (
@@ -259,7 +259,7 @@ export function RolesManager({
                     className={cn(
                       "group relative w-full rounded-xl border px-3.5 py-3 text-left transition-all",
                       active
-                        ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30"
+                        ? "border-primary bg-primary/5"
                         : "border-gray-200 bg-white hover:border-primary/40 hover:bg-blue-50/40"
                     )}
                   >
@@ -396,10 +396,10 @@ export function RolesManager({
                         </p>
                         <span
                           className={cn(
-                            "rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
+                            "rounded-md border px-2 py-0.5 text-[11px] font-medium tabular-nums",
                             selectedInModule > 0
-                              ? "bg-primary/10 text-primary ring-primary/20"
-                              : "bg-white text-gray-400 ring-gray-200"
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-gray-200 bg-white text-gray-500"
                           )}
                         >
                           {selectedInModule}/{rows.length}

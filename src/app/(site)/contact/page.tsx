@@ -22,15 +22,19 @@ export default async function ContactPage() {
   const company = await getCompanyInfo();
 
   return (
-    <div className="flex flex-col bg-gray-50/30">
+    <div className="flex flex-col bg-gray-50/60">
       <ContactHero />
 
-      <Container className="py-24">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          <ContactInfo
-            contact={{ email: company.email, phone: company.phone, address: company.address }}
-          />
-          <ContactForm />
+      <Container className="py-16 sm:py-24">
+        <div className="grid items-start gap-12 lg:grid-cols-5 lg:gap-16">
+          <div className="lg:col-span-2">
+            <ContactInfo
+              contact={{ email: company.email, phone: company.phone, address: company.address }}
+            />
+          </div>
+          <div className="lg:col-span-3">
+            <ContactForm />
+          </div>
         </div>
       </Container>
     </div>

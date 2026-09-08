@@ -26,21 +26,21 @@ export function PropertyCardSkeleton({ className }: { className?: string }) {
     <div
       aria-hidden="true"
       className={cn(
-        "flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white",
+        "flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white",
         className
       )}
     >
       <Skeleton className="aspect-[4/3] w-full rounded-none bg-gray-200/70" />
-      <div className="flex flex-col gap-4 p-6">
-        <div className="flex items-start justify-between gap-3">
-          <Skeleton className="h-5 w-2/3" />
-          <Skeleton className="h-5 w-20" />
+      <div className="flex flex-col gap-3 p-5 sm:p-6">
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-2/5" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3.5 w-1/2" />
         </div>
-        <Skeleton className="h-3.5 w-1/2" />
-        <div className="grid grid-cols-3 gap-3 border-t border-gray-100 pt-4">
-          <Skeleton className="h-3.5 w-full" />
-          <Skeleton className="h-3.5 w-full" />
-          <Skeleton className="h-3.5 w-full" />
+        <div className="flex gap-5 border-t border-gray-100 pt-4">
+          <Skeleton className="h-3.5 w-14" />
+          <Skeleton className="h-3.5 w-14" />
+          <Skeleton className="h-3.5 w-16" />
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@ export function PropertyGridSkeleton({
         {withFilters && (
           <div
             aria-hidden="true"
-            className="mb-10 flex flex-col items-center justify-between gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-sm md:flex-row"
+            className="mb-10 flex flex-col items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-4 md:flex-row"
           >
             <Skeleton className="h-12 w-full md:w-96" />
             <div className="flex w-full gap-2 md:w-auto">
@@ -110,9 +110,9 @@ export function SitePageSkeleton() {
               <div
                 key={index}
                 aria-hidden="true"
-                className="space-y-5 rounded-2xl border border-gray-100 bg-white p-8"
+                className="space-y-5 rounded-xl border border-gray-200 bg-white p-8"
               >
-                <Skeleton className="h-14 w-14 rounded-xl" />
+                <Skeleton className="h-6 w-6 rounded-md" />
                 <Skeleton className="h-6 w-2/3" />
                 <Skeleton className="h-3.5 w-full" />
                 <Skeleton className="h-3.5 w-5/6" />
@@ -203,7 +203,7 @@ export function PortalPageSkeleton({ variant = "table" }: { variant?: "table" | 
           ) : (
             <div aria-hidden="true" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {Array.from({ length: 4 }).map((_, index) => (
-                <Skeleton key={index} className="h-28 w-full rounded-xl" />
+                <Skeleton key={index} className="h-28 w-full rounded-lg" />
               ))}
             </div>
           )}

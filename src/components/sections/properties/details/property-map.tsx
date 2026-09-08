@@ -50,52 +50,51 @@ export function PropertyMap({ location, query, latitude, longitude }: PropertyMa
       <div className="flex flex-col gap-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h3 className="text-2xl font-bold text-dark font-heading mb-2">
-              Location
-            </h3>
+            <h2 className="mb-2 font-heading text-xl font-bold text-dark sm:text-2xl">Location</h2>
             <div className="flex items-center gap-2 text-gray-600">
-              <MapPin className="w-4 h-4 text-primary" />
+              <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
               <span>{location || "Nigeria"}</span>
             </div>
           </div>
 
-          <div className="flex p-1 bg-gray-100 rounded-xl">
+          <div className="flex rounded-lg bg-gray-100 p-1" role="group" aria-label="Map view">
             <button
+              type="button"
               onClick={() => setView("map")}
+              aria-pressed={view === "map"}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer",
-                view === "map"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-gray-600 hover:text-dark"
+                "flex cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors duration-200",
+                view === "map" ? "bg-white text-primary shadow-sm" : "text-gray-600 hover:text-dark"
               )}
             >
-              <MapIcon className="w-4 h-4" />
+              <MapIcon className="h-4 w-4" aria-hidden="true" />
               Map
             </button>
             <button
+              type="button"
               onClick={() => setView("directions")}
+              aria-pressed={view === "directions"}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer",
-                view === "directions"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-gray-600 hover:text-dark"
+                "flex cursor-pointer items-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors duration-200",
+                view === "directions" ? "bg-white text-primary shadow-sm" : "text-gray-600 hover:text-dark"
               )}
             >
-              <Navigation className="w-4 h-4" />
+              <Navigation className="h-4 w-4" aria-hidden="true" />
               Directions
             </button>
           </div>
         </div>
 
         {view === "directions" && (
-          <div className="flex flex-col sm:flex-row gap-3 p-4 bg-background-soft rounded-xl border border-primary/10">
-            <div className="flex items-center gap-3 flex-1">
-              <Car className="w-5 h-5 text-primary shrink-0" />
+          <div className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-background-soft p-4 sm:flex-row">
+            <div className="flex flex-1 items-center gap-3">
+              <Car className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
               <Input
                 placeholder="Enter your starting address..."
                 value={origin}
                 onChange={(e) => setOrigin(e.target.value)}
                 className="bg-white"
+                aria-label="Starting address for directions"
               />
             </div>
             <Button onClick={handleShowRoute} className="shrink-0">
@@ -104,7 +103,7 @@ export function PropertyMap({ location, query, latitude, longitude }: PropertyMa
           </div>
         )}
 
-        <div className="relative w-full h-[420px] rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-inner">
+        <div className="relative h-[420px] w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
           <iframe
             key={view === "directions" ? directionsEmbedUrl : mapEmbedUrl}
             width="100%"

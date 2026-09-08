@@ -35,13 +35,10 @@ export function NotFoundContent() {
     <section className="py-16 sm:py-24">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
-          <p
-            aria-hidden="true"
-            className="font-heading text-[5.5rem] font-black leading-none text-primary/15 sm:text-[9rem]"
-          >
-            404
+          <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-primary">
+            Error 404
           </p>
-          <h1 className="-mt-6 font-heading text-3xl font-extrabold text-dark sm:-mt-10 sm:text-5xl">
+          <h1 className="font-heading text-3xl font-bold tracking-tight text-dark sm:text-5xl">
             We couldn&rsquo;t find that page
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gray-600 sm:text-lg">
@@ -54,7 +51,7 @@ export function NotFoundContent() {
               href={PRIMARY_CTA.href}
               className={buttonClasses({
                 size: "lg",
-                className: "w-full gap-2 font-bold sm:w-auto",
+                className: "w-full gap-2 font-semibold sm:w-auto",
               })}
             >
               {PRIMARY_CTA.label}
@@ -74,7 +71,7 @@ export function NotFoundContent() {
             <Link
               key={item.href}
               href={item.href}
-              className="group flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-6 text-left transition-all hover:border-primary hover:shadow-lg"
+              className="group flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-6 text-left transition-[border-color,box-shadow] duration-200 hover:border-gray-300 hover:shadow-soft"
             >
               <item.icon className="h-6 w-6 text-primary" aria-hidden="true" />
               <span className="font-heading text-lg font-bold text-dark group-hover:text-primary">

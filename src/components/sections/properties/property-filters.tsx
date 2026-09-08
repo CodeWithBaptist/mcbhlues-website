@@ -1,8 +1,7 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 
 interface PropertyFiltersProps {
@@ -12,6 +11,10 @@ interface PropertyFiltersProps {
   setType: (val: string) => void;
 }
 
+/**
+ * Search + type filter for the listings grid. Only controls that do something
+ * are rendered — there is no placeholder "Advanced" button.
+ */
 export function PropertyFilters({ search, setSearch, type, setType }: PropertyFiltersProps) {
   const types = [
     { label: "All Types", value: "all" },
@@ -20,7 +23,7 @@ export function PropertyFilters({ search, setSearch, type, setType }: PropertyFi
   ];
 
   return (
-    <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-gray-100 bg-white p-4 shadow-soft transition-shadow duration-300 hover:shadow-md md:flex-row">
+    <div className="flex flex-col items-center justify-between gap-4 rounded-lg border border-gray-200 bg-white p-4 md:flex-row">
       <div className="relative w-full md:w-96">
         <Input
           placeholder="Search location or title..."
@@ -37,20 +40,13 @@ export function PropertyFilters({ search, setSearch, type, setType }: PropertyFi
         />
       </div>
 
-      <div className="flex w-full items-center gap-2 md:w-auto">
-        <SegmentedControl
-          options={types}
-          value={type}
-          onChange={setType}
-          label="Filter listings by type"
-          className="w-full md:w-auto"
-        />
-
-        <Button variant="outline" size="sm" className="hidden shrink-0 gap-2 md:flex">
-          <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
-          Advanced
-        </Button>
-      </div>
+      <SegmentedControl
+        options={types}
+        value={type}
+        onChange={setType}
+        label="Filter listings by type"
+        className="w-full md:w-auto"
+      />
     </div>
   );
 }

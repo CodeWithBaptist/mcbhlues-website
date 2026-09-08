@@ -125,12 +125,12 @@ export function ContactForm() {
   const shown = (field: EnquiryField) => (touched[field] ? errors[field] : undefined);
 
   return (
-    <div className="rounded-[2rem] border border-gray-200 bg-white p-6 shadow-xl sm:p-8 md:p-12">
-      <h2 className="mb-8 font-heading text-2xl font-bold text-dark">Send Us a Message</h2>
+    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-soft sm:p-8 md:p-10">
+      <h2 className="mb-8 font-heading text-2xl font-bold text-dark">Send us a message</h2>
 
       {result?.ok ? (
         <div className="flex animate-fade-up flex-col items-center gap-4 py-16 text-center" role="status">
-          <CheckCircle2 className="h-14 w-14 animate-pop text-green-700" aria-hidden="true" />
+          <CheckCircle2 className="h-12 w-12 text-green-700" aria-hidden="true" />
           <p className="max-w-sm text-gray-700">{result.text}</p>
           <Button variant="outline" onClick={() => setResult(null)}>
             Send another message
@@ -261,9 +261,9 @@ export function ContactForm() {
             </p>
           )}
 
-          <Button size="lg" className="w-full gap-2 font-bold" loading={sending}>
+          <Button size="lg" className="w-full gap-2 font-semibold" loading={sending}>
             {!sending && <Send className="h-5 w-5" aria-hidden="true" />}
-            {sending ? "Sending…" : "Send Message"}
+            {sending ? "Sending…" : "Send message"}
           </Button>
 
           <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-600">

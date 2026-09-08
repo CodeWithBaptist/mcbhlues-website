@@ -1,6 +1,4 @@
-"use client";
-
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { SITE_CONFIG } from "@/constants";
 
 interface ContactInfoProps {
@@ -12,48 +10,67 @@ interface ContactInfoProps {
   };
 }
 
+/**
+ * The company's contact details, as a plain definition list. Only values the
+ * business actually maintains (in Portal → Company Settings) are shown —
+ * no invented opening hours or response-time promises.
+ */
 export function ContactInfo({ contact }: ContactInfoProps) {
   const details = contact ?? SITE_CONFIG.contact;
+  const telHref = `tel:${details.phone.replace(/[^\d+]/g, "")}`;
 
-  const contactDetails = [
+  const rows = [
     {
       icon: Phone,
-      title: "Call Us",
-      value: details.phone,
-      description: "Mon-Fri from 8am to 6pm.",
+      label: "Phone",
+      value: (
+        <a href={telHref} className="transition-colors duration-200 hover:text-primary">
+          {details.phone}
+        </a>
+      ),
+      note: "Speak to a consultant directly.",
     },
     {
       icon: Mail,
-      title: "Email Us",
-      value: details.email,
-      description: "We'll respond within 24 hours.",
+      label: "Email",
+      value: (
+        <a
+          href={`mailto:${details.email}`}
+          className="break-all transition-colors duration-200 hover:text-primary"
+        >
+          {details.email}
+        </a>
+      ),
+      note: "For enquiries, documents and anything in writing.",
     },
     {
       icon: MapPin,
-      title: "Visit Our Office",
-      value: details.address,
-      description: "Stop by for a coffee and a chat.",
-    },
-    {
-      icon: Clock,
-      title: "Working Hours",
-      value: "08:00 AM - 06:00 PM",
-      description: "Monday to Saturday.",
+      label: "Office",
+      value: <span>{details.address}</span>,
+      note: "Visits are by appointment — call or email first so the right person is available.",
     },
   ];
 
   return (
-    <div className="grid sm:grid-cols-2 gap-8">
-      {contactDetails.map((item) => (
-        <div key={item.title} className="p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-            <item.icon className="w-6 h-6" />
+    <div>
+      <h2 className="font-heading text-2xl font-bold text-dark">Get in touch</h2>
+      <p className="mt-2 max-w-md text-gray-600">
+        Use the form, or reach the office directly. Either way a consultant, not a
+        call centre, picks it up.
+      </p>
+
+      <dl className="mt-10 divide-y divide-gray-200 border-y border-gray-200">
+        {rows.map((row) => (
+          <div key={row.label} className="flex gap-5 py-6">
+            <row.icon className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+            <div className="min-w-0">
+              <dt className="text-xs font-semibold uppercase tracking-widest text-gray-500">{row.label}</dt>
+              <dd className="mt-1.5 text-lg font-semibold text-dark">{row.value}</dd>
+              <dd className="mt-1 text-sm text-gray-600">{row.note}</dd>
+            </div>
           </div>
-          <h4 className="text-xl font-bold text-dark font-heading mb-2">{item.title}</h4>
-          <p className="text-primary font-bold mb-2">{item.value}</p>
-          <p className="text-gray-600 text-sm">{item.description}</p>
-        </div>
-      ))}
+        ))}
+      </dl>
     </div>
   );
 }

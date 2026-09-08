@@ -135,18 +135,19 @@ export function PropertySidebar({
     <div className="flex flex-col gap-8 lg:sticky lg:top-28">
       <div
         id="inquiry"
-        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-xl transition-shadow duration-300 hover:shadow-2xl sm:p-8"
+        className="rounded-xl border border-gray-200 bg-white p-6 shadow-soft sm:p-8"
       >
-        <h2 className="mb-6 font-heading text-xl font-bold text-dark">
-          Inquire About This Property
-        </h2>
+        <h2 className="font-heading text-xl font-bold text-dark">Arrange a viewing</h2>
+        <p className="mb-6 mt-1 text-sm text-gray-600">
+          Send your details and a consultant will reply to confirm a time.
+        </p>
 
         {result?.ok ? (
           <div className="flex animate-fade-up flex-col items-center gap-3 py-10 text-center" role="status">
-            <CheckCircle2 className="h-12 w-12 animate-pop text-green-700" aria-hidden="true" />
+            <CheckCircle2 className="h-10 w-10 text-green-700" aria-hidden="true" />
             <p className="text-sm text-gray-700">{result.text}</p>
             <Button variant="outline" size="sm" onClick={() => setResult(null)}>
-              Send another inquiry
+              Send another enquiry
             </Button>
           </div>
         ) : (
@@ -258,8 +259,8 @@ export function PropertySidebar({
               </p>
             )}
 
-            <Button size="lg" className="w-full font-bold" loading={sending}>
-              {sending ? "Sending…" : "Send Inquiry"}
+            <Button size="lg" className="w-full font-semibold" loading={sending}>
+              {sending ? "Sending…" : "Send enquiry"}
             </Button>
 
             <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-600">

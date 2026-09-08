@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
-import { Card, EmptyState, Notice } from "./ui";
+import { Card, EmptyState, Notice, portalInputClass } from "./ui";
 import { ModalShell } from "./modal-shell";
 import { FileUpload } from "./file-upload";
 
@@ -141,7 +141,7 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
             {filtered.map((asset) => (
               <article
                 key={asset.id}
-                className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xs transition-[transform,box-shadow,border-color] duration-300 ease-soft hover:-translate-y-1 hover:border-primary/30 hover:shadow-lift"
+                className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition-[box-shadow,border-color] duration-200 ease-soft hover:border-gray-300 hover:shadow-soft"
               >
                 <div className="flex h-36 items-center justify-center overflow-hidden bg-gray-50">
                   {asset.kind === "image" || asset.kind === "logo" ? (
@@ -149,7 +149,7 @@ export function MediaManager({ initialAssets, permissions }: MediaManagerProps) 
                     <img
                       src={asset.url}
                       alt={asset.alt || asset.title}
-                      className="h-full w-full object-cover transition-transform duration-500 ease-soft group-hover:scale-105"
+                      className="h-full w-full object-cover"
                     />
                   ) : (
                     <FileText className="h-10 w-10 text-gray-300" />
@@ -268,7 +268,7 @@ function AddAssetDialog({
   return (
     <ModalShell onClose={onClose} label="Add asset" align="center">
       {(close) => (
-      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl">
+      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-lift">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="flex items-center gap-2 font-heading text-base font-bold text-dark">
             <Shapes className="h-4 w-4 text-primary" /> Add asset
@@ -317,7 +317,7 @@ function AddAssetDialog({
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Kind</span>
               <select
-                className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className={portalInputClass}
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
               >

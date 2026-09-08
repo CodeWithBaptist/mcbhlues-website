@@ -38,12 +38,12 @@ export function SaveButton({
       aria-label={label}
       title={hydrated ? label : "Save this property"}
       className={cn(
-        "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-md backdrop-blur-sm",
-        "transition-[transform,background-color,color,box-shadow] duration-200 ease-soft",
-        "hover:scale-110 hover:bg-white hover:text-primary hover:shadow-lg active:scale-95",
+        "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-gray-700 shadow-sm",
+        "transition-[transform,background-color,color] duration-200 ease-soft",
+        "hover:bg-white hover:text-primary active:scale-95",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-        "disabled:cursor-default disabled:opacity-70 disabled:hover:scale-100",
-        saved && "text-primary ring-2 ring-primary/30",
+        "disabled:cursor-default disabled:opacity-70",
+        saved && "text-primary",
         className
       )}
     >

@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-/** Existing metrics, expressed as quiet typographic summaries rather than tiles. */
+/**
+ * Existing metrics, expressed as quiet typographic summaries rather than tiles.
+ * `icon` / `tone` are accepted for backwards compatibility with the dashboard's
+ * stat descriptors but intentionally not rendered — colour-coded tiles made
+ * every number look equally urgent.
+ */
 export function StatCard({ label, value, hint, href }: {
   label: string;
   value: string;
   hint?: string;
-  icon: string;
+  icon?: string;
   tone?: "primary" | "emerald" | "amber" | "violet" | "sky" | "rose" | "slate";
   href?: string;
 }) {
