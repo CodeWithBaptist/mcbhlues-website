@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { NotificationRow } from "@/lib/notifications/notification-service";
 import { Card, EmptyState, Notice } from "./ui";
+import { ModalShell } from "./modal-shell";
 
 const KIND_ICONS: Record<string, React.ReactNode> = {
   enquiry: <MessageSquare className="h-4 w-4 text-blue-600" />,
@@ -120,14 +121,14 @@ export function NotificationsManager({
                 <div className="flex items-start gap-3 py-3">
                   <span
                     className={cn(
-                      "mt-0.5 rounded-lg border p-2",
+                      "mt-0.5 rounded-lg border p-2 transition-colors duration-200",
                       row.read ? "border-gray-100 bg-gray-50" : "border-primary/20 bg-primary/5"
                     )}
                   >
                     {KIND_ICONS[row.kind] ?? KIND_ICONS.info}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className={cn("text-sm", row.read ? "text-gray-600" : "font-semibold text-dark")}>
+                    <p className={cn("text-sm transition-colors duration-200", row.read ? "text-gray-600" : "font-semibold text-dark")}>
                       {row.title}
                     </p>
                     {row.body && <p className="mt-0.5 truncate text-xs text-gray-500">{row.body}</p>}
@@ -220,11 +221,12 @@ function ComposeDialog({
   }
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <ModalShell onClose={onClose} label="Send notification" align="center">
+      {(close) => (
       <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">Send notification</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -275,7 +277,7 @@ function ComposeDialog({
         </div>
 
         <footer className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -284,6 +286,7 @@ function ComposeDialog({
           </Button>
         </footer>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }

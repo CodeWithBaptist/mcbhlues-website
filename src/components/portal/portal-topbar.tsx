@@ -35,6 +35,28 @@ export function PortalTopbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  // Quiet elevation once the page scrolls underneath the sticky bar. Class-driven
+  // so scrolling never re-renders the topbar.
+  useEffect(() => {
+    const node = headerRef.current;
+    if (!node) return;
+    let ticking = false;
+    const update = () => {
+      node.classList.toggle("is-scrolled", window.scrollY > 4);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Find a portal section shortcut — focus topbar search
   useEffect(() => {
@@ -97,7 +119,7 @@ export function PortalTopbar() {
   const showSearchResults = searchQuery.trim().length > 1;
 
   return (
-    <header className="portal-topbar sticky top-0 z-30 border-b border-gray-200 bg-white">
+    <header ref={headerRef} className="portal-topbar sticky top-0 z-30 border-b border-gray-200 bg-white">
       <div className="flex flex-wrap items-center gap-3 px-4 py-3 pl-16 sm:gap-4 lg:px-6 xl:px-8">
         {/* Left: breadcrumbs + title */}
         <div className="min-w-0 flex-1">
@@ -152,7 +174,7 @@ export function PortalTopbar() {
 
           {/* Existing section suggestions */}
           {showSearchResults && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white p-2 shadow-xl">
+            <div className="portal-menu-enter absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-md border border-gray-200 bg-white p-2 shadow-xl">
               <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
                 Quick suggestions
               </p>

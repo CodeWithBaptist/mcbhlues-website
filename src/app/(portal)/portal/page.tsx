@@ -19,6 +19,7 @@ import { DashboardHero } from "@/components/portal/dashboard-hero";
 import { StatCard } from "@/components/portal/stat-card";
 import { ActivityFeed } from "@/components/portal/activity-feed";
 import { QuickActions } from "@/components/portal/quick-actions";
+import { Reveal } from "@/components/portal/reveal";
 import { formatCurrency } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -160,7 +161,7 @@ export default async function PortalDashboard() {
         moduleCount={modules.length}
       />
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+      <div className="portal-stagger grid grid-cols-2 gap-x-6 gap-y-1 lg:grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
@@ -180,7 +181,7 @@ export default async function PortalDashboard() {
         ].filter(Boolean) as { label: string; href: string; icon: string }[]}
       />
 
-      <div className="grid items-start gap-6 lg:grid-cols-3">
+      <Reveal className="grid items-start gap-6 lg:grid-cols-3" delay={60}>
         <ActivityFeed
           className="lg:col-span-2"
           items={recentActivity.map((row) => ({
@@ -232,7 +233,7 @@ export default async function PortalDashboard() {
             </div>
           </Card>
         </div>
-      </div>
+      </Reveal>
     </div>
   );
 }

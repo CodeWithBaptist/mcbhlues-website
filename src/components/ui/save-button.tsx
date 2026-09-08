@@ -43,7 +43,7 @@ export function SaveButton({
         "hover:scale-110 hover:bg-white hover:text-primary hover:shadow-lg active:scale-95",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         "disabled:cursor-default disabled:opacity-70 disabled:hover:scale-100",
-        saved && "text-primary",
+        saved && "text-primary ring-2 ring-primary/30",
         className
       )}
     >

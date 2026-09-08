@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Card, EmptyState, Notice } from "./ui";
+import { ModalShell } from "./modal-shell";
 
 export interface AnnouncementRow {
   id: string;
@@ -285,13 +286,14 @@ function AnnouncementEditor({
   }
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+    <ModalShell onClose={onClose} label={isEdit ? "Edit announcement" : "New announcement"}>
+      {(close) => (
       <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">
             {isEdit ? "Edit announcement" : "New announcement"}
           </h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -337,7 +339,7 @@ function AnnouncementEditor({
         {error && <p className="border-t border-red-100 bg-red-50 px-6 py-2 text-sm text-red-700">{error}</p>}
 
         <footer className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -346,6 +348,7 @@ function AnnouncementEditor({
           </Button>
         </footer>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }

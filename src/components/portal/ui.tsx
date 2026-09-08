@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /** Shared editorial page heading. Icons remain accepted for existing callers. */
@@ -105,7 +109,7 @@ export function StatusPill({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium capitalize",
+        "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium capitalize transition-colors duration-200",
         tone.className
       )}
     >
@@ -127,10 +131,10 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="px-4 py-8 text-center">
+    <div className="portal-empty px-4 py-8 text-center">
       {icon && (
         <div
-          className="mx-auto mb-3 flex h-8 w-8 items-center justify-center text-gray-400"
+          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 text-gray-400 ring-1 ring-gray-200"
           aria-hidden="true"
         >
           {icon}
@@ -143,10 +147,21 @@ export function EmptyState({
   );
 }
 
+const NOTICE_ICONS = {
+  ok: CheckCircle2,
+  error: XCircle,
+  info: Info,
+  warning: AlertTriangle,
+} as const;
+
 /**
  * Inline feedback banner used by the portal managers after a save, publish,
  * delete, etc. `role=\"status\"` announces successes politely; errors get
  * `role=\"alert\"` so they interrupt.
+ *
+ * The leading icon inherits the banner's text colour so it stays correct in
+ * both themes without new colour tokens. Dismissal fades out before unmounting
+ * (instantly under reduced motion).
  */
 export function Notice({
   tone = "ok",
@@ -166,20 +181,48 @@ export function Notice({
     warning: "border-amber-200 bg-amber-50 text-amber-900 shadow-amber-500/10",
   } as const;
 
+  const [leaving, setLeaving] = useState(false);
+  const timer = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (timer.current !== null) window.clearTimeout(timer.current);
+    },
+    []
+  );
+
+  function dismiss() {
+    if (!onDismiss || leaving) return;
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      onDismiss();
+      return;
+    }
+    setLeaving(true);
+    timer.current = window.setTimeout(onDismiss, 170);
+  }
+
+  const Icon = NOTICE_ICONS[tone];
+
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
         "animate-fade-in flex items-start justify-between gap-3 rounded-md border px-4 py-3 text-sm font-medium",
         tones[tone],
+        leaving && "portal-notice-leave",
         className
       )}
     >
-      <span className="min-w-0 leading-relaxed">{children}</span>
+      <span className="flex min-w-0 items-start gap-2.5">
+        <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 leading-relaxed">{children}</span>
+      </span>
       {onDismiss && (
         <button
           type="button"
-          onClick={onDismiss}
+          onClick={dismiss}
           aria-label="Dismiss message"
           className=" -mr-1 shrink-0 rounded-lg p-1.5 opacity-60 transition-all hover:bg-black/5 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
         >

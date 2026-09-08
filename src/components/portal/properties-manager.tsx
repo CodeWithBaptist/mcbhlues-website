@@ -27,6 +27,7 @@ import type { PropertyWithDetails } from "@/lib/properties/property-service";
 import { useSession } from "./permission-provider";
 import { Card, EmptyState, StatusPill, Notice } from "./ui";
 import { FileUpload } from "./file-upload";
+import { ModalShell } from "./modal-shell";
 
 export interface StaffOption {
   id: string;
@@ -313,7 +314,7 @@ export function PropertiesManager({
               </thead>
               <tbody>
                 {filtered.map((property) => (
-                  <tr key={property.id} className="border-b border-gray-50 align-top">
+                  <tr key={property.id} className="group border-b border-gray-50 align-top">
                     <td data-label="Property" className="px-3 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex aspect-[4/3] w-24 shrink-0 items-center justify-center overflow-hidden rounded-md bg-gray-100">
@@ -645,7 +646,8 @@ function PropertyEditor({
     "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
 
   return (
-    <div className="portal-modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4">
+    <ModalShell onClose={onClose} label={isEdit ? "Edit property" : "Add property"}>
+      {(close) => (
       <form
         onSubmit={submit}
         className="portal-modal-panel my-4 w-full max-w-4xl rounded-xl bg-white shadow-2xl"
@@ -659,7 +661,7 @@ function PropertyEditor({
               {isEdit ? form.name : "Create a new property listing"}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700" aria-label="Close">
+          <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </header>
@@ -958,7 +960,7 @@ function PropertyEditor({
         )}
 
         <footer className="flex justify-end gap-2 border-t border-gray-100 px-6 py-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={close}>
             Cancel
           </Button>
           <Button type="submit" disabled={saving}>
@@ -967,7 +969,8 @@ function PropertyEditor({
           </Button>
         </footer>
       </form>
-    </div>
+      )}
+    </ModalShell>
   );
 }
 

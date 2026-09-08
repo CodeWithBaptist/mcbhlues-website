@@ -107,7 +107,9 @@
   }
 }
 
-/* Skeleton shimmer: a highlight sweeping left→right over the placeholder. */
+/* Skeleton shimmer: a highlight sweeping left→right over the placeholder.
+   `--shimmer-delay` (inherited, so set it on any ancestor) staggers the phase
+   so table rows shimmer as a gentle wave instead of in lockstep. */
 .shimmer {
   position: relative;
   overflow: hidden;
@@ -126,6 +128,7 @@
     transparent 100%
   );
   animation: shimmer 1.8s linear infinite;
+  animation-delay: var(--shimmer-delay, 0s);
   pointer-events: none;
 }
 .portal-dark .shimmer::after {
@@ -360,6 +363,251 @@
 .staff-portal select:hover:not(:disabled),
 .public-site select:hover:not(:disabled) {
   border-color: #374151;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal page entrance & stagger                                             */
+/* -------------------------------------------------------------------------- */
+/* One gentle entrance for the whole page: each navigation mounts a fresh
+   `<main>` child, so the animation replays naturally per page. The `backwards`
+   fill matters — no transform lingers afterwards, and a lingering transform
+   would trap the fixed modals and drawers rendered inside the page. */
+@keyframes portal-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.portal-main > * {
+  animation: portal-page-in 0.38s ease-out backwards;
+}
+
+/* Single elements that should enter along with the page (banners, alerts). */
+.portal-enter {
+  animation: portal-page-in 0.38s ease-out backwards;
+}
+
+/* Staggered entrance for short collections (stat rows, module links). Delays
+   are capped so even long lists finish settling quickly. */
+.portal-stagger > * {
+  animation: portal-page-in 0.4s ease-out backwards;
+}
+.portal-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+.portal-stagger > *:nth-child(2) { animation-delay: 0.06s; }
+.portal-stagger > *:nth-child(3) { animation-delay: 0.1s; }
+.portal-stagger > *:nth-child(4) { animation-delay: 0.14s; }
+.portal-stagger > *:nth-child(5) { animation-delay: 0.18s; }
+.portal-stagger > *:nth-child(6) { animation-delay: 0.22s; }
+.portal-stagger > *:nth-child(7) { animation-delay: 0.26s; }
+.portal-stagger > *:nth-child(n + 8) { animation-delay: 0.3s; }
+
+/* Empty states arrive with the same soft entrance as the page. */
+.portal-empty {
+  animation: portal-page-in 0.4s ease-out backwards;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal navigation feel                                                     */
+/* -------------------------------------------------------------------------- */
+/* Sidebar links: a whisper of background on hover plus a 2px icon nudge so the
+   menu feels tactile. The active page keeps its existing tinted treatment —
+   the border and text colour still carry the "selected" state. */
+.portal-nav-link:not([aria-current="page"]):hover {
+  background-color: color-mix(in srgb, var(--color-primary) 3%, transparent);
+}
+.portal-nav-link svg {
+  transition: transform 0.2s ease;
+}
+.portal-nav-link:hover svg {
+  transform: translateX(2px);
+}
+
+/* The sticky topbar gains quiet elevation once the page scrolls underneath. */
+.portal-topbar {
+  transition: box-shadow 0.25s ease;
+}
+.portal-topbar.is-scrolled {
+  box-shadow: 0 12px 24px -20px rgb(15 23 42 / 0.35);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal menus & notices                                                     */
+/* -------------------------------------------------------------------------- */
+@keyframes portal-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Small floating panels that mount on interaction (topbar search results). */
+.portal-menu-enter {
+  animation: portal-menu-in 0.18s ease-out backwards;
+}
+
+@keyframes portal-notice-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+/* Applied by `Notice` for ~170ms before unmount so dismissal fades instead of
+   vanishing. More specific than the `animate-fade-in` utility it replaces. */
+.portal-notice-leave {
+  animation: portal-notice-out 0.17s ease-in both;
+  pointer-events: none;
+}
+
+/* Conditionally-rendered form feedback arrives softly instead of popping in. */
+.staff-portal p[class~="text-red-700"],
+.staff-auth p[class~="text-red-700"],
+.staff-portal p[class~="text-green-700"],
+.staff-auth p[class~="text-green-700"] {
+  animation: fade-in 0.25s ease-out backwards;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal modal & drawer exits                                                */
+/* -------------------------------------------------------------------------- */
+@keyframes portal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes portal-panel-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+}
+@keyframes portal-drawer-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+/* Applied by `ModalShell` / `DrawerShell` briefly before unmount. */
+.portal-modal-backdrop.is-closing {
+  animation: portal-backdrop-out 0.16s ease-in both;
+}
+.portal-modal-backdrop.is-closing .portal-modal-panel {
+  animation: portal-panel-out 0.16s ease-in both;
+}
+.portal-modal-backdrop.is-closing .portal-drawer-panel {
+  animation: portal-drawer-out 0.17s ease-in both;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal table feedback                                                      */
+/* -------------------------------------------------------------------------- */
+/* Row actions share one transition so hover and press always feel the same. */
+.portal-table tbody :where(button, a) {
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.15s ease;
+}
+/* A quiet accent on the first cell while the row is hovered. `box-shadow` on
+   `<tr>` itself is unreliable cross-browser, so the cell carries it. */
+.portal-table tbody td {
+  transition: box-shadow 0.18s ease;
+}
+.portal-table tbody tr:hover td:first-child {
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+.portal-table tbody select:not(:disabled):hover {
+  border-color: var(--color-primary);
+}
+
+/* While a row action is in flight a slim sweep crosses the top of the scroll
+   region, alongside the existing table dim. Absent on browsers without `:has`,
+   where the dim alone still communicates the busy state. */
+@keyframes portal-busy-sweep {
+  from {
+    background-position: -45% 0;
+  }
+  to {
+    background-position: 145% 0;
+  }
+}
+.portal-table-scroll {
+  position: relative;
+}
+.portal-table-scroll:has([data-busy])::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-primary) 65%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 45% 100%;
+  background-repeat: no-repeat;
+  animation: portal-busy-sweep 1.1s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portal tactile press & scroll reveal                                       */
+/* -------------------------------------------------------------------------- */
+/* A 1px sink for portal buttons that don't define their own press behaviour.
+   Buttons whose classes already mention `translate` keep their bespoke styles —
+   that includes the shared `Button` and the absolutely-centred icon buttons,
+   where a replacement transform would break alignment. */
+.staff-portal :where(button:not(:disabled)):not([class*="translate"]):active {
+  transform: translateY(1px);
+}
+
+/* Below-fold sections revealed by `<Reveal>`: the hidden state is only ever
+   added by JS after mount (so no-JS and reduced-motion readers always see the
+   content), then eased in once when scrolled into view. */
+.portal-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.portal-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.45s ease-out,
+    transform 0.45s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portal-reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

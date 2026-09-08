@@ -61,7 +61,7 @@ export default function AcceptInvitePage({ params }: { params: Promise<{ token: 
   }
 
   return (
-    <div className="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 sm:p-8">
+    <div className="w-full max-w-md animate-fade-up rounded-lg border border-gray-200 bg-white p-6 sm:p-8">
       <div className="mb-6">
         <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-primary">Staff Portal</p>
         <h1 className="font-heading text-xl font-bold text-dark">Set your password</h1>

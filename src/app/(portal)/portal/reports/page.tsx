@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { BarChart3, CalendarClock, History } from "lucide-react";
 import { pageAccess } from "@/lib/rbac/page-guard";
 import { buildReport, type NamedCount } from "@/lib/reports/report-service";
 import { AccessDenied } from "@/components/portal/access-denied";
-import { Card, PageHeader } from "@/components/portal/ui";
+import { Card, EmptyState, PageHeader } from "@/components/portal/ui";
+import { Reveal } from "@/components/portal/reveal";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +33,11 @@ function Breakdown({ title, description, rows }: { title: string; description: s
   return (
     <Card title={title} description={description}>
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-400">No data yet.</p>
+        <EmptyState
+          icon={<BarChart3 className="h-6 w-6" />}
+          title="No data yet"
+          description="Figures will appear here as soon as there is something to report."
+        />
       ) : (
         <div className="space-y-2.5">
           {rows.map((row) => (
@@ -61,7 +67,7 @@ export default async function ReportsPage() {
         description="Live operational snapshot across properties, customers, enquiries and bookings."
       />
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-5">
+      <div className="portal-stagger grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-5">
         {report.totals.map((stat) => (
           <div
             key={stat.label}
@@ -106,10 +112,14 @@ export default async function ReportsPage() {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <Reveal className="grid gap-6 lg:grid-cols-2">
         <Card title="Upcoming bookings" description="Next confirmed and pending appointments">
           {report.upcomingBookings.length === 0 ? (
-            <p className="text-sm text-gray-400">Nothing scheduled.</p>
+            <EmptyState
+              icon={<CalendarClock className="h-6 w-6" />}
+              title="Nothing scheduled"
+              description="Confirmed and pending appointments will show up here."
+            />
           ) : (
             <ul className="divide-y divide-gray-50 text-sm">
               {report.upcomingBookings.map((booking) => (
@@ -141,7 +151,11 @@ export default async function ReportsPage() {
         {canSeeActivity && (
           <Card title="Recent staff activity" description="Latest recorded actions across the portal">
             {report.recentActivity.length === 0 ? (
-              <p className="text-sm text-gray-400">No activity recorded yet.</p>
+              <EmptyState
+                icon={<History className="h-6 w-6" />}
+                title="No activity yet"
+                description="Staff actions will appear here as work happens across the portal."
+              />
             ) : (
               <ul className="divide-y divide-gray-50 text-sm">
                 {report.recentActivity.map((entry, index) => (
@@ -159,7 +173,7 @@ export default async function ReportsPage() {
             )}
           </Card>
         )}
-      </div>
+      </Reveal>
 
       <Card title="Log viewers" description="Each area is guarded by its own permission.">
         <div className="flex flex-wrap gap-2">

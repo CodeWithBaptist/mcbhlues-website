@@ -13,7 +13,7 @@ export function StatCard({ label, value, hint, href }: {
   const content = <>
     <div className="flex items-start justify-between gap-2">
       <p className="text-sm font-medium text-gray-600">{label}</p>
-      {href && <ArrowUpRight className="h-4 w-4 shrink-0 text-gray-400 group-hover:text-primary" aria-hidden="true" />}
+      {href && <ArrowUpRight className="h-4 w-4 shrink-0 text-gray-400 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />}
     </div>
     <p className="mt-2 font-heading text-2xl font-bold tracking-tight tabular-nums text-dark sm:text-[28px]">{value}</p>
     {hint && <p className="mt-1 text-xs leading-relaxed text-gray-500">{hint}</p>}

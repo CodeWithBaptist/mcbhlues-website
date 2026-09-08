@@ -45,12 +45,12 @@ export function ActivityFeed({ items, className }: { items: ActivityItem[]; clas
       ) : (
         <ol className="divide-y divide-gray-100">
           {items.map((item) => (
-            <li key={item.id} className="py-4 first:pt-0 last:pb-0">
+            <li key={item.id} className="group -mx-2 rounded-lg px-2 py-4 transition-colors duration-200 first:pt-0 last:pb-0 hover:bg-gray-50/70">
               <p className="text-sm font-medium leading-relaxed text-dark">{item.description || item.action.replaceAll(".", " ")}</p>
               <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-relaxed text-gray-500">
-                <time dateTime={item.createdAt} title={item.createdAt}>{relative(item.createdAt)}</time>
+                <time dateTime={item.createdAt} title={new Date(item.createdAt).toLocaleString()} className="transition-colors duration-200 group-hover:text-gray-600">{relative(item.createdAt)}</time>
                 <span aria-hidden="true">·</span><span className="break-all">{item.actor}</span>
-                <code className="text-xs text-gray-500">{item.action}</code>
+                <code className="transition-colors duration-200 group-hover:text-gray-700">{item.action}</code>
               </div>
             </li>
           ))}

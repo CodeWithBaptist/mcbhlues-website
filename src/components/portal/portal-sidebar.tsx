@@ -152,7 +152,7 @@ export function PortalSidebar({ navigation, logoUrl, companyName }: { navigation
           {query && <p className="mt-2 text-xs text-gray-500">{filteredCount} of {totalItems} items</p>}
         </div>
       )}
-      <nav className={cn("portal-scrollbar min-h-0 flex-1 space-y-5 overflow-y-auto py-5", compact ? "px-2" : "px-4")} aria-label="Portal navigation">
+      <nav className={cn("portal-scrollbar min-h-0 flex-1 space-y-5 overflow-x-hidden overflow-y-auto py-5", compact ? "px-2" : "px-4")} aria-label="Portal navigation">
         {filteredNav.length === 0 ? (
           <div className="py-4 text-sm text-gray-500">
             <p>No matches. Try a different term.</p>

@@ -126,3 +126,65 @@ fixture for investigation. Never run write checks against live data.
 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally points at an already installed
 Chromium in restricted environments. Browser downloads, screenshots, database files
 and test reports are ignored; no runtime browser dependency is shipped.
+
+## Motion & micro-interaction pass (2026-09-08)
+
+A life-and-feedback pass over the portal above. No redesign: palette, fonts,
+information architecture and all functionality are unchanged. Everything new is
+transform/opacity only, uses existing theme tokens, and degrades under
+`prefers-reduced-motion` (CSS kills plus explicit JS guards in the new
+components — feedback still appears, it just doesn't animate).
+
+- **Page entrance:** `.portal-main > *` fades up once per navigation
+  (`backwards` fill, so no transform lingers to trap fixed descendants).
+  Previously referenced but undefined `.portal-enter` / `.portal-stagger` are
+  now defined and used for banners, stat rows and module links.
+- **Navigation:** sidebar links gain a 3% hover tint and a 2px icon nudge; the
+  mobile drawer slides in from the left; the sticky topbar gains quiet shadow
+  elevation on scroll; the notification badge finally pops on count change.
+- **Dashboard:** stat arrows slide on hover, quick-action arrows advance,
+  activity rows highlight and emphasise their timestamp/action on hover, and
+  the below-fold grid eases in once via the new `<Reveal>` (IO-driven,
+  no-JS-safe, reduced-motion-safe).
+- **Tables:** first-cell accent on row hover, shared button press transition,
+  status-select hover, and a slim progress sweep across the scroll region
+  while `data-busy` (gracefully absent without `:has`).
+- **Modals & drawers:** new `ModalShell` / `DrawerShell` wrap the nine
+  editor/drawer managers (properties, enquiries + drawer, bookings + small
+  reschedule dialog which also gains the shared panel class, customers +
+  drawer, media, notifications composer, announcements, FAQs, testimonials).
+  Escape dismisses, Tab is trapped, body scroll locks, focus returns to the
+  trigger, the panel gets `role="dialog"` semantics, and dismissal plays a
+  ~170ms exit before unmount. Staff's bespoke blurred overlay and the
+  security-timeout dialog are deliberately untouched.
+- **Feedback:** `Notice` gains a tone icon (inherits banner colour, so both
+  themes stay correct) and a fade-out dismissal; status pills transition
+  colour on change; conditionally rendered form errors/successes fade in.
+- **Loading & empty:** the portal skeleton now mirrors the real page shape
+  (heading, toolbar, `Card` with header) instead of a gradient banner, and
+  table rows shimmer as a staggered wave; `EmptyState` gains a soft medallion
+  and entrance; the three raw `<p>` empties on Reports become real empty
+  states.
+- **Tactile details:** portal buttons sink 1px on press unless they define
+  their own behaviour (centred icon buttons excluded by construction);
+  property thumbnails zoom 6% on row hover inside their clipped frame;
+  saved favourites gain a quiet selected ring; theme/file-upload/search
+  micro-interactions refined. `.portal-main` gets `overflow-x: clip` as a
+  safety net (never a scroll container, so sticky keeps working).
+
+### Verification for this pass
+
+- `tsc --noEmit`, ESLint over every touched file, and `git diff --check` pass.
+- All 30 existing unit/integration tests pass; `next build` succeeds.
+- Authenticated SSR smoke of all 22 portal routes against a disposable PGlite
+  database: every route 200 with an `h1`, no server errors.
+- jsdom behaviour checks (scratch, not committed) for the new client logic:
+  dialog semantics/initial focus, Tab trap wrap in both directions,
+  Escape/Cancel exit timing, scroll-lock release, focus return, immediate
+  close under reduced motion, Notice icon/role/dismissal, and Reveal's
+  no-JS default plus IO reveal — all passed.
+- Full Playwright run was **not** possible in this sandbox (no browser
+  installed, browser CDN blocked). Before merge, run the documented
+  `npm run test:ui` suite with a disposable database — it covers the
+  22 routes × 3 widths × 2 themes matrix, modal open/close timing, overflow,
+  reduced motion and console errors.
