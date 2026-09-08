@@ -448,6 +448,19 @@
   color-scheme: dark;
 }
 
+/* The page chrome behind `.public-site` (overscroll area, root scrollbar
+   gutter) follows the public theme too. Scoped with `:has()` so the staff
+   portal — which never renders `.public-site` — keeps its own root colors
+   even when both themes are stored in the same browser. `#0a1220` is the
+   existing public dark background, not a new color. */
+html.public-dark:has(.public-site),
+html.public-dark:has(.public-site) body {
+  background-color: #0a1220;
+}
+html.public-dark:has(.public-site) {
+  color-scheme: dark;
+}
+
 /* Map the existing public components' utility classes onto the dark palette.
    Keeping this scoped means the current card/section components, and future
    CMS-driven public content using the same utilities, all switch together. */
@@ -579,6 +592,139 @@
 
 .public-dark .public-site hr {
   border-color: var(--public-border-soft);
+}
+
+/* Brand-blue text, borders, rings and fills are lifted to the existing
+   `--color-primary-light` token in dark mode: `#2563EB` on `#0a1220` is
+   roughly 2.5:1, which fails even large-text contrast. Every interactive
+   variant used on the public site is covered so hover/focus/peer/marker
+   states can never strand an element in the unreadable light color. */
+.public-dark .public-site [class~="text-primary"] {
+  color: var(--color-primary-light) !important;
+}
+.public-dark .public-site [class~="hover:text-primary"]:hover,
+.public-dark .public-site [class~="active:text-primary"]:active,
+.public-dark .public-site .group:hover [class~="group-hover:text-primary"],
+.public-dark .public-site .peer:focus ~ [class~="peer-focus:text-primary"] {
+  color: var(--color-primary-light) !important;
+}
+.public-dark .public-site [class~="marker:text-primary"]::marker,
+.public-dark .public-site [class~="marker:text-primary"] *::marker {
+  color: var(--color-primary-light) !important;
+}
+.public-dark .public-site [class~="hover:text-primary-dark"]:hover {
+  color: #a7c9ff !important;
+}
+.public-dark .public-site [class~="border-primary"] {
+  border-color: var(--color-primary-light) !important;
+}
+.public-dark .public-site [class~="hover:border-primary"]:hover,
+.public-dark .public-site .group:hover [class~="group-hover:border-primary"],
+.public-dark .public-site [class~="focus:border-primary"]:focus {
+  border-color: var(--color-primary-light) !important;
+}
+/* Invalid fields keep their dark error border on focus instead of flashing
+   the light `#b91c1c` — the same `#7f3346` the resting `border-red-700`
+   already maps to. */
+.public-dark .public-site [class~="focus:border-red-700"]:focus {
+  border-color: #7f3346 !important;
+}
+.public-dark .public-site [class~="ring-primary"] {
+  --tw-ring-color: var(--color-primary-light) !important;
+}
+.public-dark .public-site [class~="fill-primary"] {
+  fill: var(--color-primary-light) !important;
+}
+
+/* High-opacity white surfaces become the dark surface in the same hue as the
+   existing `bg-white/80` mapping: the navbar (`/90`), the save button and
+   the card "View details" pill (`/95`, plus its solid-white hover). The
+   low-opacity whites (`/5`, `/10`) are deliberately untouched — they only
+   ever sit on surfaces that are dark in both themes (heroes, footer, the
+   brand-blue panel). */
+.public-dark .public-site [class~="bg-white/90"] {
+  background-color: rgb(17 28 45 / 0.9) !important;
+}
+.public-dark .public-site [class~="bg-white/95"] {
+  background-color: rgb(17 28 45 / 0.95) !important;
+}
+.public-dark .public-site [class~="hover:bg-white"]:hover {
+  background-color: var(--public-surface) !important;
+}
+
+/* Skeleton blocks keep their translucency over the dark surface instead of
+   flashing light gray while content loads. `#22334d` is the existing dark
+   value for `bg-gray-200`. */
+.public-dark .public-site [class~="bg-gray-200/90"] {
+  background-color: rgb(34 51 77 / 0.9) !important;
+}
+.public-dark .public-site [class~="bg-gray-200/70"] {
+  background-color: rgb(34 51 77 / 0.7) !important;
+}
+
+/* The skeleton sheen is white by default; the portal already quiets it for
+   dark mode and the public site needs the identical treatment. */
+.public-dark .public-site .shimmer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 255 255 / 0.07) 45%,
+    rgb(255 255 255 / 0.14) 50%,
+    rgb(255 255 255 / 0.07) 55%,
+    transparent 100%
+  );
+}
+
+/* Row hover tint on the property details page — the same `#12243c` the
+   resting `bg-background-soft` already maps to. */
+.public-dark .public-site [class~="hover:bg-background-soft"]:hover {
+  background-color: #12243c !important;
+}
+
+/* Form controls: hover lightens the border toward the field text instead of
+   darkening it (the light-theme direction, which would vanish on dark
+   surfaces). `#8fa1b8` is the existing dark `text-gray-400` tone. */
+.public-dark .public-site [class~="hover:border-gray-700"]:hover {
+  border-color: #8fa1b8 !important;
+}
+.public-dark .public-site select:hover:not(:disabled) {
+  border-color: #8fa1b8;
+}
+
+/* The navbar's scrolled hairline carries an alpha the base `border-gray-200`
+   mapping doesn't cover. */
+.public-dark .public-site [class~="border-gray-200/80"] {
+  border-color: var(--public-border) !important;
+}
+
+/* Favorites badge ring matches the dark navbar instead of haloing white. */
+.public-dark .public-site [class~="ring-white"] {
+  --tw-ring-color: var(--public-surface) !important;
+}
+
+/* Decorative translucent brand text (giant 404 numeral, testimonial quote
+   marks) is mixed from the existing primary-light token so it stays visible
+   without turning solid. */
+.public-dark .public-site [class~="text-primary/15"] {
+  color: color-mix(in srgb, var(--color-primary-light) 15%, transparent) !important;
+}
+.public-dark .public-site [class~="text-primary/40"] {
+  color: color-mix(in srgb, var(--color-primary-light) 40%, transparent) !important;
+}
+
+/* Opt-out for elements that sit on a surface which is identical in both
+   themes — currently the white CTA button on the brand-blue panel. Without
+   it the global `bg-white` / `hover:bg-gray-100` / `text-primary-dark`
+   remaps would paint a dark button on the unchanged blue panel. The values
+   are the light-theme originals, re-asserted with higher specificity. */
+.public-dark .public-site [class~="keep-light"][class~="bg-white"] {
+  background-color: #ffffff !important;
+}
+.public-dark .public-site [class~="keep-light"][class~="hover:bg-gray-100"]:hover {
+  background-color: #f3f4f6 !important;
+}
+.public-dark .public-site [class~="keep-light"][class~="text-primary-dark"] {
+  color: var(--color-primary-dark) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -51,8 +51,11 @@ export function CTASection() {
                 href={PRIMARY_CTA.href}
                 className={buttonClasses({
                   size: "lg",
+                  // `keep-light`: the panel behind this button is brand blue
+                  // in both themes, so the button opts out of the dark remaps
+                  // (see globals.css) instead of turning dark-on-blue.
                   className:
-                    "w-full gap-2 bg-white px-10 font-bold text-primary-dark hover:bg-gray-100 focus-visible:outline-white sm:w-auto",
+                    "keep-light w-full gap-2 bg-white px-10 font-bold text-primary-dark hover:bg-gray-100 focus-visible:outline-white sm:w-auto",
                 })}
               >
                 {PRIMARY_CTA.label}
