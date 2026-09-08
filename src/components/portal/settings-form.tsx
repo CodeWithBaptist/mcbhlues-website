@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, Notice } from "./ui";
+import { Card, Notice, portalInputClass } from "./ui";
 import { useSession } from "./permission-provider";
+import { cn } from "@/lib/utils";
 
 export interface SettingFieldOption {
   value: string;
@@ -134,7 +135,7 @@ export function SettingsForm({
                   <span className="mb-1.5 block text-sm font-medium text-gray-700">{field.label}</span>
                   {field.type === "select" ? (
                     <select
-                      className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 text-sm text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                      className={cn(portalInputClass, "disabled:opacity-50")}
                       value={value}
                       disabled={!editable}
                       onChange={(event) => update(event.target.value)}
@@ -147,7 +148,7 @@ export function SettingsForm({
                     </select>
                   ) : field.type === "textarea" ? (
                     <textarea
-                      className="min-h-24 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                      className={cn(portalInputClass, "h-auto min-h-24 py-2 disabled:opacity-50")}
                       value={value}
                       placeholder={field.placeholder}
                       disabled={!editable}

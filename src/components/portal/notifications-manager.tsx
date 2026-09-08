@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { NotificationRow } from "@/lib/notifications/notification-service";
-import { Card, EmptyState, Notice } from "./ui";
+import { Card, EmptyState, Notice, portalInputClass } from "./ui";
 import { ModalShell } from "./modal-shell";
 
 const KIND_ICONS: Record<string, React.ReactNode> = {
@@ -223,7 +223,7 @@ function ComposeDialog({
   return (
     <ModalShell onClose={onClose} label="Send notification" align="center">
       {(close) => (
-      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-2xl">
+      <form onSubmit={submit} className="portal-modal-panel w-full max-w-md rounded-xl bg-white shadow-lift">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">Send notification</h2>
           <button type="button" onClick={close} className="text-gray-400 hover:text-gray-700" aria-label="Close">
@@ -244,7 +244,7 @@ function ComposeDialog({
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Kind</span>
               <select
-                className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className={portalInputClass}
                 value={kind}
                 onChange={(e) => setKind(e.target.value)}
               >
@@ -257,7 +257,7 @@ function ComposeDialog({
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Recipient</span>
               <select
-                className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className={portalInputClass}
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
               >

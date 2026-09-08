@@ -18,15 +18,12 @@ export function LegalHero({
   lastUpdated: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-dark py-16 text-white sm:py-20">
-      <div className="absolute inset-0 opacity-10" aria-hidden="true">
-        <div className="absolute inset-0 bg-[radial-gradient(#2563EB_1px,transparent_1px)] [background-size:40px_40px]" />
-      </div>
-      <Container className="relative z-10">
-        <p className="mb-4 text-sm font-bold uppercase tracking-widest text-primary-light">
+    <section className="bg-dark py-16 text-white sm:py-20">
+      <Container>
+        <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-primary-light">
           {eyebrow}
         </p>
-        <h1 className="font-heading text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
+        <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
           {title}
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-gray-200 sm:text-lg">
@@ -126,7 +123,7 @@ export function Placeholder({ children }: { children: React.ReactNode }) {
 
 export function LegalFooterNote() {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
       <h2 className="mb-2 font-heading text-lg font-bold text-dark">Questions?</h2>
       <p className="text-base leading-relaxed text-gray-700">
         If anything on this page is unclear, please{" "}

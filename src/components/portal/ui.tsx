@@ -119,6 +119,76 @@ export function StatusPill({ status }: { status: string }) {
   );
 }
 
+/**
+ * Class string for the portal's native `<select>` / ad-hoc inputs so they match
+ * the shared `Input` (height, radius, border and focus halo) without wrapping
+ * every native control in a component. `portal.css` supplies the theme colours.
+ */
+export const portalInputClass =
+  "h-12 w-full rounded-md border border-gray-500 bg-white px-4 py-2 text-sm text-dark shadow-2xs transition-[border-color,box-shadow] duration-200 ease-soft placeholder:text-gray-500 hover:border-gray-700 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+/** Labelled form row used by every portal editor. */
+export function Field({
+  label,
+  hint,
+  children,
+  className,
+}: {
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <label className={cn("block min-w-0", className)}>
+      <span className="mb-1.5 block text-sm font-medium text-gray-700">{label}</span>
+      {children}
+      {hint && <span className="mt-1.5 block text-xs leading-relaxed text-gray-500">{hint}</span>}
+    </label>
+  );
+}
+
+/**
+ * Compact icon-only row action for tables (edit, publish, delete…). The
+ * `title` doubles as the accessible name. `portal.css` lifts the hit area to
+ * 38px on desktop and 44px on touch layouts.
+ */
+export function IconAction({
+  children,
+  title,
+  danger,
+  success,
+  disabled,
+  onClick,
+}: {
+  children: React.ReactNode;
+  title: string;
+  danger?: boolean;
+  success?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      title={title}
+      aria-label={title}
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md border bg-white p-1.5 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-40",
+        danger
+          ? "border-red-200 text-red-700 hover:border-red-300 hover:bg-red-50"
+          : success
+            ? "border-green-200 text-green-700 hover:border-green-300 hover:bg-green-50"
+            : "border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function EmptyState({
   title,
   description,
@@ -134,7 +204,7 @@ export function EmptyState({
     <div className="portal-empty px-4 py-8 text-center">
       {icon && (
         <div
-          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 text-gray-400 ring-1 ring-gray-200"
+          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-500"
           aria-hidden="true"
         >
           {icon}
@@ -175,10 +245,10 @@ export function Notice({
   className?: string;
 }) {
   const tones = {
-    ok: "border-green-200 bg-green-50 text-green-800 shadow-green-500/10",
-    error: "border-red-200 bg-red-50 text-red-800 shadow-red-500/10",
-    info: "border-blue-200 bg-blue-50 text-blue-800 shadow-blue-500/10",
-    warning: "border-amber-200 bg-amber-50 text-amber-900 shadow-amber-500/10",
+    ok: "border-green-200 bg-green-50 text-green-800",
+    error: "border-red-200 bg-red-50 text-red-800",
+    info: "border-blue-200 bg-blue-50 text-blue-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-900",
   } as const;
 
   const [leaving, setLeaving] = useState(false);
@@ -224,7 +294,7 @@ export function Notice({
           type="button"
           onClick={dismiss}
           aria-label="Dismiss message"
-          className=" -mr-1 shrink-0 rounded-lg p-1.5 opacity-60 transition-all hover:bg-black/5 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className="-mr-1 shrink-0 rounded-md p-1.5 opacity-60 transition-opacity duration-200 hover:bg-black/5 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true" fill="currentColor">
             <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
@@ -255,10 +325,8 @@ export function PermissionChecklist({
           <li
             key={entry.key}
             className={cn(
-              "flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-all duration-200",
-              allowed
-                ? "border-green-200 bg-green-50/70 hover:bg-green-50 shadow-sm"
-                : "border-gray-200 bg-gray-50 hover:bg-white"
+              "flex items-center justify-between gap-3 rounded-md border px-3.5 py-2.5 text-sm font-medium",
+              allowed ? "border-green-200 bg-green-50/70" : "border-gray-200 bg-gray-50"
             )}
           >
             <span className={allowed ? "text-gray-800" : "text-gray-400 line-through"}>
@@ -266,8 +334,8 @@ export function PermissionChecklist({
             </span>
             <code
               className={cn(
-                "rounded-lg px-1.5 py-1 text-[11px] font-semibold",
-                allowed ? "bg-green-100 text-green-800 ring-1 ring-green-200" : "bg-gray-200 text-gray-500"
+                "rounded px-1.5 py-1 text-[11px] font-semibold",
+                allowed ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-500"
               )}
             >
               {entry.key}

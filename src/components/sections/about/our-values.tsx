@@ -3,56 +3,63 @@
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Shield, Sparkles, Zap, Globe } from "lucide-react";
+import { FileCheck2, Handshake, ScrollText, UserCheck } from "lucide-react";
 
+/**
+ * The same four commitments the homepage makes ("What you can expect"),
+ * stated here as the principles behind them — so the two pages never
+ * describe the firm in different words.
+ */
 const values = [
   {
-    title: "Uncompromising Quality",
-    description: "We set the gold standard in every project, ensuring every detail reflects our commitment to excellence.",
-    icon: Shield,
+    title: "One accountable team",
+    description:
+      "The consultants, developers and managers you meet are the people who handle your project. You are not passed between departments.",
+    icon: UserCheck,
   },
   {
-    title: "Innovative Solutions",
-    description: "Embracing the latest technologies and sustainable practices to build properties for the next generation.",
-    icon: Zap,
+    title: "Costs agreed up front",
+    description:
+      "Budgets, fees and timelines are set out in writing before work starts, and payments are released against agreed milestones.",
+    icon: ScrollText,
   },
   {
-    title: "Client-Centricity",
-    description: "Your vision is our blueprint. We work tirelessly to bring your luxury living dreams to life.",
-    icon: Sparkles,
+    title: "Advice, not sales",
+    description:
+      "When we advise you on what to buy, the recommendation follows the brief you set, not whatever we happen to have on our books.",
+    icon: Handshake,
   },
   {
-    title: "Global Vision",
-    description: "While we have local expertise, we operate with a global perspective to deliver world-class results.",
-    icon: Globe,
+    title: "Contracts we can defend",
+    description:
+      "Purchase, tenancy and management agreements are reviewed by our own legal team before you sign anything.",
+    icon: FileCheck2,
   },
 ];
 
 export function OurValues() {
   return (
-    <section className="py-24 bg-background-soft">
+    <section className="bg-background-soft py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="Core Principles"
-          title="What Defines Us"
-          description="At MCBHLUES ENTERPRISES, we are driven by a set of core values that ensure we remain at the pinnacle of the real estate industry."
+          eyebrow="How we work"
+          title="The principles behind every engagement"
+          description="Four commitments we make on every project, whatever its size."
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {values.map((value, index) => (
             <motion.div
               key={value.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-lg transition-all"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.06 }}
+              className="rounded-xl border border-gray-200 bg-white p-7"
             >
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
-                <value.icon className="w-7 h-7" />
-              </div>
-              <h4 className="text-xl font-bold font-heading mb-4 text-dark">{value.title}</h4>
-              <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+              <value.icon className="mb-5 h-6 w-6 text-primary" aria-hidden="true" />
+              <h3 className="mb-3 font-heading text-lg font-bold text-dark">{value.title}</h3>
+              <p className="text-sm leading-relaxed text-gray-600">{value.description}</p>
             </motion.div>
           ))}
         </div>

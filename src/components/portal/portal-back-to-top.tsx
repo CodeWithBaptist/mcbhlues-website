@@ -39,11 +39,11 @@ export function PortalBackToTop() {
           onClick={scrollToTop}
           aria-label="Back to top"
           title="Back to top"
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
-          animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.96 }}
-          transition={reduceMotion ? { duration: 0.12 } : { type: "spring", stiffness: 340, damping: 26 }}
-          className="fixed bottom-5 right-4 z-30 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-[0_8px_24px_-12px_rgba(15,23,42,0.22),0_4px_12px_rgba(15,23,42,0.08)] ring-1 ring-gray-200 transition-colors hover:bg-primary hover:text-white hover:ring-primary sm:bottom-6 sm:right-6"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed bottom-5 right-4 z-30 inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-dark shadow-lift transition-colors duration-200 hover:border-primary hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:bottom-6 sm:right-6"
         >
           <ArrowUp className="h-4 w-4" />
         </motion.button>

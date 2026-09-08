@@ -3,62 +3,64 @@
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { ClipboardCheck, Calendar, FileText, CheckCircle2 } from "lucide-react";
 
 const steps = [
   {
-    icon: ClipboardCheck,
-    title: "Apply Online",
-    description: "Submit your application and required documents through our secure portal.",
+    step: "01",
+    title: "Choose and view",
+    description:
+      "Pick the rentals that fit your needs and budget from the list below. We arrange viewings at times that suit you.",
   },
   {
-    icon: FileText,
-    title: "Vetting & Approval",
-    description: "Our team reviews your application and conducts necessary background checks.",
+    step: "02",
+    title: "Apply",
+    description:
+      "Tell your consultant you would like to proceed. We confirm the terms, rent and deposit in writing and collect the documents the landlord needs.",
   },
   {
-    icon: Calendar,
-    title: "Schedule Viewing",
-    description: "Once pre-approved, schedule a private tour of your selected properties.",
+    step: "03",
+    title: "Review the lease",
+    description:
+      "Our legal team reviews the tenancy agreement and walks you through it before you sign anything.",
   },
   {
-    icon: CheckCircle2,
-    title: "Move In",
-    description: "Sign the agreement, collect your keys, and enjoy your new luxury home.",
+    step: "04",
+    title: "Move in",
+    description:
+      "Sign, pay the agreed amounts and collect your keys. Where we manage the building, the same team looks after it once you are in.",
   },
 ];
 
 export function RentProcess() {
   return (
-    <section className="py-24">
+    <section className="py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="Smooth Transitions"
-          title="How to Rent with Us"
-          description="We've streamlined our rental process to be as fast and transparent as possible."
+          eyebrow="How it works"
+          title="Renting with us, step by step"
+          description="From first viewing to move-in, with the paperwork explained along the way."
         />
 
-        <div className="max-w-4xl mx-auto">
-           <div className="grid sm:grid-cols-2 gap-12">
-              {steps.map((step, index) => (
-                 <motion.div
-                    key={step.title}
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    className="flex gap-6 items-start"
-                 >
-                    <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
-                       <step.icon className="w-8 h-8" />
-                    </div>
-                    <div>
-                       <h4 className="text-xl font-bold font-heading mb-2 text-dark">{step.title}</h4>
-                       <p className="text-gray-600 leading-relaxed text-sm">{step.description}</p>
-                    </div>
-                 </motion.div>
-              ))}
-           </div>
-        </div>
+        <ol className="mx-auto grid max-w-4xl gap-x-12 gap-y-10 sm:grid-cols-2">
+          {steps.map((step, index) => (
+            <motion.li
+              key={step.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.06 }}
+              className="flex gap-6"
+            >
+              <span className="shrink-0 font-heading text-sm font-semibold tabular-nums text-primary">
+                {step.step}
+              </span>
+              <div>
+                <h3 className="mb-2 font-heading text-xl font-bold text-dark">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-gray-600">{step.description}</p>
+              </div>
+            </motion.li>
+          ))}
+        </ol>
       </Container>
     </section>
   );

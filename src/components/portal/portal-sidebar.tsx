@@ -146,7 +146,7 @@ export function PortalSidebar({ navigation, logoUrl, companyName }: { navigation
             <Icons.Search className="pointer-events-none absolute left-3 h-4 w-4 text-gray-500" />
             <input ref={searchRef} value={query} onChange={(e) => setQuery(e.target.value)}
               placeholder="Filter menu…" aria-label="Filter navigation"
-              className="h-11 w-full rounded-md border border-gray-200 bg-white pl-9 pr-10 text-sm text-dark placeholder:text-gray-500" />
+              className="h-11 w-full rounded-md border border-gray-200 bg-white pl-9 pr-10 text-sm text-dark transition-[border-color,box-shadow] duration-200 placeholder:text-gray-500 hover:border-gray-300 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10" />
             {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear filter" className="absolute right-0 flex h-11 w-10 items-center justify-center text-gray-500 hover:text-primary"><Icons.X className="h-4 w-4" /></button>}
           </label>
           {query && <p className="mt-2 text-xs text-gray-500">{filteredCount} of {totalItems} items</p>}
@@ -169,7 +169,7 @@ export function PortalSidebar({ navigation, logoUrl, companyName }: { navigation
                     aria-label={compact ? item.label : undefined} title={compact ? item.label : undefined}
                     className={cn("portal-nav-link group flex min-h-11 items-center gap-3 border-l-2 px-3 text-sm font-medium transition-colors duration-200",
                       compact && "justify-center px-2",
-                      active ? "border-primary text-primary" : "border-transparent text-gray-600 hover:border-primary/40 hover:text-primary")}>
+                      active ? "border-primary text-primary" : "border-transparent text-gray-600 hover:border-gray-300 hover:text-primary")}>
                     <Icon name={item.icon} className="h-[18px] w-[18px] shrink-0" />
                     {!compact && <span>{item.label}</span>}
                   </Link>
@@ -180,18 +180,10 @@ export function PortalSidebar({ navigation, logoUrl, companyName }: { navigation
         ))}
       </nav>
       <div className="shrink-0 border-t border-gray-200 p-4">
-        <div className={cn("flex items-center gap-3", compact && "justify-center")}>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-700">{initials}</span>
-          {!compact && <div className="min-w-0"><p className="truncate text-sm font-semibold text-dark">{user.firstName} {user.lastName}</p><p className="text-xs text-gray-500">{roleLabel}</p></div>}
+        <div className={cn("flex items-center gap-3", compact && "justify-center")} title={compact ? `${user.firstName} ${user.lastName}` : undefined}>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-700" aria-hidden="true">{initials}</span>
+          {!compact && <div className="min-w-0"><p className="truncate text-sm font-semibold text-dark">{user.firstName} {user.lastName}</p><p className="truncate text-xs text-gray-500">{roleLabel}</p></div>}
         </div>
-        {!compact && <>
-          <div className="mt-3 flex flex-wrap gap-x-4 text-xs font-medium text-gray-600">
-            <Link href="/portal/account/password" onClick={() => setOpen(false)} className="inline-flex min-h-11 items-center hover:text-primary">Password</Link>
-            <Link href="/portal/notifications" onClick={() => setOpen(false)} className="inline-flex min-h-11 items-center hover:text-primary">Alerts</Link>
-            <Link href="/" target="_blank" className="inline-flex min-h-11 items-center gap-1 hover:text-primary">Website<Icons.ExternalLink className="h-3 w-3" /></Link>
-          </div>
-          <p className="mt-1 text-xs text-gray-500">{user.permissions.length} permissions</p>
-        </>}
       </div>
     </div>
   );

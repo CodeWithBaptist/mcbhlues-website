@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowRight, Heart } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { PropertyCard } from "@/components/ui/property-card";
+import { ListingGrid } from "@/components/ui/listing-grid";
 import { PropertyCardSkeleton } from "@/components/ui/skeletons";
 import { buttonClasses } from "@/components/ui/button";
 import { useHydrated } from "@/lib/consent";
@@ -32,7 +31,7 @@ export function FavoritesList({ properties }: { properties: Property[] }) {
   // the list is empty. Show neutral placeholders until hydration finishes.
   if (!hydrated) {
     return (
-      <section className="py-24">
+      <section className="py-12 sm:py-16">
         <Container>
           <p className="sr-only" role="status">
             Loading your saved properties
@@ -49,16 +48,13 @@ export function FavoritesList({ properties }: { properties: Property[] }) {
 
   if (savedProperties.length === 0) {
     return (
-      <section className="py-24 text-center">
+      <section className="py-16 text-center sm:py-24">
         <Container>
           <div className="mx-auto max-w-md">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Heart className="h-10 w-10" aria-hidden="true" />
-            </div>
-            <h2 className="mb-4 font-heading text-3xl font-bold text-dark">No saved properties yet</h2>
+            <Heart className="mx-auto mb-6 h-8 w-8 text-gray-400" aria-hidden="true" />
+            <h2 className="mb-3 font-heading text-2xl font-bold text-dark">Nothing saved yet</h2>
             <p className="mb-8 text-gray-600">
-              Tap the heart on any listing to save it here. Your list is kept in
-              this browser only — we never see it.
+              Tap the heart on any listing to keep it here for later.
             </p>
             <Link
               href="/properties"
@@ -67,7 +63,7 @@ export function FavoritesList({ properties }: { properties: Property[] }) {
                 className: "gap-2",
               })}
             >
-              Browse Properties
+              Browse properties
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </Link>
           </div>
@@ -77,45 +73,24 @@ export function FavoritesList({ properties }: { properties: Property[] }) {
   }
 
   return (
-    <section className="py-12">
+    <section className="py-12 sm:py-16">
       <Container>
-        <div className="mb-12 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Heart className="h-6 w-6 fill-primary" aria-hidden="true" />
-            </div>
-            <div>
-              <h2 className="font-heading text-3xl font-bold text-dark">Your saved properties</h2>
-              <p className="text-sm text-gray-600">
-                {savedProperties.length}{" "}
-                {savedProperties.length === 1 ? "listing" : "listings"} saved in this browser
-              </p>
-            </div>
-          </div>
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-sm text-gray-600" aria-live="polite">
+            {savedProperties.length}{" "}
+            {savedProperties.length === 1 ? "listing" : "listings"} saved
+          </p>
           <button
             type="button"
             onClick={clearFavorites}
-            className="rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 underline underline-offset-4 transition hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="text-sm font-semibold text-gray-700 underline-offset-4 transition-colors duration-200 hover:text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Clear all
           </button>
         </div>
 
-        <div
-          className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-          aria-live="polite"
-        >
-          {savedProperties.map((property, index) => (
-            <motion.div
-              key={property.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: Math.min(index, 5) * 0.05 }}
-            >
-              <PropertyCard property={property} priority={index < 3} />
-            </motion.div>
-          ))}
-        </div>
+        {/* The empty state is handled above, before the grid renders. */}
+        <ListingGrid properties={savedProperties} />
 
         <p className="mt-12 text-center text-gray-600">
           Ready to move on one of these?{" "}

@@ -14,20 +14,20 @@
   --font-heading: "Poppins", sans-serif;
   --font-body: "Inter", sans-serif;
 
-  /* Motion language: one soft ease for entrances, one spring for taps, and a
-     shared duration scale so hover/press feedback feels consistent site-wide. */
+  /* Motion language: one ease-out curve for everything, and three durations —
+     micro feedback 150–250ms, standard transitions 200–350ms, page and section
+     entrances 300–500ms. Nothing overshoots or bounces. */
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Depth scale — `soft` for resting cards, `lift` for the hovered state. */
+  /* Depth scale — `soft` for resting cards, `lift` for the hovered state and
+     floating panels. No coloured glows. */
   --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 10px 24px -18px rgb(15 23 42 / 0.28);
   --shadow-lift: 0 2px 4px rgb(15 23 42 / 0.04), 0 24px 44px -22px rgb(15 23 42 / 0.34);
-  --shadow-glow: 0 12px 30px -12px rgb(37 99 235 / 0.45);
 
   --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-fade-up: fade-up 0.4s var(--ease-soft) both;
-  --animate-fade-in: fade-in 0.3s ease-out both;
-  --animate-pop: pop 0.35s var(--ease-spring) both;
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-pop: pop 0.25s var(--ease-soft) both;
   --animate-shake: shake 0.4s ease-in-out both;
 }
 
@@ -68,15 +68,14 @@
   }
 }
 
+/* State-change acknowledgement (saved heart, badge count): a short settle,
+   not a bounce. */
 @keyframes pop {
-  0% {
+  from {
     opacity: 0;
-    transform: scale(0.6);
+    transform: scale(0.8);
   }
-  60% {
-    transform: scale(1.12);
-  }
-  100% {
+  to {
     opacity: 1;
     transform: scale(1);
   }
@@ -145,12 +144,12 @@
 /* Lift-on-hover surface used by cards that are not `<button>`s. */
 .card-lift {
   transition:
-    transform 0.28s var(--ease-soft),
-    box-shadow 0.28s var(--ease-soft),
-    border-color 0.28s ease;
+    transform 0.25s var(--ease-soft),
+    box-shadow 0.25s var(--ease-soft),
+    border-color 0.25s ease;
 }
 .card-lift:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-lift);
 }
 
@@ -1290,6 +1289,104 @@ html {
 
 .public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-green-700"] {
   color: #6ee7a8 !important;
+}
+
+/* Interactive tints and rings shared by the portal managers. Each maps onto a
+   surface or border value that already exists above, so hover/focus states
+   never strand a control in a light-theme colour. */
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-red-50"]:hover {
+  background-color: #351a25 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-green-50"]:hover {
+  background-color: #102d25 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-blue-50/40"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-blue-100"]:hover {
+  background-color: #122944 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-gray-50/70"]:hover {
+  background-color: #17253a !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:bg-gray-200/60"]:hover {
+  background-color: #22334d !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-gray-300"]:hover {
+  border-color: #38506f !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-red-200"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-red-300"]:hover {
+  border-color: #713144 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-gray-600"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-gray-700"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .group:hover [class~="group-hover:text-gray-600"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) .group:hover [class~="group-hover:text-gray-700"] {
+  color: #dbe5f2 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-red-600"]:hover {
+  color: #fda4af !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-blue-700"]:hover {
+  color: #93c5fd !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary/50"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="text-primary/60"] {
+  color: color-mix(in srgb, var(--color-primary-light) 70%, transparent) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-gray-100"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-gray-200"] {
+  --tw-ring-color: var(--public-border) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-blue-100"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-blue-200"] {
+  --tw-ring-color: #2c557e !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-green-200"] {
+  --tw-ring-color: #28634e !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-amber-100"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-amber-200"] {
+  --tw-ring-color: #705621 !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-red-200"] {
+  --tw-ring-color: #713144 !important;
+}
+
+/* Translucent brand borders/rings used by portal hover and focus states. In
+   dark mode they are mixed from the existing primary-light token, the same
+   way the solid `border-primary` remap above works, so the halo stays visible
+   against the dark surfaces without introducing a new colour. */
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-primary/40"]:hover,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-primary/50"]:hover {
+  border-color: color-mix(in srgb, var(--color-primary-light) 55%, transparent) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus:ring-primary/10"]:focus,
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus:ring-primary/30"]:focus {
+  --tw-ring-color: color-mix(in srgb, var(--color-primary-light) 25%, transparent) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus-within:border-gray-300"]:focus-within {
+  border-color: #38506f !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="focus:bg-white"]:focus {
+  background-color: var(--public-surface) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="divide-gray-200"] > :not(:last-child) {
+  border-color: var(--public-border) !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:border-green-300"]:hover {
+  border-color: #28634e !important;
+}
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="hover:text-red-700"]:hover {
+  color: #ffb4b4 !important;
+}
+/* Input error halo (`ring-red-700/10`) over the dark red border tone. */
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="ring-red-700/10"] {
+  --tw-ring-color: rgb(127 51 70 / 0.35) !important;
+}
+/* Status-pill dots for the neutral states. */
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-400"],
+.public-dark :is(.public-site, .staff-portal, .staff-auth) [class~="bg-gray-500"] {
+  background-color: #6b7f9c !important;
 }
 
 /* While a row action is in flight the whole table dims: one clear signal that

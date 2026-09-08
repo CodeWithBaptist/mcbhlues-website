@@ -40,12 +40,12 @@ export default async function PortalLayout({ children }: { children: React.React
       }}
     >
       <div className="staff-portal flex min-h-screen">
-        <a href="#main-content" className="sr-only fixed left-4 top-4 z-[120] rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-lg focus:not-sr-only focus:outline-none focus:ring-4 focus:ring-primary/30">
+        <a href="#main-content" className="sr-only fixed left-4 top-4 z-[120] rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-lift focus:not-sr-only focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Skip to main content
         </a>
         <PortalSidebar navigation={navigation} logoUrl={company.logoUrl} companyName={company.name} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <PortalTopbar />
+          <PortalTopbar navigation={navigation} />
           <main id="main-content" className="portal-main min-w-0 flex-1 px-4 py-6 sm:px-6 lg:py-8 xl:px-8">
             {children}
           </main>

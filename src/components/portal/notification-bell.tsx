@@ -52,7 +52,7 @@ export function NotificationBell() {
       title="Notifications"
     >
       <Bell
-        className="h-5 w-5 transition-transform duration-200 ease-soft group-hover:scale-110"
+        className="h-5 w-5 transition-colors duration-200"
         aria-hidden="true"
       />
       {unread !== null && unread > 0 && (

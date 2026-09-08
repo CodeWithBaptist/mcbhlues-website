@@ -3,67 +3,75 @@
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Building2, Target, Heart } from "lucide-react";
+import { SERVICES } from "@/constants";
+
+const commitments = [
+  {
+    title: "Our approach to projects",
+    description:
+      "Every job starts with a written brief and an agreed budget, then moves through the stages we sign off on together, in writing.",
+  },
+  {
+    title: "How we work",
+    description:
+      "A named consultant stays on your case, progress is reported at set intervals, and you review and approve before any money moves.",
+  },
+];
 
 export function OurStory() {
   return (
-    <section className="py-24">
+    <section className="py-20 sm:py-24">
       <Container>
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
           >
             <SectionHeading
               align="left"
               eyebrow="What we do"
               title="Consulting, development and management under one roof"
               description="Buying, building and running property each need different skills. We keep them in one firm so the handover from one stage to the next does not fall through the cracks."
-              className="mb-8"
+              className="mb-10"
             />
-            <div className="space-y-6">
-              <div className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                  <Target className="w-6 h-6" />
+            <dl className="divide-y divide-gray-200 border-y border-gray-200">
+              {commitments.map((item) => (
+                <div key={item.title} className="grid gap-2 py-6 sm:grid-cols-3 sm:gap-6">
+                  <dt className="font-heading text-base font-bold text-dark">{item.title}</dt>
+                  <dd className="text-sm leading-relaxed text-gray-600 sm:col-span-2">{item.description}</dd>
                 </div>
-                <div>
-                  <h4 className="font-bold text-dark mb-1">Our approach to projects</h4>
-                  <p className="text-gray-600 text-sm">Every job starts with a written brief and an agreed budget, then moves through the stages we sign off on together, in writing.</p>
-                </div>
-              </div>
-              <div className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-primary/20 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                  <Heart className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-dark mb-1">How we work</h4>
-                  <p className="text-gray-600 text-sm">A named consultant stays on your case, progress is reported at set intervals, and you review and approve before any money moves.</p>
-                </div>
-              </div>
-            </div>
+              ))}
+            </dl>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ delay: 0.08 }}
+            className="rounded-xl border border-gray-200 bg-background-soft p-8 sm:p-10"
           >
-            <div className="aspect-video rounded-3xl bg-primary-soft overflow-hidden relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/40 to-transparent z-10" />
-              <div className="absolute inset-0 flex items-center justify-center z-20">
-                <Building2 className="w-24 h-24 text-white opacity-50 group-hover:scale-110 transition-transform duration-500" />
-              </div>
-            </div>
-            <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hidden md:block z-30 max-w-[240px]">
-              <p className="text-primary font-black text-4xl mb-1">One team</p>
-              <p className="text-gray-600 text-xs font-bold uppercase tracking-tight">
-                From first viewing through handover and beyond
-              </p>
-            </div>
+            <p className="mb-6 text-sm font-semibold uppercase tracking-widest text-primary">
+              The three services
+            </p>
+            <ol className="space-y-6">
+              {SERVICES.map((service, index) => (
+                <li key={service.id} className="flex gap-5">
+                  <span className="font-heading text-sm font-semibold tabular-nums text-gray-500">
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <h3 className="font-heading text-lg font-bold text-dark">{service.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{service.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-8 border-t border-gray-200 pt-6 text-sm leading-relaxed text-gray-600">
+              One team and one point of contact from the first viewing through to
+              handover and beyond.
+            </p>
           </motion.div>
         </div>
       </Container>

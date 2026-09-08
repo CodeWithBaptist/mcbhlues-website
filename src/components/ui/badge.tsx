@@ -8,8 +8,8 @@ interface BadgeProps {
 
 export function Badge({ children, variant = "primary", className }: BadgeProps) {
   const variants = {
-    primary: "bg-primary text-white shadow-sm shadow-primary/30",
-    secondary: "bg-primary-dark text-white shadow-sm shadow-primary-dark/30",
+    primary: "bg-primary text-white",
+    secondary: "bg-primary-dark text-white",
     outline: "border border-primary text-primary",
     light: "bg-background-soft text-primary-dark",
   };
@@ -17,7 +17,7 @@ export function Badge({ children, variant = "primary", className }: BadgeProps) 
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider transition-colors duration-200",
+        "inline-flex items-center rounded-md px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-200",
         variants[variant],
         className
       )}

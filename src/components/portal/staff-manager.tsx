@@ -25,11 +25,13 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Can, useSession } from "./permission-provider";
+import { ModalShell } from "./modal-shell";
 import { StatCard } from "./stat-card";
-import { Card, EmptyState, StatusPill, Notice } from "./ui";
+import { Card, EmptyState, StatusPill, Notice, Field, IconAction, portalInputClass } from "./ui";
 
 export interface StaffRow {
   id: string;
@@ -196,10 +198,10 @@ export function StaffManager({
       {/*  Live overview                                                    */}
       {/* ---------------------------------------------------------------- */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
-        <StatCard label="Team members" value={`${stats.total}`} hint="All staff accounts" icon="Users" tone="primary" />
-        <StatCard label="Active" value={`${stats.active}`} hint="Can sign in now" icon="UserCheck" tone="emerald" />
-        <StatCard label="Invited" value={`${stats.invited}`} hint="Awaiting first sign-in" icon="MailPlus" tone="amber" />
-        <StatCard label="Disabled" value={`${stats.disabled}`} hint="Access suspended" icon="UserX" tone="slate" />
+        <StatCard label="Team members" value={`${stats.total}`} hint="All staff accounts" />
+        <StatCard label="Active" value={`${stats.active}`} hint="Can sign in now" />
+        <StatCard label="Invited" value={`${stats.invited}`} hint="Awaiting first sign-in" />
+        <StatCard label="Disabled" value={`${stats.disabled}`} hint="Access suspended" />
       </div>
 
       {message && (
@@ -251,31 +253,13 @@ export function StaffManager({
               onChange={(event) => setQuery(event.target.value)}
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {filterTabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setStatusFilter(tab.id)}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-                  statusFilter === tab.id
-                    ? "border-primary bg-primary text-white shadow-sm"
-                    : "border-gray-200 bg-white text-gray-600 hover:border-primary/40 hover:text-primary"
-                )}
-              >
-                {tab.label}
-                <span
-                  className={cn(
-                    "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-                    statusFilter === tab.id ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-                  )}
-                >
-                  {tab.count}
-                </span>
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            scrollable
+            options={filterTabs.map((tab) => ({ label: `${tab.label} (${tab.count})`, value: tab.id }))}
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value as (typeof filterTabs)[number]["id"])}
+            label="Filter staff by status"
+          />
         </div>
 
         <Can permission="staff:create">
@@ -376,7 +360,7 @@ export function StaffManager({
                           {row.roles.map((role) => (
                             <span
                               key={role.id}
-                              className="group inline-flex items-center gap-1 rounded-full bg-primary/10 py-0.5 pl-2.5 pr-1.5 text-xs font-medium text-primary ring-1 ring-primary/15"
+                              className="group inline-flex items-center gap-1 rounded-md border border-gray-200 bg-gray-50 py-0.5 pl-2.5 pr-1.5 text-xs font-medium text-gray-700"
                             >
                               <ShieldCheck className="h-3 w-3 text-primary/60" />
                               {role.name}
@@ -605,82 +589,36 @@ export function StaffManager({
   );
 }
 
-function IconAction({
-  children,
-  onClick,
-  title,
-  disabled,
-  danger,
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  title: string;
-  disabled?: boolean;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      title={title}
-      aria-label={title}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "rounded-lg border p-2 transition-all disabled:cursor-not-allowed disabled:opacity-40",
-        danger
-          ? "border-red-200 text-red-600 hover:border-red-300 hover:bg-red-50"
-          : "border-gray-200 bg-white text-gray-500 hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
-      )}
-    >
-      {children}
-    </button>
-  );
-}
 
 /**
- * Shared modal shell for the staff dialogs: centered panel over a blurred
- * backdrop, Escape to close and body scroll locked while open.
+ * Staff dialogs sit on the shared `ModalShell` (focus trap, Escape, exit
+ * animation, focus restore). `children` may be a render function receiving the
+ * shell's `close` so inner buttons dismiss through the exit animation.
  */
 function ModalOverlay({
   onClose,
+  label,
   children,
   wide,
 }: {
   onClose: () => void;
-  children: React.ReactNode;
+  label: string;
+  children: React.ReactNode | ((close: () => void) => React.ReactNode);
   wide?: boolean;
 }) {
-  useEffect(() => {
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-
   return (
-    <div
-      className="portal-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 p-4 backdrop-blur-sm"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        className={cn(
-          "portal-modal-panel flex max-h-[86vh] w-full flex-col rounded-2xl bg-white shadow-2xl",
-          wide ? "max-w-3xl" : "max-w-md"
-        )}
-      >
-        {children}
-      </div>
-    </div>
+    <ModalShell onClose={onClose} label={label} align="center">
+      {(close) => (
+        <div
+          className={cn(
+            "portal-modal-panel flex max-h-[86vh] w-full flex-col rounded-xl bg-white shadow-lift",
+            wide ? "max-w-3xl" : "max-w-md"
+          )}
+        >
+          {typeof children === "function" ? children(close) : children}
+        </div>
+      )}
+    </ModalShell>
   );
 }
 
@@ -696,21 +634,21 @@ function ModalHeader({
   onClose: () => void;
 }) {
   return (
-    <header className="flex items-start justify-between gap-4 border-b border-gray-100 px-5 py-4">
-      <div className="flex items-start gap-3">
-        <span className="rounded-lg bg-primary/10 p-2 text-primary">{icon}</span>
-        <div>
+    <header className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4">
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="mt-0.5 shrink-0 text-primary" aria-hidden="true">{icon}</span>
+        <div className="min-w-0">
           <h2 className="font-heading text-base font-bold text-dark">{title}</h2>
-          {subtitle && <p className="mt-0.5 text-xs text-gray-500">{subtitle}</p>}
+          {subtitle && <p className="mt-0.5 text-xs leading-relaxed text-gray-500">{subtitle}</p>}
         </div>
       </div>
       <button
         type="button"
         onClick={onClose}
-        className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
-        aria-label="Close dialog"
+        className="-mr-2 -mt-1 shrink-0 rounded-md p-1.5 text-gray-500 transition-colors duration-200 hover:bg-gray-100 hover:text-gray-700"
+        aria-label="Close"
       >
-        <X className="h-4 w-4" />
+        <X className="h-5 w-5" />
       </button>
     </header>
   );
@@ -796,7 +734,7 @@ function CreateStaffForm({
         {canAssignRole && (
           <Field label="Role">
             <select
-              className="h-12 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-dark transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+              className={portalInputClass}
               value={form.roleId}
               onChange={(event) => setForm({ ...form, roleId: event.target.value })}
             >
@@ -837,14 +775,6 @@ function CreateStaffForm({
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-gray-700">{label}</span>
-      {children}
-    </label>
-  );
-}
 
 function EditStaffDetails({
   staff,
@@ -895,16 +825,18 @@ function EditStaffDetails({
   }
 
   return (
-    <ModalOverlay onClose={onClose}>
+    <ModalOverlay onClose={onClose} label="Edit staff details">
+      {(close) => (
+      <>
       <ModalHeader
         icon={<Pencil className="h-4 w-4" />}
         title="Edit staff details"
         subtitle={`Update the name and phone number for ${staff.email}. The sign-in email cannot be changed here.`}
-        onClose={onClose}
+        onClose={close}
       />
       <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col">
         <div className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
-          <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3.5 py-3 ring-1 ring-gray-100">
+          <div className="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 px-3.5 py-3">
             <Avatar row={staff} size="lg" />
             <div className="min-w-0">
               <p className="font-semibold text-dark">
@@ -936,8 +868,8 @@ function EditStaffDetails({
           {error && <p className="text-sm text-red-600">{error}</p>}
         </div>
 
-        <footer className="flex justify-end gap-2 border-t border-gray-100 px-5 py-3.5">
-          <Button variant="outline" size="sm" onClick={onClose} type="button">
+        <footer className="flex justify-end gap-2 border-t border-gray-200 px-5 py-3.5">
+          <Button variant="outline" size="sm" onClick={close} type="button">
             Cancel
           </Button>
           <Button type="submit" size="sm" disabled={saving}>
@@ -950,6 +882,8 @@ function EditStaffDetails({
           </Button>
         </footer>
       </form>
+      </>
+      )}
     </ModalOverlay>
   );
 }
@@ -1030,14 +964,16 @@ function IndividualPermissions({
   }
 
   return (
-    <ModalOverlay onClose={onClose} wide>
+    <ModalOverlay onClose={onClose} wide label={`${staff.firstName} ${staff.lastName} — individual permissions`}>
+      {(close) => (
+      <>
       <ModalHeader
         icon={<SlidersHorizontal className="h-4 w-4" />}
         title={
           staff.firstName + " " + staff.lastName + " — individual permissions"
         }
         subtitle="Overrides are layered on top of the role permissions. A deny always wins."
-        onClose={onClose}
+        onClose={close}
       />
 
       <div className="flex flex-wrap items-center gap-2 border-b border-gray-100 px-5 py-3">
@@ -1185,13 +1121,13 @@ function IndividualPermissions({
 
       {error && <p className="px-5 pb-2 text-sm text-red-600">{error}</p>}
 
-      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 px-5 py-3.5">
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 px-5 py-3.5">
         <p className="flex items-center gap-1.5 text-xs text-gray-500">
-          <Lock className="h-3.5 w-3.5" />
+          <Lock className="h-3.5 w-3.5" aria-hidden="true" />
           You can only grant permissions you hold yourself.
         </p>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={onClose} type="button">
+          <Button variant="outline" size="sm" onClick={close} type="button">
             Cancel
           </Button>
           <Button onClick={save} size="sm" disabled={saving || !loaded} type="button">
@@ -1204,6 +1140,8 @@ function IndividualPermissions({
           </Button>
         </div>
       </footer>
+      </>
+      )}
     </ModalOverlay>
   );
 }

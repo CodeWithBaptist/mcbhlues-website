@@ -38,15 +38,11 @@ export function Hero({ content }: { content?: HeroContent }) {
     <section className="relative flex items-center overflow-hidden bg-background-soft py-16 sm:py-20 lg:min-h-[88vh] lg:py-0">
       <Container className="relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="mb-6 inline-block border border-primary/30 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-dark sm:text-sm">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+            <span className="mb-6 inline-block border border-gray-300 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-primary-dark sm:text-sm">
               {badge}
             </span>
-            <h1 className="mb-6 font-heading text-4xl font-extrabold leading-[1.1] text-dark sm:text-5xl md:text-6xl">
+            <h1 className="mb-6 font-heading text-4xl font-bold leading-[1.1] tracking-tight text-dark sm:text-5xl md:text-6xl">
               {title}
             </h1>
             <p className="mb-10 max-w-xl font-body text-base leading-relaxed text-gray-700 sm:text-lg">
@@ -84,12 +80,12 @@ export function Hero({ content }: { content?: HeroContent }) {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.15 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="relative hidden lg:block"
           >
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+            <div className="relative overflow-hidden rounded-xl">
               <SmartImage
                 src={image}
                 alt={imageAlt}

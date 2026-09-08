@@ -50,7 +50,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
     <footer className="bg-dark pb-10 pt-20 text-white">
       {/* Hairline brand accent along the very top of the footer. */}
       <div
-        className="mx-auto mb-16 h-px w-full max-w-7xl bg-gradient-to-r from-transparent via-primary-light/50 to-transparent"
+        className="mx-auto mb-16 h-px w-full max-w-7xl bg-white/10"
         aria-hidden="true"
       />
       <Container>
@@ -72,7 +72,7 @@ export function Footer({ company }: { company?: CompanyInfo }) {
                         href={social.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-all duration-300 ease-soft hover:-translate-y-1 hover:bg-primary hover:shadow-lg hover:shadow-primary/30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 transition-colors duration-200 ease-soft hover:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                       >
                         {Icon && <Icon className="h-5 w-5" aria-hidden="true" />}
                         <span className="sr-only">

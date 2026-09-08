@@ -18,8 +18,8 @@ export function ThemeToggle({ showLabel = false }: { showLabel?: boolean }) {
       aria-label="Toggle color theme"
       title="Toggle color theme"
     >
-      <Moon className="public-theme-moon h-4 w-4 transition-transform duration-300 ease-soft group-hover:scale-110" />
-      <Sun className="public-theme-sun hidden h-4 w-4 transition-transform duration-300 ease-soft group-hover:scale-110" />
+      <Moon className="public-theme-moon h-4 w-4" />
+      <Sun className="public-theme-sun hidden h-4 w-4" />
       {showLabel && <span>Toggle theme</span>}
     </button>
   );
