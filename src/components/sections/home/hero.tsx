@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { buttonClasses } from "@/components/ui/button";
 import { SmartImage } from "@/components/ui/smart-image";
+import { NewsletterSignup } from "@/components/sections/home/newsletter-signup";
 import { PRIMARY_CTA } from "@/constants";
 
 export interface HeroContent {
@@ -72,11 +73,7 @@ export function Hero({ content }: { content?: HeroContent }) {
               </Link>
             </div>
 
-            <p className="mt-10 max-w-md text-sm leading-relaxed text-gray-600">
-              Give us a call or send a message. A consultant who knows your case
-              stays on it for the whole transaction. No call centres and no hand
-              offs between departments.
-            </p>
+            <NewsletterSignup />
           </motion.div>
 
           <motion.div
