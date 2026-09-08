@@ -13,6 +13,7 @@ import {
   Sparkles,
   Bell,
   KeyRound,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -244,6 +245,11 @@ export function PortalTopbar() {
               <span className="xl:hidden">Website</span>
               <ExternalLink className="h-3 w-3 opacity-70" aria-hidden="true" />
             </Link>
+          </div>
+
+          <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] font-semibold text-emerald-700 sm:flex" title="Your portal session is protected">
+            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="hidden lg:inline">Secure session</span>
           </div>
 
           <span className="hidden h-6 w-px bg-gray-200 sm:block" aria-hidden />
