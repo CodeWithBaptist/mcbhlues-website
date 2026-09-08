@@ -4,7 +4,6 @@ import { AnnouncementBanner } from "@/components/layout/announcement-banner";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { CookieConsent } from "@/components/layout/cookie-consent";
-import { NewsletterPrompt } from "@/components/layout/newsletter-prompt";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { SiteMotion } from "@/components/theme/site-motion";
 import { getCompanyInfo } from "@/lib/settings/company";
@@ -45,7 +44,6 @@ export default async function SiteLayout({
         <Footer company={company} />
         <BackToTop />
         <CookieConsent />
-        <NewsletterPrompt />
         <SiteAnalytics />
       </div>
     </SiteMotion>
