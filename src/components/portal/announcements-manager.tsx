@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { Card, EmptyState, Notice } from "./ui";
+import { Card, EmptyState, Notice, portalInputClass } from "./ui";
 import { ModalShell } from "./modal-shell";
 
 export interface AnnouncementRow {
@@ -288,7 +288,7 @@ function AnnouncementEditor({
   return (
     <ModalShell onClose={onClose} label={isEdit ? "Edit announcement" : "New announcement"}>
       {(close) => (
-      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-lift">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">
             {isEdit ? "Edit announcement" : "New announcement"}
@@ -311,7 +311,7 @@ function AnnouncementEditor({
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium text-gray-700">Tone</span>
               <select
-                className="h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                className={portalInputClass}
                 value={form.tone}
                 onChange={(e) => set("tone", e.target.value)}
               >

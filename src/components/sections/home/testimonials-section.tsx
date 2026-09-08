@@ -24,22 +24,22 @@ export function TestimonialsSection({ testimonials }: { testimonials: PublicTest
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="py-24 bg-gray-50/60">
+    <section className="bg-gray-50/60 py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="Client Voices"
-          title="What Our Clients Say"
-          description="Trusted by homeowners, investors and businesses across the market."
+          eyebrow="Client feedback"
+          title="What our clients say"
+          description="In their own words, from people we have bought, built or managed property for."
         />
-        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {testimonials.slice(0, 6).map((item, index) => (
             <motion.figure
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
-              className="flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.06 }}
+              className="flex flex-col rounded-xl border border-gray-200 bg-white p-6"
             >
               <Quote className="mb-4 h-6 w-6 text-primary/40" aria-hidden="true" />
               <blockquote className="flex-1 text-sm leading-relaxed text-gray-700">
@@ -72,7 +72,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: PublicTest
                     className="h-10 w-10 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
                     {item.name
                       .split(" ")
                       .map((part) => part[0])
@@ -81,7 +81,7 @@ export function TestimonialsSection({ testimonials }: { testimonials: PublicTest
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-bold text-dark">{item.name}</p>
+                  <p className="text-sm font-semibold text-dark">{item.name}</p>
                   <p className="text-xs text-gray-600">{item.role || "Client"}</p>
                 </div>
               </figcaption>

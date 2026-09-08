@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Check, KeyRound, Loader2, Minus, Plus, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import { Can, useSession } from "./permission-provider";
 import { StatCard } from "./stat-card";
@@ -79,10 +80,10 @@ export function PermissionsManager({
       {/*  Overview                                                         */}
       {/* ---------------------------------------------------------------- */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-1 xl:grid-cols-4">
-        <StatCard label="Permissions" value={`${stats.total}`} hint="Keys in the catalogue" icon="KeyRound" tone="primary" />
-        <StatCard label="Modules" value={`${stats.modules}`} hint="Functional groupings" icon="LayoutGrid" tone="sky" />
-        <StatCard label="Custom keys" value={`${stats.custom}`} hint="Added on top of the defaults" icon="Sparkles" tone="violet" />
-        <StatCard label="Grant coverage" value={`${stats.coverage}%`} hint="Of role × permission cells granted" icon="ShieldCheck" tone="emerald" />
+        <StatCard label="Permissions" value={`${stats.total}`} hint="Keys in the catalogue" />
+        <StatCard label="Modules" value={`${stats.modules}`} hint="Functional groupings" />
+        <StatCard label="Custom keys" value={`${stats.custom}`} hint="Added on top of the defaults" />
+        <StatCard label="Grant coverage" value={`${stats.coverage}%`} hint="Of role × permission cells granted" />
       </div>
 
       {error && (
@@ -106,23 +107,19 @@ export function PermissionsManager({
               onChange={(event) => setFilter(event.target.value)}
             />
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            <ModuleChip
-              label="All modules"
-              count={permissions.length}
-              active={moduleFilter === "all"}
-              onClick={() => setModuleFilter("all")}
-            />
-            {allModules.map((module) => (
-              <ModuleChip
-                key={module}
-                label={module}
-                count={permissions.filter((row) => row.module === module).length}
-                active={moduleFilter === module}
-                onClick={() => setModuleFilter(module)}
-              />
-            ))}
-          </div>
+          <SegmentedControl
+            scrollable
+            options={[
+              { label: `All modules (${permissions.length})`, value: "all" },
+              ...allModules.map((module) => ({
+                label: `${module} (${permissions.filter((row) => row.module === module).length})`,
+                value: module,
+              })),
+            ]}
+            value={moduleFilter}
+            onChange={setModuleFilter}
+            label="Filter permissions by module"
+          />
         </div>
 
         <Can permission="permission:update">
@@ -256,40 +253,6 @@ export function PermissionsManager({
   );
 }
 
-function ModuleChip({
-  label,
-  count,
-  active,
-  onClick,
-}: {
-  label: string;
-  count: number;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "rounded-full border px-3 py-1.5 text-xs font-medium capitalize transition-colors",
-        active
-          ? "border-primary bg-primary text-white shadow-sm"
-          : "border-gray-200 bg-white text-gray-600 hover:border-primary/40 hover:text-primary"
-      )}
-    >
-      {label}
-      <span
-        className={cn(
-          "ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-          active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-        )}
-      >
-        {count}
-      </span>
-    </button>
-  );
-}
 
 function CreatePermissionForm({
   onDone,

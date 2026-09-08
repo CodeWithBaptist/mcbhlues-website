@@ -20,7 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import type { CustomerDetail, CustomerListItem } from "@/lib/customers/customer-service";
-import { Card, EmptyState, StatusPill, Notice } from "./ui";
+import { Card, EmptyState, StatusPill, Notice, Field, IconAction, portalInputClass } from "./ui";
 import { DrawerShell, ModalShell } from "./modal-shell";
 
 export interface StaffOption {
@@ -325,37 +325,6 @@ export function CustomersManager({ initialCustomers, staff, propertyOptions, per
   );
 }
 
-function IconAction({
-  children,
-  title,
-  danger,
-  disabled,
-  onClick,
-}: {
-  children: React.ReactNode;
-  title: string;
-  danger?: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      title={title}
-      aria-label={title}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "rounded border p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40",
-        danger
-          ? "border-red-200 text-red-600 hover:bg-red-50"
-          : "border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
-      )}
-    >
-      {children}
-    </button>
-  );
-}
 
 /* -------------------------------------------------------------------------- */
 /*  Customer editor (create / update)                                          */
@@ -414,13 +383,12 @@ function CustomerEditor({
     onSaved(isEdit ? undefined : data.customer?.id);
   }
 
-  const inputClass =
-    "h-12 w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-sm text-dark placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary";
+  const inputClass = portalInputClass;
 
   return (
     <ModalShell onClose={onClose} label={isEdit ? "Edit customer" : "Add customer"}>
       {(close) => (
-      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-2xl rounded-xl bg-white shadow-lift">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>
             <h2 className="font-heading text-base font-bold text-dark">
@@ -590,7 +558,7 @@ function CustomerDetailPanel({
   return (
     <DrawerShell onClose={onClose} label={`${detail.firstName} ${detail.lastName}`}>
       {(close) => (
-      <div className="portal-drawer-panel h-full w-full max-w-xl overflow-y-auto bg-white shadow-2xl">
+      <div className="portal-drawer-panel h-full w-full max-w-xl overflow-y-auto border-l border-gray-200 bg-white shadow-lift">
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-6 py-4">
           <div>
             <h2 className="font-heading text-base font-bold text-dark">
@@ -767,22 +735,5 @@ function CustomerDetailPanel({
       </div>
       )}
     </DrawerShell>
-  );
-}
-
-function Field({
-  label,
-  children,
-  className,
-}: {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <label className={cn("block", className)}>
-      <span className="mb-1.5 block text-sm font-medium text-gray-700">{label}</span>
-      {children}
-    </label>
   );
 }

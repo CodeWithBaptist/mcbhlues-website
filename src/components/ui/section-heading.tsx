@@ -18,7 +18,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 max-w-3xl mb-12",
+        "mb-12 flex max-w-3xl flex-col gap-4",
         align === "center" ? "mx-auto text-center" : "text-left",
         className
       )}
@@ -39,11 +39,11 @@ export function SectionHeading({
           )}
         </span>
       )}
-      <h2 className="text-3xl md:text-5xl font-extrabold text-dark leading-tight">
+      <h2 className="font-heading text-3xl font-bold leading-tight tracking-tight text-dark md:text-4xl">
         {title}
       </h2>
       {description && (
-        <p className="text-lg text-gray-600 leading-relaxed">
+        <p className="text-base leading-relaxed text-gray-600 sm:text-lg">
           {description}
         </p>
       )}

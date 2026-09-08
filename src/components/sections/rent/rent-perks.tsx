@@ -3,56 +3,62 @@
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Settings, Headphones, ShieldCheck, Zap } from "lucide-react";
+import { FileCheck2, ShieldCheck, Wrench, UserCheck } from "lucide-react";
 
+/**
+ * What renting through the firm actually includes — each point maps to a
+ * service the company already describes elsewhere on the site.
+ */
 const perks = [
   {
-    title: "Elite Management",
-    description: "24/7 facility management ensures your home is always in peak condition.",
-    icon: Settings,
-  },
-  {
-    title: "Concierge Services",
-    description: "Dedicated support for all your needs, from maintenance to local recommendations.",
-    icon: Headphones,
-  },
-  {
-    title: "Secure Living",
-    description: "Advanced security protocols and high-tech systems for your peace of mind.",
+    title: "Listings we have checked",
+    description:
+      "Every rental is inspected and its ownership confirmed before it is advertised, so what you view is what you rent.",
     icon: ShieldCheck,
   },
   {
-    title: "Prime Connectivity",
-    description: "All our rental units are located in high-connectivity zones with modern amenities.",
-    icon: Zap,
+    title: "Leases reviewed for you",
+    description:
+      "Tenancy agreements go through our legal team before you sign. Terms, deposits and notice periods are explained in plain language.",
+    icon: FileCheck2,
+  },
+  {
+    title: "Managed buildings",
+    description:
+      "Where we manage the property, maintenance, cleaning and security are run by our facility team with one number to call.",
+    icon: Wrench,
+  },
+  {
+    title: "One point of contact",
+    description:
+      "The consultant who shows you the property is the one who handles your application, move-in and any questions afterwards.",
+    icon: UserCheck,
   },
 ];
 
 export function RentPerks() {
   return (
-    <section className="py-24">
+    <section className="py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="The Renting Advantage"
-          title="Why Rent with MCBHLUES?"
-          description="We provide more than just a space; we provide a curated living experience with unparalleled support."
+          eyebrow="Renting with us"
+          title="What is included when you rent through MCBHLUES"
+          description="Straightforward tenancies, with the checks and the support handled by the same team."
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {perks.map((perk, index) => (
             <motion.div
               key={perk.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group p-8 rounded-2xl border border-gray-100 bg-white hover:border-primary/20 hover:shadow-xl transition-all duration-300"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.06 }}
+              className="rounded-xl border border-gray-200 bg-white p-7"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-all">
-                <perk.icon className="w-7 h-7" />
-              </div>
-              <h4 className="text-xl font-bold font-heading mb-3 text-dark">{perk.title}</h4>
-              <p className="text-gray-600 text-sm leading-relaxed">{perk.description}</p>
+              <perk.icon className="mb-5 h-6 w-6 text-primary" aria-hidden="true" />
+              <h3 className="mb-3 font-heading text-lg font-bold text-dark">{perk.title}</h3>
+              <p className="text-sm leading-relaxed text-gray-600">{perk.description}</p>
             </motion.div>
           ))}
         </div>

@@ -139,7 +139,7 @@ export default async function PropertyDetailsPage({ params }: Props) {
   });
 
   return (
-    <div className="flex flex-col bg-gray-50/30">
+    <div className="flex flex-col bg-gray-50/60">
       <script
         type="application/ld+json"
         // Listing copy is staff-authored, so escape it for inline JSON-LD.
@@ -182,8 +182,14 @@ export default async function PropertyDetailsPage({ params }: Props) {
         </div>
       </Container>
 
-      <div className="bg-white border-t border-gray-100">
-        <FeaturedProperties properties={featured} />
+      <div className="border-t border-gray-100 bg-white">
+        <FeaturedProperties
+          properties={featured}
+          excludeId={property.id}
+          eyebrow="More listings"
+          title="You may also like"
+          description={`Other properties ${property.type === "sale" ? "for sale" : "to rent"} and across Lagos.`}
+        />
       </div>
     </div>
   );

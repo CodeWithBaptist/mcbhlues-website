@@ -5,6 +5,7 @@ import { describe, test } from "node:test";
 import { SERVICES, SITE_CONFIG, SITE_URL } from "../src/constants";
 import { pageMetadata } from "../src/lib/seo";
 import {
+  BRAND_ALIASES,
   BRAND_ID,
   ORGANIZATION_ID,
   WEBSITE_ID,
@@ -40,7 +41,14 @@ describe("organizationSchema", () => {
   });
 
   test("ties the brand back to the same entity", () => {
-    assert.deepEqual(org.alternateName, [SITE_CONFIG.brand]);
+    // The wordmark, the business name and the search variants (#21), all
+    // pointing at one organization node.
+    assert.deepEqual(org.alternateName, [
+      SITE_CONFIG.brand,
+      COMPANY.name,
+      ...BRAND_ALIASES,
+    ]);
+    assert.ok(org.alternateName.includes(SITE_CONFIG.brand));
     assert.deepEqual(org.brand, { "@id": BRAND_ID });
     assert.equal(brandSchema().name, SITE_CONFIG.brand);
     assert.equal(brandSchema()["@id"], BRAND_ID);

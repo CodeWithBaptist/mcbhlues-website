@@ -36,6 +36,15 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 /** Pointer to the organization node, for use as a property value elsewhere. */
 export const organizationRef = { "@id": ORGANIZATION_ID };
 
+/**
+ * Other spellings that should resolve to the same business card.
+ *
+ * "MCBH Blues" is a common mis-hearing of the wordmark. It was added to the
+ * organization schema in #21 and is preserved here — remove it from this list
+ * if it is not a name the business actually trades under.
+ */
+export const BRAND_ALIASES = ["MCBH Blues"];
+
 /** The company fields the schemas read. */
 export type SchemaCompany = Pick<
   CompanyInfo,
@@ -85,8 +94,9 @@ export function organizationSchema(company: SchemaCompany) {
     "@id": ORGANIZATION_ID,
     // The registered business name…
     name: company.name,
-    // …and the brand the public knows it by, tied back to the same node.
-    alternateName: [SITE_CONFIG.brand],
+    // …and every other spelling that should resolve to the same card: the
+    // wordmark, the business name itself, and the variants people mistype.
+    alternateName: [SITE_CONFIG.brand, company.name, ...BRAND_ALIASES],
     brand: { "@id": BRAND_ID },
     url: SITE_URL,
     image: `${SITE_URL}/og-image.jpg`,

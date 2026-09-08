@@ -5,6 +5,7 @@ import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
+import { SiteMotion } from "@/components/theme/site-motion";
 import { getCompanyInfo } from "@/lib/settings/company";
 import { siteSchemaGraph, toJsonLd } from "@/lib/schema";
 
@@ -28,21 +29,23 @@ export default async function SiteLayout({
   const schema = siteSchemaGraph(company);
 
   return (
-    <div className="public-site flex min-h-screen flex-col">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: toJsonLd(schema) }}
-      />
-      <ScrollProgress />
-      <AnnouncementBanner />
-      <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
-      <main id="main-content" className="flex-grow pt-20">
-        {children}
-      </main>
-      <Footer company={company} />
-      <BackToTop />
-      <CookieConsent />
-      <SiteAnalytics />
-    </div>
+    <SiteMotion>
+      <div className="public-site flex min-h-screen flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: toJsonLd(schema) }}
+        />
+        <ScrollProgress />
+        <AnnouncementBanner />
+        <Navbar phone={company.phone} logoUrl={company.logoUrl} companyName={company.name} />
+        <main id="main-content" className="flex-grow pt-20">
+          {children}
+        </main>
+        <Footer company={company} />
+        <BackToTop />
+        <CookieConsent />
+        <SiteAnalytics />
+      </div>
+    </SiteMotion>
   );
 }

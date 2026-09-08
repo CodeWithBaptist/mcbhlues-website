@@ -1,37 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Minus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
 
+/**
+ * Built-in answers describe only what the rest of the site already commits
+ * to (written briefs, checks before listing, private viewings, legal review).
+ * Anything more specific — timelines, financing partners — belongs in the
+ * CMS where staff can keep it accurate.
+ */
 const defaultFaqs = [
   {
-    question: "What types of properties does MCBHLUES offer for sale?",
+    question: "What kinds of property do you sell?",
     answer:
-      "We offer a comprehensive range of luxury properties including penthouses, villas, estates, lofts, and premium commercial spaces. Each listing is hand-verified to meet our rigorous quality and location standards.",
+      "Residential and commercial property across Lagos — houses, apartments, land and commercial space. Every listing is checked before it goes live, and the current stock is on the Properties page.",
   },
   {
-    question: "Do you provide financing assistance for property purchases?",
+    question: "How does a purchase start?",
     answer:
-      "Yes. We work with a network of trusted financial institutions and mortgage brokers to help you secure the best financing options. Our consultants will guide you through the entire process.",
+      "With a conversation. Tell us what you are looking for and at what budget; we put a written brief together with you, then search and shortlist against it before any viewings are arranged.",
   },
   {
-    question: "How do you verify your property listings?",
+    question: "How do you check a listing before it goes live?",
     answer:
-      "Every listing undergoes a thorough verification process that includes title checks, physical inspections, neighborhood assessments, and legal clearance. This ensures you invest with complete confidence.",
+      "Title and location are checked and the asking price is compared with recent sales in the area. If something does not stand up, the property is not listed.",
   },
   {
-    question: "Can I schedule property viewings before making a decision?",
+    question: "Can I view a property before making a decision?",
     answer:
-      "Absolutely. We encourage all prospective buyers to schedule private viewings. Our agents will arrange exclusive tours at your convenience, including virtual walkthroughs for international buyers.",
+      "Yes. Private viewings are arranged at a time that suits you, and your consultant attends so questions can be answered on the spot.",
   },
   {
-    question: "What is the average transaction timeline?",
+    question: "Who reviews the paperwork?",
     answer:
-      "Typically, the process from initial consultation to closing takes 30 to 60 days, depending on the property type and financing arrangement. We work to expedite every step while maintaining thorough due diligence.",
+      "Purchase agreements are reviewed by our own legal team before you sign, and your consultant stays on the case through to handover.",
   },
 ];
 
@@ -46,6 +52,7 @@ export interface FaqItem {
  */
 export function BuyFAQ({ items }: { items?: FaqItem[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const baseId = useId();
   const faqs = items && items.length > 0 ? items : defaultFaqs;
 
   const toggle = (index: number) => {
@@ -53,65 +60,61 @@ export function BuyFAQ({ items }: { items?: FaqItem[] }) {
   };
 
   return (
-    <section className="py-24">
+    <section className="py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="Questions Answered"
-          title="Frequently Asked Questions"
-          description="Everything you need to know about buying a luxury property through MCBHLUES Enterprises."
+          eyebrow="Common questions"
+          title="Buying through MCBHLUES Enterprises"
+          description="Short answers to the questions we are asked most often. Anything else, ask your consultant."
         />
 
-        <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className={cn(
-                "border-b border-gray-100 last:border-b-0",
-              )}
-            >
-              <button
-                onClick={() => toggle(index)}
-                className="w-full flex items-center justify-between py-6 text-left group"
-              >
-                <span className="text-lg font-bold text-dark font-heading group-hover:text-primary transition-colors pr-8">
-                  {faq.question}
-                </span>
-                <div
-                  className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors",
-                    openIndex === index
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-dark group-hover:bg-primary/10"
-                  )}
-                >
-                  {openIndex === index ? (
-                    <Minus className="w-4 h-4" />
-                  ) : (
-                    <Plus className="w-4 h-4" />
-                  )}
-                </div>
-              </button>
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+        <div className="mx-auto max-w-3xl border-t border-gray-200">
+          {faqs.map((faq, index) => {
+            const open = openIndex === index;
+            const panelId = `${baseId}-panel-${index}`;
+            const buttonId = `${baseId}-button-${index}`;
+            return (
+              <div key={index} className="border-b border-gray-200">
+                <h3>
+                  <button
+                    id={buttonId}
+                    type="button"
+                    onClick={() => toggle(index)}
+                    aria-expanded={open}
+                    aria-controls={panelId}
+                    className="group flex w-full items-center justify-between gap-6 py-5 text-left"
                   >
-                    <p className="pb-6 text-gray-600 leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+                    <span className="font-heading text-base font-semibold text-dark transition-colors duration-200 group-hover:text-primary sm:text-lg">
+                      {faq.question}
+                    </span>
+                    <Plus
+                      className={cn(
+                        "h-5 w-5 shrink-0 text-gray-500 transition-transform duration-250 ease-soft",
+                        open && "rotate-45 text-primary"
+                      )}
+                      aria-hidden="true"
+                    />
+                  </button>
+                </h3>
+                <AnimatePresence initial={false}>
+                  {open && (
+                    <motion.div
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="pb-6 leading-relaxed text-gray-600">{faq.answer}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </Container>
     </section>

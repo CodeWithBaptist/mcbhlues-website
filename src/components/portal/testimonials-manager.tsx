@@ -294,7 +294,7 @@ function TestimonialEditor({
   return (
     <ModalShell onClose={onClose} label={isEdit ? "Edit testimonial" : "Add testimonial"}>
       {(close) => (
-      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-2xl">
+      <form onSubmit={submit} className="portal-modal-panel my-4 w-full max-w-lg rounded-xl bg-white shadow-lift">
         <header className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <h2 className="font-heading text-base font-bold text-dark">
             {isEdit ? "Edit testimonial" : "Add testimonial"}

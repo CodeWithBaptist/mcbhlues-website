@@ -102,13 +102,13 @@ export function Navbar({
                     {current ? (
                       <motion.span
                         layoutId="nav-active-underline"
-                        className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-primary"
-                        transition={reduceMotion ? { duration: 0 } : { type: "spring", bounce: 0.25, duration: 0.45 }}
+                        className="absolute -bottom-1.5 left-0 h-0.5 w-full bg-primary"
+                        transition={reduceMotion ? { duration: 0 } : { duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                       />
                     ) : (
                       <span
                         aria-hidden="true"
-                        className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 rounded-full bg-primary/50 transition-transform duration-300 ease-soft group-hover/link:scale-x-100"
+                        className="absolute -bottom-1.5 left-0 h-0.5 w-full origin-left scale-x-0 bg-primary/50 transition-transform duration-250 ease-soft group-hover/link:scale-x-100"
                       />
                     )}
                   </Link>
@@ -123,7 +123,7 @@ export function Navbar({
               href="/favorites"
               aria-current={isCurrent("/favorites") ? "page" : undefined}
               className={cn(
-                "relative rounded-full p-2.5 transition-[background-color,color,transform] duration-200 hover:scale-105 hover:bg-primary/10 active:scale-95",
+                "relative rounded-full p-2.5 transition-[background-color,color] duration-200 hover:bg-primary/10",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 isCurrent("/favorites") || savedCount > 0 ? "text-primary" : "text-dark"
               )}
@@ -170,7 +170,7 @@ export function Navbar({
           {/* Mobile Toggle — 44px target, per WCAG 2.5.8 */}
           <button
             type="button"
-            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-dark transition-colors duration-200 hover:bg-gray-100 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-md text-dark transition-colors duration-200 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
             onClick={() => setIsOpen((open) => !open)}
             aria-expanded={isOpen}
             aria-controls={menuId}

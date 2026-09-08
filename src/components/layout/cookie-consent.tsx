@@ -49,7 +49,7 @@ export function CookieConsent() {
       aria-describedby="cookie-consent-description"
       className="fixed inset-x-0 bottom-0 z-[70] px-4 pb-4 sm:px-6 sm:pb-6"
     >
-      <div className="relative mx-auto flex max-w-4xl flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl sm:p-6 md:flex-row md:items-center md:gap-6">
+      <div className="relative mx-auto flex max-w-4xl animate-fade-up flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-lift sm:p-6 md:flex-row md:items-center md:gap-6">
         <div className="flex flex-1 gap-4">
           <Cookie className="mt-0.5 hidden h-6 w-6 shrink-0 text-primary sm:block" aria-hidden="true" />
           <div className="space-y-1 pr-8 md:pr-0">
@@ -93,7 +93,7 @@ export function CookieConsent() {
           type="button"
           aria-label="Dismiss — keep essential cookies only"
           onClick={() => decide("rejected")}
-          className="absolute right-4 top-4 rounded-md p-1 text-gray-600 hover:bg-gray-100 hover:text-dark md:hidden"
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-md text-gray-600 transition-colors duration-200 hover:bg-gray-100 hover:text-dark md:hidden"
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>

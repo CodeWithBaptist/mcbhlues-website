@@ -79,6 +79,16 @@ introduce one.
 Settings; with nothing configured it is an empty array rather than a guessed
 social link.
 
+**One exception worth naming.** `alternateName` carries
+`["MCBHLUES", "MCBHLUES Enterprises", "MCBH Blues"]`. The first two restate
+names the site already shows; **"MCBH Blues" is an assertion** — nothing else
+in this repository establishes it as a name the business trades under. PR #21
+added it as a spelling people mistype, and this branch preserves that merged
+decision rather than quietly reverting it. It sits on its own line in
+`BRAND_ALIASES` (`src/lib/schema.ts`); delete it from that array if it is not a
+genuine alias. Google tokenises "MCBH Blues" into "MCBHLUES" either way, so
+removing it costs nothing.
+
 ## 4. Keyword density was measured, not assumed
 
 Brand mentions in **visible body text** (scripts, styles and `<head>` stripped)
@@ -86,23 +96,24 @@ on the prerendered pages:
 
 | Page | Words | "MCBHLUES" | Density |
 | --- | --- | --- | --- |
-| `/` | 597 | 5 | 0.84% |
-| `/about` | 392 | 6 | 1.53% |
-| `/properties` | 295 | 4 | 1.36% |
-| `/buy` | 484 | 6 | 1.24% |
-| `/rent` | 389 | 5 | 1.29% |
-| `/contact` | 258 | 4 | 1.55% |
+| `/` | 609 | 5 | 0.82% |
+| `/about` | 487 | 5 | 1.03% |
+| `/properties` | 284 | 4 | 1.41% |
+| `/buy` | 507 | 5 | 0.99% |
+| `/rent` | 479 | 5 | 1.04% |
+| `/contact` | 275 | 4 | 1.45% |
 | `/privacy` | 1396 | 7 | 0.50% |
 | `/terms` | 1468 | 9 | 0.61% |
 | `/cookies` | 395 | 4 | 1.01% |
 
 Every page is under 2%. The only addition to body copy was one clause in the
-footer that names the company. Four further visible-text edits changed casing
+footer that names the company. Two further visible-text edits changed casing
 only ("MCBHLUES ENTERPRISES" → "MCBHLUES Enterprises") — the homepage hero
-fallback, the seeded CMS value behind it, the About values intro and the Buy
-FAQ intro — so the written form of the name matches the schema. No brand
-mention was added or removed by them. Legal document bodies keep their all-caps
-defined-term convention.
+fallback and the seeded CMS value behind it — so the written form of the name
+matches the schema. No brand mention was added or removed by them. (The About
+values intro and the Buy FAQ intro carried the same all-caps problem, but #21
+rewrote both sentences, and the Buy FAQ heading already uses the correct
+casing.) Legal document bodies keep their all-caps defined-term convention.
 
 There are no hidden elements, no `display:none` brand text, no pages created to
 catch a single keyword, and no separate landing pages for
@@ -111,12 +122,6 @@ catch a single keyword, and no separate landing pages for
 
 ## 5. Deliberately not done
 
-- **"MCBH Blues" is not declared anywhere.** Nothing in this repository
-  establishes it as a name the business trades under, so it was not added to
-  `alternateName` — that would be inventing an alias. Google already treats it
-  as a tokenisation of "MCBHLUES", so nothing is lost. If it *is* a genuine
-  trading name, it is a one-line change in `organizationSchema()`:
-  `alternateName: [SITE_CONFIG.brand, "MCBH Blues"]`.
 - **No web app manifest.** A `manifest.ts` would carry the same name /
   short-name pair, but it also turns on the browser install prompt — a product
   decision, not an SEO one.

@@ -1,71 +1,64 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, FileText, Handshake, Key } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
 const steps = [
   {
     step: "01",
-    icon: Search,
-    title: "Discover",
-    description: "Browse our curated portfolio of verified luxury properties. Use our advanced filters to find the perfect match.",
+    title: "Brief",
+    description:
+      "Tell us what you are looking for, where and at what budget. We put the brief in writing and agree it with you before any search begins.",
   },
   {
     step: "02",
-    icon: FileText,
-    title: "Consult",
-    description: "Schedule a free consultation with our expert agents. We provide market insights and personalized recommendations.",
+    title: "Shortlist",
+    description:
+      "We check title, location and price against recent sales, then send a shortlist for you to approve before viewings are arranged.",
   },
   {
     step: "03",
-    icon: Handshake,
-    title: "Negotiate",
-    description: "We handle all negotiations to ensure you get the best value. Our team works tirelessly on your behalf.",
+    title: "Viewings and offer",
+    description:
+      "Private viewings at times that suit you. When you find the right property we advise on the offer and handle the negotiation.",
   },
   {
     step: "04",
-    icon: Key,
-    title: "Close",
-    description: "Seamlessly close your deal with our legal and financial support. From paperwork to handover, we manage it all.",
+    title: "Completion",
+    description:
+      "Our legal team reviews the purchase agreement before you sign, and your consultant stays on the case through to handover.",
   },
 ];
 
 export function BuyProcess() {
   return (
-    <section className="py-24 bg-background-soft">
+    <section className="bg-background-soft py-20 sm:py-24">
       <Container>
         <SectionHeading
-          eyebrow="How It Works"
-          title="Your Path to Ownership"
-          description="We've simplified the luxury property buying process into four straightforward steps."
+          eyebrow="How it works"
+          title="Buying with us, step by step"
+          description="The same four stages on every purchase, each one agreed with you before the next begins."
         />
 
-        <div className="grid md:grid-cols-4 gap-8 relative">
-          {/* Connector Line */}
-          <div className="hidden md:block absolute top-20 left-[12.5%] right-[12.5%] h-0.5 bg-primary/20 -z-0" />
-
+        <ol className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
-            <motion.div
+            <motion.li
               key={step.step}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.15 }}
-              className="relative flex flex-col items-center text-center group"
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.06 }}
+              className="border-t-2 border-primary/20 pt-6"
             >
-              <div className="relative z-10 w-20 h-20 rounded-2xl bg-white border-2 border-primary/10 flex items-center justify-center mb-6 group-hover:border-primary group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-300">
-                <step.icon className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-primary font-black text-sm tracking-widest mb-2">
-                STEP {step.step}
+              <span className="font-heading text-sm font-semibold tabular-nums text-primary">
+                Step {step.step}
               </span>
-              <h3 className="text-xl font-bold text-dark font-heading mb-3">{step.title}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed max-w-[240px]">{step.description}</p>
-            </motion.div>
+              <h3 className="mb-3 mt-2 font-heading text-xl font-bold text-dark">{step.title}</h3>
+              <p className="text-sm leading-relaxed text-gray-600">{step.description}</p>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </Container>
     </section>
   );

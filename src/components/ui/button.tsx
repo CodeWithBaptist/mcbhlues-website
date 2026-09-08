@@ -19,15 +19,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 // Contrast against white / the surface the button sits on:
 //   primary   #2563EB on #FFF  → 5.1:1 (white text on it → 5.1:1)  ✓ AA
 //   secondary #1E3A8A on #FFF  → 10.8:1                            ✓ AAA
-// Each variant also gets a soft resting shadow that deepens on hover, so the
-// control reads as pressable before the pointer moves.
+// Hover is a colour step, not a glow: solid fills darken, the outline fills.
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary:
-    "bg-primary text-white shadow-sm shadow-primary/25 hover:bg-primary-dark hover:shadow-md hover:shadow-primary/30",
-  secondary:
-    "bg-primary-dark text-white shadow-sm shadow-primary-dark/25 hover:bg-primary hover:shadow-md hover:shadow-primary/30",
-  outline:
-    "border-2 border-primary text-primary hover:bg-primary hover:text-white hover:shadow-md hover:shadow-primary/25",
+  primary: "bg-primary text-white hover:bg-primary-dark",
+  secondary: "bg-primary-dark text-white hover:bg-primary",
+  outline: "border-2 border-primary text-primary hover:bg-primary hover:text-white",
   ghost: "text-primary hover:bg-background-soft",
 };
 
@@ -60,12 +56,12 @@ export function buttonClasses({
   className?: string;
 } = {}) {
   return cn(
-    "group inline-flex cursor-pointer items-center justify-center rounded-md text-center transition-all duration-200 ease-soft",
+    "group inline-flex cursor-pointer items-center justify-center rounded-md text-center transition-[background-color,color,border-color,transform,opacity] duration-200 ease-soft",
     // focus-visible (not focus) so a mouse click doesn't paint a ring.
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
     // Sinking 1px on press is the cue that the click landed.
-    "active:translate-y-px active:scale-[0.99]",
-    "disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none",
+    "active:translate-y-px",
+    "disabled:pointer-events-none disabled:opacity-60",
     VARIANTS[variant],
     SIZES[size],
     className

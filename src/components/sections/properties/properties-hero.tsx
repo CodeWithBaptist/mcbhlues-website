@@ -12,13 +12,13 @@ export function PropertiesHero() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl"
         >
-          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-primary">
             Current Listings
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-dark mb-4">
+          </p>
+          <h1 className="mb-4 font-heading text-4xl font-bold tracking-tight text-dark md:text-5xl">
             Browse property for sale and rent
           </h1>
-          <p className="text-gray-600 text-lg leading-relaxed">
+          <p className="text-lg leading-relaxed text-gray-600">
             Filter the list below by type, title or location. Select any listing to
             see the full details and arrange a viewing.
           </p>

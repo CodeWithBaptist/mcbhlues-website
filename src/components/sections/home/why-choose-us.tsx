@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, FileCheck2, Handshake, ScrollText, UserCheck } from "lucide-react";
+import { FileCheck2, Handshake, ScrollText, UserCheck } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 
@@ -37,9 +37,9 @@ const expectations = [
 
 export function WhyChooseUs() {
   return (
-    <section className="py-24 bg-white">
+    <section className="bg-white py-20 sm:py-24">
       <Container>
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <SectionHeading
               align="left"
@@ -48,22 +48,20 @@ export function WhyChooseUs() {
               description="We keep the working relationship straightforward: clear scope, agreed costs and one team that sees the job through."
             />
 
-            <div className="grid sm:grid-cols-2 gap-8 mt-12">
+            <div className="mt-2 grid gap-8 sm:grid-cols-2">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.08 }}
-                  className="flex flex-col gap-4"
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-80px" }}
+                  transition={{ delay: index * 0.06 }}
+                  className="flex flex-col gap-3"
                 >
-                  <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center text-primary">
-                    <feature.icon className="w-6 h-6" />
-                  </div>
+                  <feature.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                   <div>
-                    <h4 className="text-lg font-bold font-heading mb-2">{feature.title}</h4>
-                    <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
+                    <h3 className="mb-2 font-heading text-lg font-bold text-dark">{feature.title}</h3>
+                    <p className="text-sm leading-relaxed text-gray-600">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}
@@ -71,27 +69,24 @@ export function WhyChooseUs() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
             className="lg:mt-16"
           >
-            <div className="rounded-2xl border border-gray-200 bg-background-soft p-8 md:p-10">
-              <div className="flex items-center gap-3 mb-6">
-                <CheckCircle2 className="w-6 h-6 text-primary" />
-                <h3 className="text-xl font-bold font-heading">How a typical project runs</h3>
-              </div>
-              <ul className="space-y-5">
-                {expectations.map((item) => (
-                  <li key={item} className="flex gap-3 text-gray-600 text-[15px] leading-relaxed">
-                    <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-4 h-4" />
+            <div className="rounded-xl border border-gray-200 bg-background-soft p-8 md:p-10">
+              <h3 className="mb-6 font-heading text-xl font-bold text-dark">How a typical project runs</h3>
+              <ol className="space-y-5">
+                {expectations.map((item, index) => (
+                  <li key={item} className="flex gap-4 text-[15px] leading-relaxed text-gray-600">
+                    <span className="mt-0.5 shrink-0 font-heading text-sm font-semibold tabular-nums text-primary">
+                      0{index + 1}
                     </span>
                     {item}
                   </li>
                 ))}
-              </ul>
-              <p className="mt-8 border-t border-gray-200 pt-6 text-sm text-gray-600 leading-relaxed">
+              </ol>
+              <p className="mt-8 border-t border-gray-200 pt-6 text-sm leading-relaxed text-gray-600">
                 Every scope is put in writing before we begin, so you know what is
                 included, what it costs and when it will be done.
               </p>
