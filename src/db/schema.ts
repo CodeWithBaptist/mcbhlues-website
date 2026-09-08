@@ -660,6 +660,33 @@ export const settings = pgTable(
 /*  UPLOADS (files stored in the database so they survive read-only hosts)     */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Newsletter sign-ups collected by the public site.
+ *
+ * `email` is unique, so a second submission of the same address is an upsert
+ * rather than a duplicate row — the visitor is told they are already on the
+ * list instead of being silently re-added. `status` and `unsubscribedAt` exist
+ * so a later unsubscribe can suppress sending without destroying the record.
+ */
+export const subscribers = pgTable(
+  "subscribers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    email: text("email").notNull(),
+    /** website | portal — where the address was captured */
+    source: text("source").notNull().default("website"),
+    /** active | unsubscribed */
+    status: text("status").notNull().default("active"),
+    unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("subscribers_email_unique").on(table.email),
+    index("subscribers_created_at_idx").on(table.createdAt),
+  ]
+);
+
 export const uploads = pgTable(
   "uploads",
   {
@@ -699,4 +726,5 @@ export type CmsContent = typeof cmsContent.$inferSelect;
 export type MediaAsset = typeof mediaAssets.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type Subscriber = typeof subscribers.$inferSelect;
 export type Upload = typeof uploads.$inferSelect;
