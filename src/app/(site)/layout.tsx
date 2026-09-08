@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnnouncementBanner } from "@/components/layout/announcement-banner";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
+import { BackToTop } from "@/components/layout/back-to-top";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { SiteAnalytics } from "@/components/analytics/site-analytics";
 import { getCompanyInfo } from "@/lib/settings/company";
@@ -75,6 +76,7 @@ export default async function SiteLayout({
         {children}
       </main>
       <Footer company={company} />
+      <BackToTop />
       <CookieConsent />
       <SiteAnalytics />
     </div>

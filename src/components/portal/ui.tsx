@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * Gradient hero banner used to headline the redesigned administration pages.
- * Matches the dashboard hero's visual language: brand gradient, soft orbs and
- * a glass icon chip, with an optional slot for contextual meta on the right.
+ * Refreshed to match the new dashboard hero: deeper gradient, subtle grid and
+ * frosted-glass meta pills, with improved contrast and depth.
  */
 export function PageHero({
   kicker,
@@ -19,24 +19,36 @@ export function PageHero({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="portal-enter relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-br from-primary-dark via-primary to-primary-light px-6 py-6 text-white shadow-lg ring-1 ring-white/10">
-      <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-      <div className="pointer-events-none absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+    <section className="portal-enter relative mb-6 overflow-hidden rounded-[20px] bg-gradient-to-br from-[#0f2a64] via-[#1a3ea1] to-[#2a7fff] px-6 py-6 text-white shadow-[0_12px_32px_-16px_rgba(16,42,100,0.40),0_4px_12px_rgba(16,42,100,0.10)] ring-1 ring-white/10 sm:px-7">
+      {/* depth */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -right-16 -top-20 h-60 w-60 rounded-full bg-white/[0.09] blur-3xl" />
+        <div className="absolute -bottom-24 right-24 h-48 w-48 rounded-full bg-white/[0.07] blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(520px_220px_at_20%_0%,rgba(255,255,255,0.10),transparent)]" />
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.9) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.9) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
+      </div>
 
       <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-start gap-4">
-          <span className="mt-0.5 shrink-0 rounded-xl bg-white/15 p-3 ring-1 ring-white/25 transition-transform duration-300 ease-soft hover:scale-105">
+          <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-primary shadow-sm ring-1 ring-white/20 transition-transform duration-300 ease-soft hover:scale-[1.04] hover:rotate-[-2deg]">
             {icon}
           </span>
           <div className="min-w-0">
             {kicker && (
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-blue-100">
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-blue-100 ring-1 ring-white/15 backdrop-blur">
                 {kicker}
               </p>
             )}
-            <h1 className="mt-0.5 font-heading text-2xl font-extrabold">{title}</h1>
+            <h1 className="mt-2 font-heading text-2xl font-extrabold tracking-tight sm:text-[26px]">{title}</h1>
             {description && (
-              <p className="mt-1 max-w-2xl text-sm text-blue-100">{description}</p>
+              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-blue-100/90">{description}</p>
             )}
           </div>
         </div>
@@ -57,13 +69,15 @@ export function HeroMeta({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-xl bg-white/10 px-3.5 py-2 ring-1 ring-white/20 backdrop-blur-sm transition-colors duration-200 hover:bg-white/15">
-      <span className="text-blue-100">{icon}</span>
+    <div className="flex items-center gap-2.5 rounded-xl bg-white/10 px-3.5 py-2.5 ring-1 ring-white/20 backdrop-blur-md transition-colors duration-200 hover:bg-white/15">
+      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white ring-1 ring-white/15">
+        {icon}
+      </span>
       <span>
-        <span className="block text-[10px] font-medium uppercase tracking-wider text-blue-200">
+        <span className="block text-[10px] font-semibold uppercase tracking-wider text-blue-200">
           {label}
         </span>
-        <span className="block text-sm font-semibold leading-tight">{value}</span>
+        <span className="block text-sm font-bold leading-tight">{value}</span>
       </span>
     </div>
   );
@@ -79,12 +93,12 @@ export function PageHeader({
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="portal-enter mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <h1 className="font-heading text-2xl font-bold text-dark">{title}</h1>
-        {description && <p className="mt-1 text-sm text-gray-600">{description}</p>}
+    <div className="portal-enter mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <h1 className="font-heading text-2xl font-extrabold tracking-tight text-dark sm:text-[26px]">{title}</h1>
+        {description && <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-gray-600">{description}</p>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
     </div>
   );
 }
@@ -105,15 +119,15 @@ export function Card({
   return (
     <section
       className={cn(
-        "portal-enter rounded-xl border border-gray-200 bg-white shadow-soft transition-shadow duration-300",
+        "portal-enter overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.10)] transition-all duration-300 hover:shadow-[0_8px_28px_-14px_rgba(15,23,42,0.15),0_4px_12px_rgba(15,23,42,0.05)]",
         className
       )}
     >
       {(title || actions) && (
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 px-5 py-4">
-          <div>
-            {title && <h2 className="font-heading text-base font-bold text-dark">{title}</h2>}
-            {description && <p className="mt-0.5 text-xs text-gray-500">{description}</p>}
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 bg-gradient-to-b from-gray-50/60 to-white px-5 py-4">
+          <div className="min-w-0">
+            {title && <h2 className="font-heading text-[15px] font-bold tracking-tight text-dark">{title}</h2>}
+            {description && <p className="mt-0.5 text-xs font-medium text-gray-500">{description}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </header>
@@ -153,7 +167,7 @@ export function StatusPill({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors duration-200",
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold capitalize shadow-sm transition-colors duration-200",
         tone.className
       )}
     >
@@ -175,17 +189,17 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="animate-fade-up rounded-xl border border-dashed border-gray-300 bg-gray-50/50 px-6 py-12 text-center transition-colors duration-300 hover:border-primary/30 hover:bg-primary/[0.02]">
+    <div className="animate-fade-up rounded-2xl border border-dashed border-gray-300 bg-gradient-to-b from-gray-50/80 to-white px-6 py-10 text-center shadow-sm transition-all duration-300 hover:border-primary/25 hover:bg-primary/[0.02] hover:shadow-md">
       {icon && (
         <div
-          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
+          className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15"
           aria-hidden="true"
         >
           {icon}
         </div>
       )}
-      <p className="font-medium text-gray-700">{title}</p>
-      {description && <p className="mx-auto mt-1 max-w-md text-sm text-gray-500">{description}</p>}
+      <p className="font-heading text-[15px] font-bold text-dark">{title}</p>
+      {description && <p className="mx-auto mt-1.5 max-w-md text-sm leading-relaxed text-gray-500">{description}</p>}
       {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
@@ -193,8 +207,8 @@ export function EmptyState({
 
 /**
  * Inline feedback banner used by the portal managers after a save, publish,
- * delete, etc. `role="status"` announces successes politely; errors get
- * `role="alert"` so they interrupt.
+ * delete, etc. `role=\"status\"` announces successes politely; errors get
+ * `role=\"alert\"` so they interrupt.
  */
 export function Notice({
   tone = "ok",
@@ -208,28 +222,28 @@ export function Notice({
   className?: string;
 }) {
   const tones = {
-    ok: "border-green-200 bg-green-50 text-green-800",
-    error: "border-red-200 bg-red-50 text-red-800",
-    info: "border-blue-200 bg-blue-50 text-blue-800",
-    warning: "border-amber-200 bg-amber-50 text-amber-900",
+    ok: "border-green-200 bg-green-50 text-green-800 shadow-green-500/10",
+    error: "border-red-200 bg-red-50 text-red-800 shadow-red-500/10",
+    info: "border-blue-200 bg-blue-50 text-blue-800 shadow-blue-500/10",
+    warning: "border-amber-200 bg-amber-50 text-amber-900 shadow-amber-500/10",
   } as const;
 
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "animate-fade-up flex items-start justify-between gap-3 rounded-lg border px-3.5 py-2.5 text-sm shadow-2xs",
+        "animate-fade-up flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm font-medium shadow-sm backdrop-blur-sm",
         tones[tone],
         className
       )}
     >
-      <span className="min-w-0">{children}</span>
+      <span className="min-w-0 leading-relaxed">{children}</span>
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss message"
-          className="-mr-1 shrink-0 rounded-md p-1 opacity-60 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
+          className=" -mr-1 shrink-0 rounded-lg p-1.5 opacity-60 transition-all hover:bg-black/5 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true" fill="currentColor">
             <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
@@ -260,10 +274,10 @@ export function PermissionChecklist({
           <li
             key={entry.key}
             className={cn(
-              "flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm transition-colors duration-200",
+              "flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 text-sm font-medium transition-all duration-200",
               allowed
-                ? "border-green-200 bg-green-50/60 hover:bg-green-50"
-                : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+                ? "border-green-200 bg-green-50/70 hover:bg-green-50 shadow-sm"
+                : "border-gray-200 bg-gray-50 hover:bg-white"
             )}
           >
             <span className={allowed ? "text-gray-800" : "text-gray-400 line-through"}>
@@ -271,8 +285,8 @@ export function PermissionChecklist({
             </span>
             <code
               className={cn(
-                "rounded px-1.5 py-0.5 text-[11px]",
-                allowed ? "bg-green-100 text-green-800" : "bg-gray-200 text-gray-500"
+                "rounded-lg px-1.5 py-1 text-[11px] font-semibold",
+                allowed ? "bg-green-100 text-green-800 ring-1 ring-green-200" : "bg-gray-200 text-gray-500"
               )}
             >
               {entry.key}
