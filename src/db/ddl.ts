@@ -404,6 +404,18 @@ CREATE TABLE IF NOT EXISTS email_outbox (
   sent_at timestamptz
 );
 CREATE INDEX IF NOT EXISTS email_outbox_created_at_idx ON email_outbox (created_at);
+CREATE TABLE IF NOT EXISTS subscribers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  source text NOT NULL DEFAULT 'website',
+  status text NOT NULL DEFAULT 'active',
+  unsubscribed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS subscribers_email_unique ON subscribers (email);
+CREATE INDEX IF NOT EXISTS subscribers_created_at_idx ON subscribers (created_at);
+
 CREATE TABLE IF NOT EXISTS uploads (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   file_name text NOT NULL,
