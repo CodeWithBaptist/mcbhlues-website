@@ -66,13 +66,7 @@ export function FormField({
       >
         {label}
         {required ? (
-          <>
-            {" "}
-            <span aria-hidden="true" className="text-red-700">
-              *
-            </span>
-            <span className="sr-only">(required)</span>
-          </>
+          <span className="sr-only">(required)</span>
         ) : (
           <span className="ml-1 font-medium normal-case tracking-normal text-gray-600">
             (optional)
