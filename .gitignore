@@ -1,10 +1,16 @@
 node_modules
 .next
 .data
+# Environment files. .env.example is the only env file committed; all real
+# values (including the Vercel/preview .env.production) are ignored.
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo
 playwright-report
 test-results
+.drizzle

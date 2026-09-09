@@ -5,9 +5,25 @@ import { invitations, users } from "@/db/schema";
 import { hashPassword, hashToken, validatePasswordStrength } from "@/lib/auth/password";
 import { getPasswordMinLength } from "@/lib/settings/system-config";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
+import { clientIp, rateLimit } from "@/lib/security/rate-limit";
+
+/**
+ * Invitations are single-use tokens delivered over email, but the endpoint is
+ * public so we apply per-IP rate limiting to block online brute-force guessing.
+ */
+const INVITE_BURST = { limit: 20, windowMs: 15 * 60 * 1000 };
 
 /** GET /api/portal/auth/invite?token=... — validate an invitation token. */
 export async function GET(request: NextRequest) {
+  const ip = clientIp(request);
+  const burst = rateLimit(`invite:${ip}`, INVITE_BURST);
+  if (!burst.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(burst.retryAfter) } }
+    );
+  }
+
   const token = request.nextUrl.searchParams.get("token") ?? "";
   if (!token) return NextResponse.json({ error: "Missing token." }, { status: 400 });
 
@@ -34,6 +50,15 @@ export async function GET(request: NextRequest) {
 
 /** POST — the staff member sets their own password and activates the account. */
 export async function POST(request: NextRequest) {
+  const ip = clientIp(request);
+  const burst = rateLimit(`invite:${ip}`, INVITE_BURST);
+  if (!burst.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again shortly." },
+      { status: 429, headers: { "Retry-After": String(burst.retryAfter) } }
+    );
+  }
+
   const body = await request.json().catch(() => null);
   const token = typeof body?.token === "string" ? body.token : "";
   const password = typeof body?.password === "string" ? body.password : "";

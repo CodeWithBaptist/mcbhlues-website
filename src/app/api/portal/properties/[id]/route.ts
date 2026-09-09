@@ -11,14 +11,26 @@ function num(value: unknown, fallback = 0): number {
 
 /**
  * GET /api/portal/properties/:id — a single property with all its related data.
- * Requires any property read permission.
+ * Requires any property read permission, with scoped enforcement for limited readers.
  */
 export const GET = withPermission(
   ["property:read", "property:read_available", "property:assigned_read"],
-  async (_request, { params }) => {
+  async (_request, { params, user }) => {
     const { id } = await params;
     const property = await getPropertyDetails(id);
     if (!property) return NextResponse.json({ error: "Property not found." }, { status: 404 });
+
+    // Enforce scoped reads so a limited-visibility user cannot fetch arbitrary properties by ID.
+    if (!user.permissions.includes("property:read")) {
+      const canAvailable =
+        user.permissions.includes("property:read_available") && property.isPublished;
+      const canAssigned =
+        user.permissions.includes("property:assigned_read") &&
+        property.assignedUserIds.includes(user.id);
+      if (!canAvailable && !canAssigned) {
+        return NextResponse.json({ error: "Not permitted." }, { status: 403 });
+      }
+    }
     return NextResponse.json({ property });
   }
 );

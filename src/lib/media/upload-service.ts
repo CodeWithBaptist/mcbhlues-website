@@ -13,14 +13,22 @@ import { uploads } from "@/db/schema";
  * stable URL (`/api/uploads/:id`) that can be pasted anywhere a URL is accepted.
  */
 
-/** Images only, plus PDFs for the document library. */
+/**
+ * Images only, plus PDFs for the document library.
+ *
+ * SVG is deliberately excluded: SVG is XML and can embed <script> tags,
+ * event handlers, external references, etc.  When served inline from
+ * /api/uploads/:id under the application's origin (Content-Type: image/svg+xml)
+ * any script inside runs in the site's origin and becomes a stored-XSS vector.
+ * If SVG support is needed later, it must be served from a sandboxed subdomain
+ * with a restrictive Content-Disposition: attachment or sanitised server-side.
+ */
 export const ALLOWED_UPLOAD_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
   "image/avif",
-  "image/svg+xml",
   "application/pdf",
 ] as const;
 

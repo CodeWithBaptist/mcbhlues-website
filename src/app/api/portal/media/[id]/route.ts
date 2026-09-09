@@ -8,9 +8,24 @@ export const PATCH = withPermission("media:upload", async (request, { params, us
   const { id } = await params;
   const body = await request.json().catch(() => null);
 
+  const patchUrl = typeof body?.url === "string" ? body.url : undefined;
+  if (typeof patchUrl === "string") {
+    try {
+      const parsedUrl = new URL(patchUrl);
+      if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+        return NextResponse.json(
+          { error: "Only http:// and https:// URLs are supported." },
+          { status: 400 }
+        );
+      }
+    } catch {
+      return NextResponse.json({ error: "A valid URL is required." }, { status: 400 });
+    }
+  }
+
   const asset = await updateMediaAsset(id, {
     title: typeof body?.title === "string" ? body.title : undefined,
-    url: typeof body?.url === "string" ? body.url : undefined,
+    url: patchUrl,
     kind: typeof body?.kind === "string" ? body.kind : undefined,
     folder: typeof body?.folder === "string" ? body.folder : undefined,
     alt: typeof body?.alt === "string" ? body.alt : undefined,

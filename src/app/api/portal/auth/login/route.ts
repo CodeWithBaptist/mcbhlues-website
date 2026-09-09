@@ -6,8 +6,26 @@ import { verifyPassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { AUDIT_ACTIONS, recordActivity, recordAudit } from "@/lib/rbac/audit";
 import { getSecurityPolicy } from "@/lib/settings/system-config";
+import { clientIp, rateLimit } from "@/lib/security/rate-limit";
+
+/**
+ * IP-layer burst protection — cheap, in-memory stop that fires *before* any
+ * database query so an attacker cannot pound the password hash or the audit
+ * log query.  Per-account lockout (driven by system settings) layers on top.
+ */
+const LOGIN_BURST = { limit: 15, windowMs: 15 * 60 * 1000 };
 
 export async function POST(request: NextRequest) {
+  // Cheap IP rate-limit first — no body parsing, no DB work if we're already limiting.
+  const ip = clientIp(request);
+  const burst = rateLimit(`login:${ip}`, LOGIN_BURST);
+  if (!burst.ok) {
+    return NextResponse.json(
+      { error: "Too many sign-in attempts. Please try again shortly.", code: "RATE_LIMITED" },
+      { status: 429, headers: { "Retry-After": String(burst.retryAfter) } }
+    );
+  }
+
   const body = await request.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
   const password = typeof body?.password === "string" ? body.password : "";
