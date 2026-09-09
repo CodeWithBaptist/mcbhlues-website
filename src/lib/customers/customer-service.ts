@@ -104,14 +104,17 @@ function toListItem(row: typeof customers.$inferSelect): CustomerListItem {
 
 /**
  * Lists the customers the caller may see: `customer:read` sees everyone,
- * otherwise `customer:assigned_read` restricts the list to customers assigned
- * to the caller.
+ * `customer:assigned_read` restricts the list to customers assigned to the
+ * caller. Holders of neither permission get an empty list (the API guard
+ * requires at least one, so this is belt-and-braces).
  */
 export async function loadCustomersForUser(user: AuthenticatedUser): Promise<CustomerListItem[]> {
   const db = await getDb();
   const canSeeAll = hasPermission(user.permissions, "customer:read");
+  const canSeeAssigned = hasPermission(user.permissions, "customer:assigned_read");
   const rows = await db.select().from(customers).orderBy(asc(customers.createdAt));
   if (canSeeAll) return rows.map(toListItem);
+  if (!canSeeAssigned) return [];
   return rows.filter((row) => row.assignedTo === user.id).map(toListItem);
 }
 

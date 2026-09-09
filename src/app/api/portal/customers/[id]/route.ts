@@ -15,10 +15,17 @@ function num(value: unknown, fallback = 0): number {
 }
 
 /** GET /api/portal/customers/:id — notes, saved properties, related records. */
-export const GET = withPermission(["customer:read", "customer:assigned_read"], async (_request, { params }) => {
+export const GET = withPermission(["customer:read", "customer:assigned_read"], async (_request, { params, user }) => {
   const { id } = await params;
   const customer = await getCustomerDetails(id);
   if (!customer) return NextResponse.json({ error: "Customer not found." }, { status: 404 });
+
+  // Scoped readers (customer:assigned_read) may only fetch customers assigned to them.
+  if (!user.permissions.includes("customer:read")) {
+    if (customer.assignedTo !== user.id) {
+      return NextResponse.json({ error: "Not permitted." }, { status: 403 });
+    }
+  }
   return NextResponse.json({ customer });
 });
 

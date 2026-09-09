@@ -17,8 +17,13 @@ export const SYSTEM_DEFAULTS = {
 export const SECURITY_DEFAULTS = {
   /** minutes of no activity before a session is considered idle (0 = off) */
   IDLE_TIMEOUT_MINUTES: 0,
-  /** failed logins before the account is locked for a cooldown (0 = off) */
-  MAX_FAILED_LOGINS: 0,
+  /**
+   * Failed logins before the account is locked for a cooldown.
+   * Defaults to a sane value so a fresh deployment is not wide open; an
+   * administrator can tune this from Portal → System Settings (set to 0 to
+   * disable account lockout entirely — not recommended).
+   */
+  MAX_FAILED_LOGINS: 8,
   /** minutes a locked account must wait before trying again */
   LOCKOUT_MINUTES: 15,
   /** force staff to change their password after an invite/reset (informational) */

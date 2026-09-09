@@ -28,6 +28,21 @@ export const POST = withPermission(
       return NextResponse.json({ error: `Kind must be one of: ${MEDIA_KINDS.join(", ")}.` }, { status: 400 });
     }
 
+    // Block non-HTTP URLs (javascript:, data:, vbscript:, etc.) — stored URLs
+    // are rendered into <img src>, so a script scheme becomes XSS.
+    let parsedUrl: URL;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      return NextResponse.json({ error: "A valid URL is required." }, { status: 400 });
+    }
+    if (parsedUrl.protocol !== "https:" && parsedUrl.protocol !== "http:") {
+      return NextResponse.json(
+        { error: "Only http:// and https:// URLs are supported." },
+        { status: 400 }
+      );
+    }
+
     const required = kind === "document" ? "media:documents" : kind === "logo" ? "media:logo" : "media:upload";
     if (!user.permissions.includes(required)) {
       return NextResponse.json(

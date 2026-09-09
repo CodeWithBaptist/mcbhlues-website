@@ -24,6 +24,34 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
   },
   ...(blockFraming ? [{ key: "X-Frame-Options", value: "SAMEORIGIN" }] : []),
+  //
+  // Content-Security-Policy:
+  //   - 'self' for scripts/styles/fonts/frames (Next.js inline RSC chunks use 'self')
+  //   - Allow the images we actually optimise via next/image (see remotePatterns)
+  //   - Allow the keyless Google Maps embed shown on property detail pages
+  //   - Allow Cloudflare Turnstile captcha when it is configured
+  //   - Allow Vercel Analytics / Speed Insights script beacons
+  //
+  // style-src 'unsafe-inline' is required by Next.js' runtime style injection
+  // (dynamic CSS-in-JS for Tailwind/portal themes).  It is a known, accepted
+  // relaxation — script-src stays locked down.
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://cdn.vercel-insights.com https://va.vercel-scripts.com https://www.googletagmanager.com",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https:;",
+      "font-src 'self' data:",
+      "connect-src 'self' https: wss:;",
+      "frame-src 'self' https://maps.google.com https://www.google.com https://challenges.cloudflare.com",
+      "frame-ancestors " + (blockFraming ? "'self'" : "'none'"),
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+    ].join("; "),
+  },
 ];
 
 const nextConfig: NextConfig = {
