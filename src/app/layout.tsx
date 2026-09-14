@@ -106,6 +106,12 @@ export const metadata: Metadata = {
   },
   category: "real estate",
   formatDetection: { telephone: true, address: true, email: true },
+  // Google Search Console ownership proof for the domain. Next.js renders
+  // this as <meta name="google-site-verification" content="…"> in the <head>
+  // of every page (homepage included). Do not change the token.
+  verification: {
+    google: "fVsdZySoqTKw9vVjicXpjMg4QSIPEMhaKI3sHSyfG3M",
+  },
 };
 
 export const viewport: Viewport = {

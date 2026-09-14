@@ -185,7 +185,11 @@ keeps the first request after a quiet period fast.
 5. **Search engines** — Google Search Console and Bing Webmaster Tools:
    verify the domain, then submit `https://mcbhlues.com/sitemap.xml`.
    `robots.txt` already points at it and disallows `/portal`, `/admin`,
-   `/api/` and `/favorites`.
+   `/api/` and `/favorites`. GSC verification is already wired in: the
+   `google-site-verification` meta tag is emitted on every page from the
+   `verification.google` field of the root layout's `metadata`
+   (`src/app/layout.tsx`) — pick the *HTML tag* verification method in
+   Search Console and the value will already match.
 6. **Social preview** — paste a page URL into
    <https://cards-dev.twitter.com/validator> and Facebook's
    [Sharing Debugger](https://developers.facebook.com/tools/debug/) and hit
