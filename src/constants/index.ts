@@ -2,12 +2,16 @@
  * Canonical, absolute origin for the public website.
  *
  * Used for `metadataBase`, canonical URLs, Open Graph tags, the sitemap and
- * robots.txt. Override per-environment with `NEXT_PUBLIC_SITE_URL` (e.g. a
- * Vercel preview deployment) — it must be an absolute URL with no trailing
- * slash.
+ * robots.txt. The default is the project's Vercel production domain — the
+ * custom `mcbhlues.com` domain has not been registered, so it MUST NOT be
+ * advertised to crawlers. Once the custom domain is purchased and attached,
+ * set `NEXT_PUBLIC_SITE_URL=https://mcbhlues.com` (no trailing slash) to
+ * switch over without a code change. On preview deployments, set the variable
+ * to the preview URL so previews don't advertise production URLs.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://mcbhlues.com"
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://mcbhlues-website-7n66.vercel.app"
 ).replace(/\/+$/, "");
 
 export const SITE_CONFIG = {
