@@ -54,7 +54,7 @@ copy it to `.env.local` for local development.
 
 | Variable | Required | Notes |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical origin, **no trailing slash**, e.g. `https://mcbhlues.com`. Drives canonical URLs, `sitemap.xml`, `robots.txt` and every Open Graph / Twitter tag. Defaults to `https://mcbhlues.com`. Set it to the preview URL on preview deployments so previews don't advertise production URLs. |
+| `NEXT_PUBLIC_SITE_URL` | Recommended | Canonical origin, **no trailing slash**. Drives canonical URLs, `sitemap.xml`, `robots.txt` and every Open Graph / Twitter tag. Defaults to the Vercel production domain `https://mcbhlues-website-7n66.vercel.app` (the custom `mcbhlues.com` domain has not been registered — set this variable to `https://mcbhlues.com` only once it is purchased and attached). Set it to the preview URL on preview deployments so previews don't advertise production URLs. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Recommended | Cloudflare Turnstile **site** key. Public by design. Omit and the widget is not rendered. |
 | `TURNSTILE_SECRET_KEY` | Recommended | Cloudflare Turnstile **secret** key. Omit and captcha verification is skipped (the honeypot and rate limits still apply). Never expose this one. |
 | `DISABLE_HTTPS_REDIRECT` | Optional | `true` disables the HTTP→HTTPS redirect. Only for environments that terminate TLS oddly; leave unset in production. |

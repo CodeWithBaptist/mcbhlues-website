@@ -4,9 +4,12 @@ const SESSION_COOKIE = "mcbhlues_staff_session";
 
 const CANONICAL_HOST = (() => {
   try {
-    return new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mcbhlues.com").host;
+    return new URL(
+      process.env.NEXT_PUBLIC_SITE_URL ||
+        "https://mcbhlues-website-7n66.vercel.app"
+    ).host;
   } catch {
-    return "mcbhlues.com";
+    return "mcbhlues-website-7n66.vercel.app";
   }
 })();
 
