@@ -45,6 +45,33 @@ function CheckList({ heading, items }: { heading: string; items: string[] }) {
   );
 }
 
+/**
+ * Descriptions are entered in the portal as plain text. Turn the common
+ * dash-separated listing format into readable bullets without changing the
+ * stored content or requiring editors to learn a special format.
+ */
+function descriptionItems(description: string, fallback: string): string[] {
+  const text = description.trim() || fallback;
+  const plotBreakdown = text.split(/plot breakdown:\s*-\s*/i);
+
+  if (plotBreakdown.length > 1) {
+    return [
+      plotBreakdown[0].trim(),
+      ...plotBreakdown[1]
+        .split(/\s+-\s+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ];
+  }
+
+  const items = text
+    .split(/(?:\n+|•)/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return items.length > 1 ? items : [text];
+}
+
 export function PropertyContent({ property, amenities = [], features = [] }: PropertyContentProps) {
   return (
     <div className="flex flex-col gap-12">
@@ -58,10 +85,17 @@ export function PropertyContent({ property, amenities = [], features = [] }: Pro
       {/* Description */}
       <section>
         <h2 className="mb-5 font-heading text-xl font-bold text-dark sm:text-2xl">About this property</h2>
-        <p className="max-w-prose text-base leading-relaxed text-gray-600 sm:text-lg">
-          {property.description ||
-            `${property.name} is located in ${property.location}. Contact us to arrange a viewing or ask for more details.`}
-        </p>
+        <ul className="max-w-prose space-y-3 text-base leading-relaxed text-gray-600 sm:text-lg">
+          {descriptionItems(
+            property.description,
+            `${property.name} is located in ${property.location}. Contact us to arrange a viewing or ask for more details.`,
+          ).map((item) => (
+            <li key={item} className="flex items-start gap-3">
+              <span className="mt-[0.7em] h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <CheckList heading="Key features" items={features} />
