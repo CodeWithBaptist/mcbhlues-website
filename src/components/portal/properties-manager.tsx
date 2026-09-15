@@ -700,8 +700,16 @@ function PropertyEditor({
             <Field label="Year built">
               <Input type="number" min={0} value={form.yearBuilt} onChange={(event) => set("yearBuilt", event.target.value)} />
             </Field>
-            <Field label="Description" className="sm:col-span-2">
-              <Textarea value={form.description} onChange={(event) => set("description", event.target.value)} />
+            <Field
+              label="Description"
+              hint="Type * then space to start a bullet. Enter continues the list; Enter on an empty bullet ends it."
+              className="sm:col-span-2"
+            >
+              <Textarea
+                bulletList
+                value={form.description}
+                onChange={(event) => set("description", event.target.value)}
+              />
             </Field>
           </div>
 

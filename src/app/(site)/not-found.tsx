@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { NotFoundContent } from "@/components/sections/not-found-content";
+import { getCompanyInfo } from "@/lib/settings/company";
 
 /**
  * 404 for anything inside the public site that calls `notFound()` — most often
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function SiteNotFound() {
-  return <NotFoundContent />;
+export default async function SiteNotFound() {
+  // Same source as the navbar and footer around it: Portal → Company Settings.
+  const company = await getCompanyInfo();
+  return <NotFoundContent company={company} />;
 }
