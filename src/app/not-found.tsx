@@ -4,12 +4,16 @@ import { Container } from "@/components/ui/container";
 import { Logo } from "@/components/ui/logo";
 import { NotFoundContent } from "@/components/sections/not-found-content";
 import { LEGAL_LINKS, NAV_LINKS, SITE_CONFIG } from "@/constants";
+import { getCompanyInfo } from "@/lib/settings/company";
 
 /**
  * Global 404. Next renders this for any URL that matches no route, using the
  * *root* layout only — so it carries its own lightweight header and footer
  * rather than the data-driven ones from the `(site)` layout (which would need a
- * database round-trip just to render an error page).
+ * database round-trip just to render an error page). The one exception is the
+ * company contact details, which are read from Portal → Settings → Company so
+ * the phone and email here never drift from the rest of the site;
+ * `getCompanyInfo()` falls back to the shipped constants if the read fails.
  */
 export const metadata: Metadata = {
   title: "Page not found",
@@ -18,7 +22,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const company = await getCompanyInfo();
+
   return (
     <div className="public-site flex min-h-screen flex-col">
       <header className="border-b border-gray-100">
@@ -41,14 +47,14 @@ export default function NotFound() {
       </header>
 
       <main id="main-content" className="flex-grow">
-        <NotFoundContent />
+        <NotFoundContent company={company} />
       </main>
 
       <footer className="border-t border-gray-100 py-8">
         <Container>
           <div className="flex flex-col items-center justify-between gap-4 text-sm text-gray-600 sm:flex-row">
             <p>
-              © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights reserved.
+              © {new Date().getFullYear()} {company.name || SITE_CONFIG.name}. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               {LEGAL_LINKS.map((link) => (

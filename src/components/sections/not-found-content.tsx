@@ -3,6 +3,7 @@ import { ArrowRight, Home, Search, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { buttonClasses } from "@/components/ui/button";
 import { PRIMARY_CTA, SITE_CONFIG } from "@/constants";
+import type { CompanyInfo } from "@/lib/settings/company";
 
 const SUGGESTIONS = [
   {
@@ -29,8 +30,18 @@ const SUGGESTIONS = [
  * Body of the 404 page. Shared by the root `not-found.tsx` (unmatched URLs) and
  * the `(site)` one (a `notFound()` thrown by, say, a deleted listing) so both
  * look identical.
+ *
+ * `company` comes from Portal → Settings → Company (same source as the footer
+ * and navbar), so staff can change the phone and email without a code change.
+ * It is optional: callers that cannot afford a database read fall back to the
+ * shipped constants.
  */
-export function NotFoundContent() {
+export function NotFoundContent({ company }: { company?: CompanyInfo }) {
+  const contact = {
+    phone: company?.phone || SITE_CONFIG.contact.phone,
+    email: company?.email || SITE_CONFIG.contact.email,
+  };
+
   return (
     <section className="py-16 sm:py-24">
       <Container>
@@ -87,17 +98,17 @@ export function NotFoundContent() {
         <p className="mt-12 text-center text-sm text-gray-600">
           Still stuck? Call us on{" "}
           <a
-            href={`tel:${SITE_CONFIG.contact.phone.replace(/\s+/g, "")}`}
+            href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`}
             className="font-semibold text-primary underline underline-offset-2 hover:text-primary-dark"
           >
-            {SITE_CONFIG.contact.phone}
+            {contact.phone}
           </a>{" "}
           or email{" "}
           <a
-            href={`mailto:${SITE_CONFIG.contact.email}`}
+            href={`mailto:${contact.email}`}
             className="font-semibold text-primary underline underline-offset-2 hover:text-primary-dark"
           >
-            {SITE_CONFIG.contact.email}
+            {contact.email}
           </a>
           .
         </p>
