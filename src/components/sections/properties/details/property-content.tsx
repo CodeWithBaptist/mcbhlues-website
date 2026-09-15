@@ -45,34 +45,68 @@ function CheckList({ heading, items }: { heading: string; items: string[] }) {
   );
 }
 
-/**
- * Descriptions are entered in the portal as plain text. Turn the common
- * dash-separated listing format into readable bullets without changing the
- * stored content or requiring editors to learn a special format.
- */
-function descriptionItems(description: string, fallback: string): string[] {
-  const text = description.trim() || fallback;
-  const plotBreakdown = text.split(/plot breakdown:\s*-\s*/i);
+interface DescriptionCopy {
+  paragraphs: string[];
+  bullets: string[];
+}
 
-  if (plotBreakdown.length > 1) {
-    return [
-      plotBreakdown[0].trim(),
-      ...plotBreakdown[1]
+/**
+ * Keep ordinary property descriptions as prose. Only text that an editor has
+ * deliberately marked as a list is shown with bullets; previously even a
+ * single paragraph received a decorative dot, which made the page feel
+ * unnecessarily list-heavy.
+ *
+ * The plot-breakdown branch supports the compact legacy format already stored
+ * on some listings: `Plot breakdown: - item - item`.
+ */
+function descriptionCopy(description: string, fallback: string): DescriptionCopy {
+  const text = description.trim() || fallback;
+  const plotBreakdown = text.match(/^([\s\S]*?)plot breakdown:\s*-\s*([\s\S]+)$/i);
+
+  if (plotBreakdown) {
+    return {
+      paragraphs: [plotBreakdown[1].trim(), "Plot breakdown"].filter(Boolean),
+      bullets: plotBreakdown[2]
         .split(/\s+-\s+/)
         .map((item) => item.trim())
         .filter(Boolean),
-    ];
+    };
   }
 
-  const items = text
-    .split(/(?:\n+|•)/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  const paragraphs: string[] = [];
+  const bullets: string[] = [];
 
-  return items.length > 1 ? items : [text];
+  for (const line of text.split(/\n+/)) {
+    const copy = line.trim();
+    if (!copy) continue;
+
+    // The portal's list shortcut stores `•`; accept Markdown-style list marks
+    // too, while leaving dashes used naturally inside prose untouched.
+    const bullet = copy.match(/^[•*-]\s+(.+)$/);
+    if (bullet) {
+      bullets.push(bullet[1].trim());
+      continue;
+    }
+
+    // Also support older one-line content such as `Intro • first • second`.
+    const inline = copy.split(/\s+•\s+/).map((item) => item.trim()).filter(Boolean);
+    if (inline.length > 1) {
+      paragraphs.push(inline[0]);
+      bullets.push(...inline.slice(1));
+    } else {
+      paragraphs.push(copy);
+    }
+  }
+
+  return { paragraphs, bullets };
 }
 
 export function PropertyContent({ property, amenities = [], features = [] }: PropertyContentProps) {
+  const description = descriptionCopy(
+    property.description,
+    `${property.name} is located in ${property.location}. Contact us to arrange a viewing or ask for more details.`,
+  );
+
   return (
     <div className="flex flex-col gap-12">
       {/* Specs strip */}
@@ -85,17 +119,21 @@ export function PropertyContent({ property, amenities = [], features = [] }: Pro
       {/* Description */}
       <section>
         <h2 className="mb-5 font-heading text-xl font-bold text-dark sm:text-2xl">About this property</h2>
-        <ul className="max-w-prose space-y-3 text-base leading-relaxed text-gray-600 sm:text-lg">
-          {descriptionItems(
-            property.description,
-            `${property.name} is located in ${property.location}. Contact us to arrange a viewing or ask for more details.`,
-          ).map((item) => (
-            <li key={item} className="flex items-start gap-3">
-              <span className="mt-[0.7em] h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
-              <span>{item}</span>
-            </li>
+        <div className="max-w-prose space-y-4 text-base leading-relaxed text-gray-600 sm:text-lg">
+          {description.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
           ))}
-        </ul>
+          {description.bullets.length > 0 && (
+            <ul className="space-y-2.5 pt-1">
+              {description.bullets.map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <span className="mt-[0.72em] h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </section>
 
       <CheckList heading="Key features" items={features} />
