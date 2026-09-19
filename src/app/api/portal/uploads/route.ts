@@ -4,6 +4,7 @@ import {
   MAX_UPLOAD_BYTES,
   storeUpload,
   validateUpload,
+  validateUploadBuffer,
 } from "@/lib/media/upload-service";
 import { compressUploadImage } from "@/lib/media/image-compression";
 import { AUDIT_ACTIONS, recordAudit } from "@/lib/rbac/audit";
@@ -32,16 +33,17 @@ export const POST = withPermission(
     if (problem) return NextResponse.json({ error: problem }, { status: 400 });
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    if (buffer.byteLength > MAX_UPLOAD_BYTES) {
-      return NextResponse.json({ error: "That file is too large." }, { status: 413 });
+    const bufferCheck = validateUploadBuffer(buffer);
+    if (!bufferCheck.valid) {
+      return NextResponse.json({ error: bufferCheck.error }, { status: 400 });
     }
 
     // Downscale + re-encode photos before they reach the database. Falls back
     // to the original bytes if sharp is unavailable, so uploads never fail
-    // because of compression.
+    // because of compression. Use verified detected MIME type.
     const optimised = await compressUploadImage({
       name: file.name,
-      type: file.type,
+      type: bufferCheck.type,
       buffer,
     });
 
